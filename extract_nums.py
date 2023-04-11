@@ -1,5 +1,7 @@
 # Write code using find() and string slicing (see section 6.10) to extract the number at the end of the line below. Convert the extracted value to a floating point number and print it out.
 
+#this one is a more complex code for extracting the number, though not what the assignment is looking for
+
 text = "X-DSPAM-Confidence:    0.8475"
 
 def extract_number(text):
@@ -10,16 +12,22 @@ def extract_number(text):
   for letter in text:
     if letter.isnumeric() == True:
       start_of_number = text.index(letter)
-      print(start_of_number)
       break
-      
-  for number in text[start_of_number:len(text)]:
-    if number == ".":
+
+  spliced_number = text[start_of_number:]
+  
+  for letter in spliced_number:
+    if letter == ".":
       continue
 
-    if number.isnumeric() == False or number == len(text):
-      end_of_number = text.index(number)
-      print(end_of_number)
+    if letter.isnumeric() == True:
+      if text.index(letter) <= len(text):
+        end_of_number = text.index(letter) + 1
+      else:
+        continue
+
+    if letter.isnumeric() == False:
+      end_of_number = text.index(letter)
       break
     
 
@@ -27,8 +35,16 @@ def extract_number(text):
 
   return number
 
-print(extract_number(text))
+#print(extract_number(text))
 
 
+#text = "X-DSPAM-Confidence:    0.8475"
 
-      
+def get_number(text):
+  start_number = text.find(':')
+
+  number = float(text[start_number + 1:])
+  
+  print(number)
+
+get_number(text)
