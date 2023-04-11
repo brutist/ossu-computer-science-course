@@ -10,15 +10,20 @@ def extract_number(text):
   for letter in text:
     if letter.isnumeric() == True:
       start_of_number = text.index(letter)
-
-  for number in range(start_of_number:text)
-    if number == "." or number == .:
+      print(start_of_number)
+      break
+      
+  for number in text[start_of_number:len(text)]:
+    if number == ".":
       continue
 
-    if number.isnumeric() == False:
+    if number.isnumeric() == False or number == len(text):
       end_of_number = text.index(number)
+      print(end_of_number)
+      break
+    
 
-  number = float(text[start_of_number:end_of_number])
+  number = (text[start_of_number:end_of_number])
 
   return number
 
