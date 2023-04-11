@@ -1,2 +1,6 @@
-This will be my first project. I don't know it yet but I will eventually get there
-"w" f = open("myfile.txt", "w")
+This is just some codes that I did  during online classes.
+
+This repo may include:
+a. activities
+b. coding practices
+c. 
