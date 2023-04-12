@@ -20,7 +20,7 @@ def average_float(filhandle):
       line_count += 1
       start_of_number = line.find(':') + 1
       number = line[start_of_number:len(line)]
-      number = float(number.strip())
+      number = float(number.lstrip())
       total += number
 
   average = total/line_count
