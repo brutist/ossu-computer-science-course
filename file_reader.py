@@ -14,7 +14,7 @@ def average_float(filhandle):
     start_of_number = 0
     number = 0
     
-    if  not line.startswith('X-DSPAM-Confidence:'):
+    if not line.startswith('X-DSPAM-Confidence:'):
       continue
     else:
       line_count += 1
