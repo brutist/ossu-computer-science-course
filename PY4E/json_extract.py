@@ -16,7 +16,7 @@ file = file.decode()
 data = json.loads(file)
 
 #I can delete this comment{} but it would make the for loop below a little
-#unreadable
+#unreadable, yeah
 comments = data['comments']
 sum = 0
 
@@ -24,3 +24,4 @@ for item in comments:
   sum += int(item.get('count', 0))
 
 print(sum)
+
