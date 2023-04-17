@@ -53,8 +53,11 @@ complete_URL = URL + urllib.parse.urlencode(api_call)
 file = urllib.request.urlopen(complete_URL, context = ctx)
 data = file.read().decode()
 jsonObject = json.loads(data)
-results = jsonObject['results'][0]['place_id']
-
+try:
+  results = jsonObject['results'][0]['place_id']
+except:
+  print("This service is unavailable right now")
+  exit()
 
 #Print some status for the user
 print('Retrieving', complete_URL)
