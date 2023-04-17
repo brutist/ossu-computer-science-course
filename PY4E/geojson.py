@@ -36,15 +36,17 @@ api_call['address'] = location
 
 if chose_URL == 'y':
   URL = GOOGLE_URL
-  api_call['key'] = 'AIzaSyDqRG10DQK7_Ys-yeOEiQKXv9EgyjBqde0'
+  api_call['key'] = 'AIzaSyAekoWqVdXIEbSaL0Pm7pIuL0yhoCwd3c0'
   
-if chose_URL == 'n':
+elif chose_URL == 'n':
   URL = TEST_URL
   api_call['key'] = 42
 
 else:
+  print('Enter Y or N only.')
   exit()
-  
+
+
 
 complete_URL = URL + urllib.parse.urlencode(api_call)
 
