@@ -36,7 +36,7 @@ api_call['address'] = location
 
 if chose_URL == 'y':
   URL = GOOGLE_URL
-  api_call['key'] = 'AIzaSyAekoWqVdXIEbSaL0Pm7pIuL0yhoCwd3c0'
+  api_call['key'] = input('Enter Google API key: ')
   
 elif chose_URL == 'n':
   URL = TEST_URL
