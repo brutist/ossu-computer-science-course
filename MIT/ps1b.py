@@ -36,7 +36,7 @@ while currentSavings < downPayment:
     #Add savings 
     monthlySavings = (currentSalary / MONTHS_IN_YEAR) * portionSaved
     currentSavings = currentSavings + monthlySavings + monthlyInterestInSavings
-    
+  
     #This is not really part of the assignment but I really want to do this 
     #list of record for every month that passed
     record["month"] = month
@@ -48,9 +48,13 @@ while currentSavings < downPayment:
     # This is not an elegant solution, but using eval() function can turn the list of string into a dictionary again. 
     salaryRecord.append(str(record))
 
+#print result
+print('Number of months:', month)
+
 #Print the salary record for all months 
 #for record in salaryRecord:
   #print(record)
+
 
 
 
