@@ -8,27 +8,41 @@ semiAnnualRaise = float(input('Enter semi-annual raise, as decimal: '))
 
 
 #savings that will go to the downpayment
+MONTHS_IN_YEAR = 12
 currentSavings = float(0)
 monthlySalary = annualSalary / 12#months
 monthlySavings = monthlySalary * portionSaved
-monthlyInterestRate = 0.04 / 12
-
+monthlyInterestRate = 0.04 / MONTHS_IN_YEAR
 portionDownPayment = totalCost * 0.25
+month = 0
 
+#This is going to be a list of recor
+salaryRecord = list() #This is a list of dictionary with keys "month", "current_savings", "annual_salary"
+record = dict()
 
-def timeWithRaise(salary, percentSaved, cost, salaryRaise):
-    month = 0
-    while currentSavings < portionDownPayment:
-    months += 1
+while currentSavings < portionDownPayment:
+    #No. of months passed
+    month += 1
+
+    #Interest per month should change along with the increase in savings
     monthlyInterestInSavings = currentSavings * monthlyInterestRate
+    
+    #Add savings 
     currentSavings = currentSavings + monthlySavings + monthlyInterestInSavings
+    
     #check whether it's time for raise
-    if months % 6 == 0:
+    if month % 6 == 0:
         annualSalary = annualSalary + (annualSalary * semiAnnualRaise)
     
-    return months
+    record["month"] = int(month)
+    record["current_savings"] = int(currentSavings)
+    record['annualSalary'] = int(annualSalary)
+    
+    salaryRecord.append(record)
+    print(month)
+print(salaryRecord)
 
-print(timeWithRaise())
+
 
 
 
