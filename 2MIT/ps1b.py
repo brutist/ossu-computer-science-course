@@ -7,40 +7,55 @@ totalCost =  float(input('Enter dream house cost: '))
 semiAnnualRaise = float(input('Enter semi-annual raise, as decimal: '))
 
 
-#savings that will go to the downpayment
+#instantiate some values to make the code readable
 MONTHS_IN_YEAR = 12
 currentSavings = float(0)
-monthlySalary = annualSalary / 12#months
-monthlySavings = monthlySalary * portionSaved
+currentSalary = annualSalary
 monthlyInterestRate = 0.04 / MONTHS_IN_YEAR
-portionDownPayment = totalCost * 0.25
-month = 0
+downPayment = totalCost * 0.25
 
-#This is going to be a list of recor
+
+
 salaryRecord = list() #This is a list of dictionary with keys "month", "current_savings", "annual_salary"
 record = dict()
+month = 0
 
-while currentSavings < portionDownPayment:
+while currentSavings < downPayment:
+    
+    #check whether it's time for raise
+    if month % 6 == 0 and month != 0:
+      salaryRaise = currentSalary * semiAnnualRaise
+      currentSalary = currentSalary + salaryRaise
+
     #No. of months passed
     month += 1
-
+  
     #Interest per month should change along with the increase in savings
     monthlyInterestInSavings = currentSavings * monthlyInterestRate
     
     #Add savings 
+    monthlySavings = (currentSalary / MONTHS_IN_YEAR) * portionSaved
     currentSavings = currentSavings + monthlySavings + monthlyInterestInSavings
-    
-    #check whether it's time for raise
-    if month % 6 == 0:
-        annualSalary = annualSalary + (annualSalary * semiAnnualRaise)
-    
-    record["month"] = int(month)
-    record["current_savings"] = int(currentSavings)
-    record['annualSalary'] = int(annualSalary)
-    
-    salaryRecord.append(record)
-    print(month)
-print(salaryRecord)
+  
+    #This is not really part of the assignment but I really want to do this 
+    #list of record for every month that passed
+    record["month"] = month
+    record["current_savings"] = currentSavings
+    record['annualSalary'] = currentSalary
+
+    #If you dont cast to list, the entire list will point to the last immutable values it was given with.
+    #making all of the key-value pairs the same in every index of the list
+    # This is not an elegant solution, but using eval() function can turn the list of string into a dictionary again. 
+    salaryRecord.append(str(record))
+
+#print result
+print('Number of months:', month)
+
+#Print the salary record for all months 
+#for record in salaryRecord:
+  #print(record)
+
+
 
 
 
