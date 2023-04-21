@@ -1,51 +1,28 @@
 #Assignment Instruction = https://ocw.mit.edu/courses/6-0001-introduction-to-computer-science-and-programming-in-
 #python-fall-2016/8cf75481d7047180c386de3e485bd050_MIT6_0001F16_ps1.pdf
 
-# This is savings - downPayment
-record = list()
-
-def bestRate(annualSalary):
-  currentSavings = 0
-  threeYears = range(36)
-  downPayment = 1000000 * 0.25
-  semiAnnualRaise = 0.07
-  difference = currentSavings - downPayment
-  
+def bestRate(salary):  
+  isPossible = True
   low = 0
-  high = 1000
-  average = (low + high) / 2
-
+  high = 10000
+  guess = int((low + high) / 2)
+  portionSaved = high / 10000
   
-  while True:
+  while isPossible:
+    annualSalary = salary
+    currentSavings = 0
+    threeYears = 36
+    downPayment = 1000000 * 0.25
+    semiAnnualRaise = 0.07
+    difference = currentSavings - downPayment
+    month = 0
     
-    if difference < 0:
-      low = average
-      portionSaved = int(average)
-      print('x')
-
-    if difference > 100:
-      high = average
-      portionSaved = int(average)
-      print('x')
-      continue
-
-    else: 
-      print(int(average))
-      break
-  
-    for month in threeYears:
-      
+    while month != threeYears:
       # check if its time to end
-      if currentSavings < downPayment and month == len(threeYears):
+      if currentSavings < downPayment and month >= threeYears and portionSaved == 1:
         print('It is not possible to pay the down payment in three years.')
-        record.append(difference)
         break
       
-      if currentSavings >= downPayment:
-        record.append(difference)
-        print('It would take you', month, 'months to save for the down payment')
-        break
-  
       # check for salary raise time
       if month % 6 == 0 and month != 0:
         annualSalary += annualSalary * semiAnnualRaise
@@ -54,10 +31,39 @@ def bestRate(annualSalary):
       monthlyReturnOfInvestment = currentSavings * (0.04 / 12)
       monthlySavings = (annualSalary / 12) * portionSaved
       currentSavings += monthlySavings + monthlyReturnOfInvestment
-    
-  
+      month += 1
+
+      if month == threeYears:
+         difference = currentSavings - downPayment
+        
       # just to see the increase
-      print('Month: ', month, 'Annual salary:', annualSalary, 'Current savings:', currentSavings)
+      print('Month: ', month, 'Annual salary:', annualSalary, 'Current savings:', currentSavings, 'Difference: ', difference, "Portion Saved: ", portionSaved)
+      
+
+    portionSaved = guess / 10000
+    print(guess)
+    
+    if difference < 0:
+      low = guess
+      guess = low + high // 2
+      continue
+  
+    if difference > 100:
+      high = guess
+      guess = low + high // 2
+
+      continue
+        
+    else: 
+      print(portionSaved)
+      break
+
+    # Average answer is a float with a lot of decimals. I only need two decimal place. Truncate the remaining decimals
+    
+
+
+
+
 
 
 while True:
@@ -67,10 +73,4 @@ while True:
   except:
     continue
 
-
-# TO BE DETERMINED BY THE BINARY SEARCH
-# PORTION_SAVED = 
-
 bestRate(annualSalary)
-
-print(record)
