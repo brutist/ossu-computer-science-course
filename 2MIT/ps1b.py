@@ -42,7 +42,7 @@ while currentSavings < downPayment:
     record["month"] = month
     record["current_savings"] = currentSavings
     record['annualSalary'] = currentSalary
-
+    print(record)
     #If you dont cast to list, the entire list will point to the last immutable values it was given with.
     #making all of the key-value pairs the same in every index of the list
     # This is not an elegant solution, but using eval() function can turn the list of string into a dictionary again. 
