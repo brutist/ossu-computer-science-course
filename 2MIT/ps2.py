@@ -50,7 +50,6 @@ def choose_word(wordlist):
 # so that it can be accessed from anywhere in the program
 wordlist = load_words()
 
-
 def is_word_guessed(secret_word, letters_guessed):
     '''
     secret_word: string, the word the user is guessing; assumes all letters are
@@ -60,10 +59,13 @@ def is_word_guessed(secret_word, letters_guessed):
     returns: boolean, True if all the letters of secret_word are in letters_guessed;
       False otherwise
     '''
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    secret_word = list(secret_word)
+    unguessed_letters = [letter for letter in secret_word if letter not in letters_guessed] 
 
-
+    if len(unguessed_letters) <= 0:
+      return True
+    else:
+      return False
 
 def get_guessed_word(secret_word, letters_guessed):
     '''
@@ -72,10 +74,12 @@ def get_guessed_word(secret_word, letters_guessed):
     returns: string, comprised of letters, underscores (_), and spaces that represents
       which letters in secret_word have been guessed so far.
     '''
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
-
-
+    secret_word = list(secret_word)
+    space = '_ '
+    common_letters = [letter if letter in letters_guessed else space for letter in secret_word]
+    common_letters = ''.join(common_letters)
+    
+    return(common_letters)
 
 def get_available_letters(letters_guessed):
     '''
@@ -83,11 +87,26 @@ def get_available_letters(letters_guessed):
     returns: string (of letters), comprised of letters that represents which letters have not
       yet been guessed.
     '''
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    all_letters = list(string.ascii_lowercase)
+    available_letters = [letter for letter in all_letters if letter not in letters_guessed]
+    available_letters = ''.join(available_letters)
+  
+    return available_letters
     
-    
+def is_letter_in(secret_word, letter):
+  '''
+  secret_word: string, the word the user is guessing.
+  letter: string, the guess letter. Must be checked if this letter is present in secret_word
+  returns: boolean, True if the letter is present, False if otherwise.
+  '''
+  is_found = None
+  if letter in secret_word:
+    is_found = True
+  else: 
+    is_found = False
 
+  return is_found
+  
 def hangman(secret_word):
     '''
     secret_word: string, the secret word to guess.
@@ -113,8 +132,14 @@ def hangman(secret_word):
     
     Follows the other limitations detailed in the problem write-up.
     '''
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    word_length = len(secret_word)
+    GUESS = 6
+  
+    print("Welcome to the game Hangman!")
+    print("I am thinking of a word that is", word_length, "letters long.")
+    print('------------')
+    print(is_letter_in(secret_word, 'p'))
+    print(secret_word)
 
 
 
@@ -202,8 +227,12 @@ if __name__ == "__main__":
     # uncomment the following two lines.
     
     secret_word = choose_word(wordlist)
-    hangman(secret_word)
-
+    hangman('apple')
+  
+    # Current Tests
+    #print(is_word_guessed('apple', ['a', 'p', 'l', 'e', 'u', 'q']))
+    #print('Common letters: ', get_guessed_word('apple', ['e', 'i', 'k', 'p', 'r', 's']))
+    #print(get_available_letters(['e', 'i', 'k', 'p', 'r', 's']))
 ###############
     
     # To test part 3 re-comment out the above lines and 
