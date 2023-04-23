@@ -60,12 +60,16 @@ def is_word_guessed(secret_word, letters_guessed):
       False otherwise
     '''
     secret_word = list(secret_word)
-    unguessed_letters = [letter for letter in secret_word if letter not in letters_guessed] 
-
-    if len(unguessed_letters) <= 0:
-      return True
+    unguessed_letters = [letter for letter in secret_word if letter not in letters_guessed]
+    unguessed_letters = len(unguessed_letters)
+    NONE = 0
+  
+    if unguessed_letters is NONE:
+      guessed = True
     else:
-      return False
+      guessed = False
+
+    return guessed
 
 def get_guessed_word(secret_word, letters_guessed):
     '''
@@ -106,6 +110,18 @@ def is_letter_in(secret_word, letter):
     is_found = False
 
   return is_found
+
+def is_letter_valid(guess_letter, letters_guessed):
+  '''
+  gues_letter: string/char - the letter that the user input each round
+  letters_guessed: list (of letters) that the user have already guessed
+  return: Boolean: True if the letter is an alphabet and not in the letters already guessed
+          False if otherwise
+  '''
+  if guess_letter.isalpha() and not guess_letter in letters_guessed:
+    return True
+  else:
+    return False
   
 def hangman(secret_word):
     '''
@@ -134,15 +150,64 @@ def hangman(secret_word):
     '''
     word_length = len(secret_word)
     GUESS = 6
+    EXHAUSTED = 0
+    WARNINGS = 3
+    letters_guessed = list()
+    available_letters = get_available_letters(letters_guessed)
+    vowels = ['a','e','i','o','u']
   
     print("Welcome to the game Hangman!")
     print("I am thinking of a word that is", word_length, "letters long.")
+    print("You have", WARNINGS, "warnings left.")
     print('------------')
-    print(is_letter_in(secret_word, 'p'))
-    print(secret_word)
+    while True:
+      if is_word_guessed(secret_word, letters_guessed):
+        unique_letters_guessed = len(set(secret_word))
+        total_score = GUESS * unique_letters_guessed
+        print('Congratulations, you won!')
+        print('Your total score for this game:', total_score)
+        break
+      if GUESS <= EXHAUSTED:
+        print('Sorry. You ran out of guesses. The word was', secret_word)
+        break
+        
+      print('You have', GUESS, 'guesses left.')
+      print('Available letters:',get_available_letters(letters_guessed))
+      guess_letter = (input('Please guess a letter: ')).lower()
+      alphabet = guess_letter.isalpha()
 
+      if not is_letter_valid(guess_letter, letters_guessed):
+        if not guess_letter.isalpha():  
+          print("Opps! That's not a valid letter.", end = "")
 
-
+        if guess_letter in letters_guessed:
+          print("Oops! You've already guessed that letter.", end = "")
+        
+        if WARNINGS <= EXHAUSTED:
+          GUESS -= 1
+          print("You have no warnings left so you lose one guess:", get_guessed_word(secret_word, letters_guessed))
+        
+        if WARNINGS > EXHAUSTED:
+          WARNINGS -= 1
+          print("You now have", WARNINGS,"warnings left:", get_guessed_word(secret_word, letters_guessed)) 
+          
+  
+      elif is_letter_in(secret_word, guess_letter):
+        letters_guessed.append(guess_letter)
+        print('Good guess:', get_guessed_word(secret_word, letters_guessed))
+      
+      elif not is_letter_in(secret_word, guess_letter):
+        print('Oops! That letter is not in my word:', get_guessed_word(secret_word, letters_guessed))
+        letters_guessed.append(guess_letter)
+        if guess_letter in vowels:
+          GUESS -= 2
+        else:
+          GUESS -= 1
+      
+      # line separator for the every round/guess
+      print('------------')
+      
+      
 # When you've completed your hangman function, scroll down to the bottom
 # of the file and uncomment the first two lines to test
 #(hint: you might want to pick your own
@@ -227,7 +292,7 @@ if __name__ == "__main__":
     # uncomment the following two lines.
     
     secret_word = choose_word(wordlist)
-    hangman('apple')
+    hangman(secret_word)
   
     # Current Tests
     #print(is_word_guessed('apple', ['a', 'p', 'l', 'e', 'u', 'q']))
