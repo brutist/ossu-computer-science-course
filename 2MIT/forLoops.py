@@ -1,7 +1,10 @@
-import string
 
-letters = string.ascii_lowercase
 
-strList = list(letters)
+tst = 'length'
+tst1 = 'l_ngth'
 
-print(strList)
+for x, y in zip(tst, tst1):
+  if x == y:
+    print(x + ": True")
+  else:
+    print(x + ": False")
