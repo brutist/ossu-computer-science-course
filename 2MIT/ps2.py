@@ -1,7 +1,7 @@
 # Problem Set 2, hangman.py
-# Name: Jonathan Mauring
+# Name: Jonathan Mauring Jr
 # Collaborators: None
-# Time spent: start time - April 22, 2023
+# Time spent: start time - April 22, 2023 end time - April 23, 2023 8:00 pm
 
 # Hangman Game
 # -----------------------------------
