@@ -180,10 +180,17 @@ def update_hand(hand, word):
     hand: dictionary (string -> int)    
     returns: dictionary (string -> int)
     """
+    word_letters = get_frequency_dict(word)
+    hand_letters = hand.copy()
+  
+    for k,v in hand.items():
+      if k in word_letters.keys() and v > word_letters[k]:
+        hand_letters[k] = v - word_letters[k]
+      else:
+        hand_letters.pop(k)
+    
+    return hand_letters 
 
-    pass  # TO DO... Remove this line when you implement this function
-
-#
 # Problem #3: Test word validity
 #
 def is_valid_word(word, hand, word_list):
