@@ -378,7 +378,6 @@ def play_hand(hand, word_list):
 # procedure you will use to substitute a letter in a hand
 #
 
-
 def substitute_hand(hand, letter):
   """ 
     Allow the user to replace all copies of one letter in the hand (chosen by user)
@@ -401,9 +400,25 @@ def substitute_hand(hand, letter):
     letter: string
     returns: dictionary (string -> int)
     """
+  # PSEUDOCODE
+  # copy hand to avoid mutating and instantiate the return value
+  hand_substituted = hand.copy()
 
-  pass  # TO DO... Remove this line when you implement this function
+  # generate a random letter from the CONSONANTS and VOWELS that is not in hand.keys()
+  ALL_LETTERS = VOWELS + CONSONANTS
+  random_letter = random.choice(ALL_LETTERS)
 
+  while random_letter in hand.keys():
+    random_letter = random.choice(ALL_LETTERS)
+    
+  # modify the key associated with the chosen letter in hand_substituted if chosen letter in hand
+  if letter in hand_substituted.keys():
+    hand_substituted[random_letter] = hand[letter]
+    del hand_substituted[letter]
+    
+  # return the substituted hand 
+  return hand_substituted
+  
 
 def play_game(word_list):
   """
@@ -435,11 +450,64 @@ def play_game(word_list):
 
     word_list: list of lowercase strings
     """
+  
+  # PSEUDOCODE
+  # ask for total number of hand, initialize number of allowed letter substitution and allowed hand replay per series
+  HAND_SIZE = int(input('Enter total number of hands: '))
+  SUBSITUTION_ALLOWED = 1
+  REPLAY_ALLOWED = 1
+  
+  # ask if user want to substitute a letter on their hand(can only be done once in entire series)
+  substitute_hand_letter = (input('Would you like to substitute a letter? ')).lower()
+  
+  # initialize total_score, and replay_hand
+  total_score = 0
+  
+  
+  while HAND_SIZE > 0:
+    # deal a hand and display it
+    hand = deal_hand(random.randint(4, 10))
+    display_hand(hand)
+  
+    # before starting game, ask if user wants to substitute a letter
+    if SUBSITUTION_ALLOWED > 0:
+      # error check for substitute hand letter
+      if substitute_hand_letter == 'yes':
+        letter = (input('Which letter would you like to replace? '))
+        hand = substitute_hand(hand, letter)
+         # can only used substitute_letter once
+        SUBSITUTION_ALLOWED -= 1
+        
+      else:
+        continue
+      
+    # MAIN PLAY_HAND INSTANCE
+    total_score += (play_hand(hand, word_list))
+    
+  # after each hand, ask the user if they want to replay the hand. The user will keep the better score if they choose to replay
+  # (can only be done once in the entire series)
+    if REPLAY_ALLOWED:
+      replay_hand = (input('Would you like to replay the hand? '))
+      new_score = 0
+      
+      # if user chose to replay, they do not get the option to substitute a letter
+      if replay_hand == 'yes':
+        new_score = (play_hand(hand, word_list))
+      
+      if new_score > total_score: 
+        total_score = new_score
+        
+      else: 
+        continue
 
-  print("play_game not implemented."
-        )  # TO DO... Remove this line when you implement this function
-
-
+      REPLAY_ALLOWED -= 1
+      
+    # play_hand until HAND_SIZE is exhausted
+    HAND_SIZE -= 1
+  
+  # 5. returns the total score for the series of hands.
+  return total_score
+  
 #
 # Build data structures used for entire session and play game
 # Do not remove the "if __name__ == '__main__':" line - this code is executed
@@ -447,10 +515,7 @@ def play_game(word_list):
 #
 if __name__ == '__main__':
   word_list = load_words()
-  #play_game(word_list)
+  play_game(word_list)
   
 
-  
-  
-
-  play_hand(get_frequency_dict('acfi*tx'), word_list)
+  #play_hand(deal_hand(random.randint(5, 10)), word_list)
