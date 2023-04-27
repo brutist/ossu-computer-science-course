@@ -329,12 +329,11 @@ def play_hand(hand, word_list):
   total_score = 0
   
   # As long as there are still letters left in the hand
-  hand_len = calculate_handlen(hand)
   is_user_done = False
-  out_of_letters = False
   
-  while True:
+  while calculate_handlen(hand) > 0:
     # Display the hand
+    print('\nCurrent hand:', end = ' ') 
     display_hand(hand)
     
     # Ask user for input
@@ -345,17 +344,13 @@ def play_hand(hand, word_list):
     # End the game (break out of the loop)
       is_user_done = True
       break
-      
-    if hand_len == 0:
-      out_of_letters = True
-      break
-      
+    
     # Otherwise (the input is not two exclamation points): no need to implement.
     # If the word is valid
-    if is_valid_word:
+    if is_valid_word(word, hand, word_list):
       # Tell the user how many points the word earned, and the updated total score
       total_score += get_word_score(word, calculate_handlen(hand))
-      print('{fword} earned {fscore} points'.format(fword = word, fscore = get_word_score(word, calculate_handlen(hand))))
+      print('{fword} earned {fscore} points'.format(fword = word, fscore = get_word_score(word, calculate_handlen(hand))), end = ' ')
       print('Total: {ftotal} points'.format(ftotal = total_score))
 
     # Otherwise (the word is not valid):
@@ -369,8 +364,8 @@ def play_hand(hand, word_list):
   # Game is over (user entered '!!' or ran out of letters), so tell user the total score
   if is_user_done:
     print('Total score: {fscore} points'.format(fscore = total_score))
-  if out_of_letters:
-    print('Ran out of letters. Total score: {ftotal_score} points'.format(ftotal_score = total_score))
+  else:
+    print('\nRan out of letters. Total score: {ftotal_score} points'.format(ftotal_score = total_score))
   
   # Return the total score as result of function
   return total_score
@@ -458,4 +453,4 @@ if __name__ == '__main__':
   
   
 
-  play_hand(deal_hand(5), word_list)
+  play_hand(get_frequency_dict('acfi*tx'), word_list)

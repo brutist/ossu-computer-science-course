@@ -183,17 +183,6 @@ def test_is_valid_word(word_list):
         
         failure = True        
 
-
-    # test 7
-    hand = {'*': 1, 'a': 3, 'p': 2, 't': 1, 'u':2}
-    word = "p*at"
-
-    if  is_valid_word(word, hand, word_list):
-        print("FAILURE: test_is_valid_word()")
-        print("\tExpected True, but got True for word: '" + word + "' and hand:", hand)
-        
-        failure = True
-
     if not failure:
         print("SUCCESS: test_is_valid_word()")
 
