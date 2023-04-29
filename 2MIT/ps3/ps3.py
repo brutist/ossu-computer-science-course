@@ -365,7 +365,7 @@ def play_hand(hand, word_list):
   if is_user_done:
     print('Total score for this hand: {fscore} points'.format(fscore = total_score))
   else:
-    print('\nRan out of letters. \n Total score for this hand: {ftotal_score} points'.format(ftotal_score = total_score))
+    print('\nRan out of letters. \nTotal score for this hand: {ftotal_score} points'.format(ftotal_score = total_score))
   
   # Return the total score as result of function
   return total_score
@@ -454,21 +454,21 @@ def play_game(word_list):
   # PSEUDOCODE
   # ask for total number of hand, initialize number of allowed letter substitution and allowed hand replay per series
   no_of_hands = int(input('Enter total number of hands: '))
+
+  
   HAND_SIZE = 7
   SUBSITUTION_ALLOWED = 1
   REPLAY_ALLOWED = 1
   total_score = 0
   acceptable_yes_or_no_answers = ['yes', 'y', 'no', 'n']
 
-
-  while HAND_SIZE > 0:
+  while no_of_hands > 0:
     # initialize total_score, and replay_hand
     score_per_hand = 0
 
     # deal a hand and display it
-    
     hand = deal_hand(HAND_SIZE)
-    print('\nCurrent hand:', end = " ")
+    print('\nCurrent hand:', end = ' ') 
     display_hand(hand)
   
     # before starting game, ask if user wants to substitute a letter
@@ -489,7 +489,10 @@ def play_game(word_list):
         
     # MAIN PLAY_HAND INSTANCE
     score_per_hand += (play_hand(hand, word_list))
-    print('----------')
+
+    # keep track of the final score per series
+    total_score += score_per_hand
+    
     # play_hand until HAND_SIZE is exhausted
     no_of_hands -= 1
     
@@ -506,13 +509,12 @@ def play_game(word_list):
       if will_replay == 'yes' or will_replay == 'y':
         new_score = (play_hand(hand, word_list))
         
-      if new_score > score_per_hand: 
-        score_per_hand = new_score    
+        if new_score > score_per_hand: 
+          score_per_hand = new_score
+          total_score += score_per_hand
+          continue
       
       REPLAY_ALLOWED -= 1
-
-    # keep track of the final score per series
-    total_score += score_per_hand
     
   # 5. returns the total score for the series of hands.
   return total_score
@@ -525,5 +527,6 @@ if __name__ == '__main__':
   word_list = load_words()
   
   total_score = play_game(word_list)
+  print('----------')
   print('Total score over all hands:', total_score)
-
+  
