@@ -5,7 +5,7 @@
 #
 # Name          : Jonathan Mauring Jr
 # Collaborators : None
-# Time spent    : start date: April 24, 2023
+# Time spent    : start date: April 24, 2023; finished date: April 29, 2023
 
 import math
 import random
