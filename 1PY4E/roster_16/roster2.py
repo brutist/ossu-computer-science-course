@@ -4,7 +4,7 @@
 # problem set.
 
 # Date started : May 1, 2023
-# Date endded : 
+# Date ended : 
 
 ###################################################################################################################
 
@@ -22,18 +22,20 @@ DROP TABLE IF EXISTS Course;
 DROP TABLE IF EXISTS Member;
 
 CREATE TABLE User  (
-    id      INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    name    TEXT UNIQUE
+    id          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+    name        TEXT UNIQUE
 );
 
 CREATE TABLE Course  (
-    id      INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    title  TEXT UNIQUE
+    id          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+    title       TEXT UNIQUE
 );
 
 CREATE TABLE Member  (
-    id      INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    role  INTEGER
+    id          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+    user_id     INTEGER
+    course_id   INTEGER
+    role        INTEGER
 );
 ''')
 
@@ -50,9 +52,27 @@ users = json.loads(filhand)
 
 # populate the tables from the data file
 for user in users:
-  
+    name = user[0]
+    title = user[1]
+    role = user[2]
 
+    if name is None:
+        continue
 
-      
+    cur.execute('''INSERT OR IGNORE INTO User ( name )
+        VALUES ( ? )''', (name, ))
+    cur.execute('SELECT id FROM User WHERE name = ?', (name, ))
+    user_id = cur.fetchone()[0]
 
+    cur.execute('''INSERT OR IGNORE INTO Course ( title )
+        VALUES ( ? )''', (title, ))
+    cur.execute('SELECT id FROM Course where title = ?', (title, ))
+    course_id = cur.fetchone()[0]
+
+    cur.execute('''INSERT OR REPLACE INTO Member 
+        ( user_id, course_id, role )
+        VALUES ( ?, ?, ? )''', 
+        (user_id, course_id, role ))
+
+    con.commit()
 
