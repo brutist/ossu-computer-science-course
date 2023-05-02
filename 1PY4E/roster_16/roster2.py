@@ -76,7 +76,8 @@ for user in users:
 
     con.commit()
 
-
+# This part can be deleted
+# I just added this because I can't copy the answer to the problem in the terminal.
 file = open('answer.txt', 'w')
 
 
