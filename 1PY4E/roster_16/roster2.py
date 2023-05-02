@@ -33,8 +33,8 @@ CREATE TABLE Course  (
 
 CREATE TABLE Member  (
     id          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    user_id     INTEGER
-    course_id   INTEGER
+    user_id     INTEGER,
+    course_id   INTEGER,
     role        INTEGER
 );
 ''')
@@ -76,3 +76,22 @@ for user in users:
 
     con.commit()
 
+
+file = open('answer.txt', 'w')
+
+
+data1 = cur.execute('''SELECT User.name,Course.title, Member.role FROM 
+    User JOIN Member JOIN Course 
+    ON User.id = Member.user_id AND Member.course_id = Course.id
+    ORDER BY User.name DESC, Course.title DESC, Member.role DESC LIMIT 2;''')
+
+for line in data1:
+  file.write(str(line))
+
+data2 = cur.execute('''SELECT 'XYZZY' || hex(User.name || Course.title || Member.role ) AS X FROM 
+    User JOIN Member JOIN Course 
+    ON User.id = Member.user_id AND Member.course_id = Course.id
+    ORDER BY X LIMIT 1;''')
+
+for line in data2:
+  file.write(str(line))
