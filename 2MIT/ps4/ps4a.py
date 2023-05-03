@@ -31,15 +31,7 @@ def get_permutations(sequence):
       permutations.append(sequence)
       return sequence
       
-    else:
-      i += 1
-      subperms = get_permutations(sequence[i : r])
-      for perm in subperms:
-        perm_list = perm.split()
-        perm_list.insert(perm_list.index(perm), sequence[0])
-        perm = ''.join(perm_list)
-        permutations.append(perm)
-  
+    
     return permutations
     
 
