@@ -3,7 +3,6 @@
 # Collaborators: None
 # Time Spent: started: May 3
 
-def permute_help(word, index, all_permutation)
 
 def get_permutations(sequence):
     '''
@@ -24,9 +23,26 @@ def get_permutations(sequence):
     Note: depending on your implementation, you may return the permutations in
     a different order than what is listed here.
     '''
+    r = len(sequence)
+    i = 0                         # starting index
+    permutations = list()
+    
+    if len(sequence) == 1:
+      permutations.append(sequence)
+      return sequence
+      
+    else:
+      i += 1
+      subperms = get_permutations(sequence[i : r])
+      for perm in subperms:
+        perm_list = perm.split()
+        perm_list.insert(perm_list.index(perm), sequence[0])
+        perm = ''.join(perm_list)
+        permutations.append(perm)
+  
+    return permutations
     
 
-    pass #delete this line and replace with your code here
 
 if __name__ == '__main__':
 #    #EXAMPLE
@@ -38,6 +54,6 @@ if __name__ == '__main__':
 #    # Put three example test cases here (for your sanity, limit your inputs
 #    to be three characters or fewer as you will have n! permutations for a 
 #    sequence of length n)
-
-    pass #delete this line and replace with your code here
+  print(get_permutations('abc'))
+    
 

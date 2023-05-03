@@ -8,3 +8,10 @@ for x, y in zip(tst, tst1):
     print(x + ": True")
   else:
     print(x + ": False")
+
+string = 'jonathan'
+list = list(string)
+
+print(list)
+print(len(string))
+print(string[0])
