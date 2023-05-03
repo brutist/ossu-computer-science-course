@@ -1,7 +1,9 @@
 # Problem Set 4A
-# Name: <your name here>
-# Collaborators:
-# Time Spent: x:xx
+# Name: Jonathan Mauring 
+# Collaborators: None
+# Time Spent: started: May 3
+
+def permute_help(word, index, all_permutation)
 
 def get_permutations(sequence):
     '''
@@ -22,6 +24,7 @@ def get_permutations(sequence):
     Note: depending on your implementation, you may return the permutations in
     a different order than what is listed here.
     '''
+    
 
     pass #delete this line and replace with your code here
 
