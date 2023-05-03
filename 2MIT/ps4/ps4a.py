@@ -25,12 +25,26 @@ def get_permutations(sequence):
     '''
     r = len(sequence)
     i = 0                         # starting index
+
+    # This is going to be the list where all of the permutations are stored
     permutations = list()
     
+    # append to the list the current permutations
     if len(sequence) == 1:
       permutations.append(sequence)
       return sequence
+    
+    for j in range(i, len(sequence)):
+   
+      word = [letter for letter in sequence]
+      print(word)
+      # swap the first letter to all of the letters in word
+      word [j], word[r] = word[r], word[j]
       
+      sequence = sequence[i + 1 : r]
+      get_permutations(word)
+      i += 1
+
     
     return permutations
     
