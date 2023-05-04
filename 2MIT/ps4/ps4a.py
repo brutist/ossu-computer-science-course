@@ -3,6 +3,28 @@
 # Collaborators: None
 # Time Spent: started: May 3
 
+def insert_letter(word, letter, i):
+    '''
+    Insert a given letter into a word at a specified index
+
+    word (string): an arbitrary word
+
+    letter(string): assume that there is only one character to insert.
+
+    i (integer): the index in which the letter must be inserted into
+
+    Returns: string with inserted letter
+
+    Example:
+    >>> insert_letter('recursion', 'i', 1)
+    riecursion
+    '''
+    word = list(word)
+    word.insert(i, letter)
+    word = ''.join(word)
+
+    return word
+
 
 def get_permutations(sequence):
     '''
@@ -23,29 +45,24 @@ def get_permutations(sequence):
     Note: depending on your implementation, you may return the permutations in
     a different order than what is listed here.
     '''
-    r = len(sequence)
-    i = 0                         # starting index
-
-    # This is going to be the list where all of the permutations are stored
-    permutations = list()
     
-    # append to the list the current permutations
+    # instantiate the return value
+    n = 0                       # starting index
+
+    # if the sequence is a single character; return that character
     if len(sequence) == 1:
-      permutations.append(sequence)
       return sequence
     
-    for j in range(i, len(sequence)):
-   
-      word = [letter for letter in sequence]
-      print(word)
-      # swap the first letter to all of the letters in word
-      word [j], word[r] = word[r], word[j]
-      
-      sequence = sequence[i + 1 : r]
-      get_permutations(word)
-      i += 1
+    # if there are several characters; find the permutations of the characters[1 : len(sequence)]
+    # and the new permutations will be the different ways to inser the first character into each permutations
+    else:
+      permutations = get_permutations(sequence[n + 1 : len(sequence)])
 
-    
+      # I have found the solution by myself but don't understand it enough. 
+      # I'll take my time how it works
+      new_permutations = [[insert_letter(word, sequence[0], i) for i in range(len(word) + 1)] for word in permutations]
+      permutations = [val for sublist in new_permutations for val in sublist]
+      
     return permutations
     
 
