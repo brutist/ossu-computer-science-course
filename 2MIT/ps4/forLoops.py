@@ -20,8 +20,8 @@ def insert_letter(word, letter, i):
 
     return word
 
-sequence = 'abc'
-permutations = ['bc', 'cb']
+sequence = 'bc'
+permutations = ['c']
 
 new_permutations = [[insert_letter(word, sequence[0], i) for i in range(len(word) + 1)] for word in permutations]
 permutations = [val for sublist in new_permutations for val in sublist]
