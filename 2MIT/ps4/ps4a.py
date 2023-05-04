@@ -1,7 +1,8 @@
 # Problem Set 4A
 # Name: Jonathan Mauring 
 # Collaborators: None
-# Time Spent: started: May 3
+# Time Spent: started: May 3 
+#             finished; May 4 11:00 pm
 
 def insert_letter(word, letter, i):
     '''
