@@ -75,12 +75,10 @@ def get_permutations(sequence):
     # and the new permutations will be the different ways to insert the first character into each permutations
     else:
       # find all of the permutations of the sequence except the first letter
-      permutations = get_permutations(sequence[n + 1 : len(sequence)])
+      perm = get_permutations(sequence[n + 1 : len(sequence)])
       # create a new list in which the first letter is inserted in every index
-      new_permutations = [[insert_letter(word, sequence[0], i) for i in range(len(word) + 1)] for word in permutations]
-      # I am quite sure that it is possible to create a one-dimensional list on the get-go
-      # but in my limited knowledge; I got to flatten the resulting list of all permutations
-      permutations = [val for sublist in new_permutations for val in sublist]
+      permutations = [insert_letter(word, sequence[0], i) for word in perm for i in range(len(word) + 1)]
+      
 
     permutations = remove_duplicates(permutations)
 

@@ -23,7 +23,7 @@ def insert_letter(word, letter, i):
 sequence = 'bc'
 permutations = ['c']
 
-new_permutations = [[insert_letter(word, sequence[0], i) for i in range(len(word) + 1)] for word in permutations]
-permutations = [val for sublist in new_permutations for val in sublist]
+new_permutations = [insert_letter(word, sequence[0], i) for word in permutations for i in range(len(word) + 1)]
+permutations = new_permutations
 
 print(permutations)

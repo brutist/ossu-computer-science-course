@@ -1,11 +1,11 @@
 # Problem Set 4B
-# Name: <your name here>
-# Collaborators:
-# Time Spent: x:xx
+# Name: Jonathan M. Mauring Jr.
+# Collaborators: None
+# Time Spent: started: May 5; ended:
 
 import string
 
-### HELPER CODE ###
+### HELPER CODE ###1
 def load_words(file_name):
     '''
     file_name (string): the name of the file containing 
