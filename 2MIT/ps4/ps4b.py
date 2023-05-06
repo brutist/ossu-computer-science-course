@@ -236,8 +236,9 @@ class CiphertextMessage(Message):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass #delete this line and replace with your code here
-
+        # all Ciphertext attibutes are also Message attributes
+        Message.__init__(self, text)
+       
     def decrypt_message(self):
         '''
         Decrypt self.message_text by trying every possible shift value
@@ -254,7 +255,33 @@ class CiphertextMessage(Message):
         Returns: a tuple of the best shift value used to decrypt the message
         and the decrypted message text using that shift value
         '''
-        pass #delete this line and replace with your code here
+        
+        # PSEUDOCODE
+        # create a dictionary (keys = shift value) with (values = no. of valid words)
+        shift_values = dict()
+        KEYS = 25
+
+        # I know this is a shit code; Let me at least figure out the time complexity for consolation
+        # 1st for loop - O(26)
+        # 2nd for loop - O(n)
+        # if (actually a loop) - O(55000) words
+        # linear complexity? but with shitty long execution time
+        for i in range(KEYS):
+            j = KEYS - i
+            decrypted_text = self.apply_shift(j)
+            decrypted_text = decrypted_text.split()
+
+            for word in decrypted_text:
+                if is_word(word_list, word):
+                    shift_values[j] = shift_values.get(j, 0) + 1
+
+        # choose the best shift value and transform the message_text to a decrypted text
+        max_valid_word = max(shift_values.values())
+        best_shift = [k for k in shift_values if shift_values[k] == max_valid_word]
+        best_shift = int(best_shift[0])
+        decrypted_text = self.apply_shift(best_shift)
+
+        return best_shift, decrypted_text
 
 if __name__ == '__main__':
 
@@ -311,8 +338,37 @@ if __name__ == '__main__':
         result = 'FAILED'
     print(result, end = '\n\n')
 
-    
 
     #TODO: best shift value and unencrypted story 
+    test_message = 'Expected Output: {expected} \nActual Output: {actual}'
+    result = 'PASSED'
+
+    ciphertext = CiphertextMessage('jgnnq')
+    expected_output = (24, 'hello')
+    actual_output = ciphertext.decrypt_message() 
+    
+    print(test_message.format(expected = expected_output, actual = actual_output))
+    if expected_output != actual_output:
+        result = 'FAILED'
+    print(result, end = '\n\n')
+
+    ciphertext = CiphertextMessage('Dovv drkd sdc cmevzdyb govv dryco zkccsyxc bokn. Grsmr iod cebfsfo,')
+    expected_output = (16, 'Tell that its sculptor well those passions read. Which yet survive,')
+    actual_output = ciphertext.decrypt_message() 
+    
+    print(test_message.format(expected = expected_output, actual = actual_output))
+    if expected_output != actual_output:
+        result = 'FAILED'
+    print(result, end = '\n\n')
+
+    ciphertext = CiphertextMessage('Uvd P ht iljvtl Klhao, aol klzayvfly vm dvyskz.')
+    expected_output = (19, 'Now I am become Death, the destroyer of worlds.')
+    actual_output = ciphertext.decrypt_message() 
+    
+    print(test_message.format(expected = expected_output, actual = actual_output))
+    if expected_output != actual_output:
+        result = 'FAILED'
+    print(result, end = '\n\n')
+
     
 
