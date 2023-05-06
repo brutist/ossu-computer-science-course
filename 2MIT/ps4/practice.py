@@ -1,3 +1,5 @@
+import string
+
 class Coordinate(object):
     def __init__(self, x, y):
         self.x = x
@@ -66,6 +68,15 @@ f2 = Fraction(3,4)
 print('f1 =', f1, 'f2 =', f2)
 print('Add = ', f1 + f2)
 print('Subtract = ', f1.subtract(f2))
-print('Multiply', f1.mult(f2))
-print('Float', float(f1))
-print('Inverse', f1.inverse())
+print('Multiply =', f1.mult(f2))
+print('Float =', float(f1))
+print('Inverse =', f1.inverse())
+
+letters = list(string.ascii_lowercase + string.ascii_uppercase)
+print(letters)
+
+def shift(shift):
+    assert shift <= 0 and shift < 26, 'input shift; out of range'
+    print('shift:', shift)
+
+shift(0)

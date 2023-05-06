@@ -4,6 +4,7 @@
 # Time Spent: started: May 5; ended:
 
 import string
+import random
 
 ### HELPER CODE ###1
 def load_words(file_name):
@@ -70,7 +71,15 @@ class Message(object):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass #delete this line and replace with your code here
+        words = text.split(" ")
+        valid_words = []
+
+        for word in words:
+            if is_word(word_list, word):
+                valid_words.append(word)
+
+        self.message_text = text
+        self.valid_words = valid_words
 
     def get_message_text(self):
         '''
@@ -78,7 +87,7 @@ class Message(object):
         
         Returns: self.message_text
         '''
-        pass #delete this line and replace with your code here
+        return self.message_text
 
     def get_valid_words(self):
         '''
@@ -87,7 +96,7 @@ class Message(object):
         
         Returns: a COPY of self.valid_words
         '''
-        pass #delete this line and replace with your code here
+        return self.valid_words.copy()
 
     def build_shift_dict(self, shift):
         '''
@@ -95,7 +104,7 @@ class Message(object):
         The dictionary maps every uppercase and lowercase letter to a
         character shifted down the alphabet by the input shift. The dictionary
         should have 52 keys of all the uppercase letters and all the lowercase
-        letters only.        
+        letters only.
         
         shift (integer): the amount by which to shift every letter of the 
         alphabet. 0 <= shift < 26
@@ -103,7 +112,28 @@ class Message(object):
         Returns: a dictionary mapping a letter (string) to 
                  another letter (string). 
         '''
-        pass #delete this line and replace with your code here
+        # PSEUDOCODE
+        # ASSERT that the shift value be only within 0 to 26 only
+        assert shift >= 0 and shift < 26, 'input shift; must be 0 - 25 only'
+
+        # create a list of letters of the alphabet (small and capital letters) and instantiate the shift dictionary
+        small_letters = list(string.ascii_lowercase)
+        capital_letters = list(string.ascii_uppercase)
+        all_letters = small_letters + capital_letters
+        shifted_letters = dict()
+
+        # create a dictionary (key = letter - input shift) with (value = letter)
+        # it should be 'letter - input shift' to avoid going beyond the all_letters list
+        # going negative means you go to the last item in the list which solves out of bounds problem
+        for letter in all_letters:
+            if letter.islower():
+                shifted = small_letters[small_letters.index(letter) - shift]
+                shifted_letters[shifted] = letter
+            else:
+                shifted = capital_letters[capital_letters.index(letter) - shift]
+                shifted_letters[shifted] = letter
+
+        return shifted_letters
 
     def apply_shift(self, shift):
         '''
@@ -117,7 +147,23 @@ class Message(object):
         Returns: the message text (string) in which every character is shifted
              down the alphabet by the input shift
         '''
-        pass #delete this line and replace with your code here
+        # ASSERT that the input shift is within range
+        assert shift >= 0 and shift < 26, 'input shift; must be 0 - 25 only'
+
+        # Create a dictionary of with keys = letter and values = shifted letters according to input shift
+        shifted_letters = self.build_shift_dict(shift)
+        
+        # create a list to contain temperary shifted message text
+        shifted_message = list()
+
+        # append to the shifted_message list each shifted letters according to the input shift
+        for letter in self.message_text:
+            if letter.isalpha():
+                shifted_message.append(shifted_letters[letter])
+            else:
+                shifted_message.append(letter)
+
+        return ''.join(shifted_message)
 
 class PlaintextMessage(Message):
     def __init__(self, text, shift):
@@ -135,7 +181,10 @@ class PlaintextMessage(Message):
             self.message_text_encrypted (string, created using shift)
 
         '''
-        pass #delete this line and replace with your code here
+        Message.__init__(self, text)
+        self.shift = shift
+        self.encryption_dict = self.build_shift_dict(shift)
+        self.message_text_encrypted = self.apply_shift(shift)
 
     def get_shift(self):
         '''
@@ -143,7 +192,7 @@ class PlaintextMessage(Message):
         
         Returns: self.shift
         '''
-        pass #delete this line and replace with your code here
+        return self.shift
 
     def get_encryption_dict(self):
         '''
@@ -151,7 +200,7 @@ class PlaintextMessage(Message):
         
         Returns: a COPY of self.encryption_dict
         '''
-        pass #delete this line and replace with your code here
+        return self.encryption_dict.copy()
 
     def get_message_text_encrypted(self):
         '''
@@ -159,7 +208,7 @@ class PlaintextMessage(Message):
         
         Returns: self.message_text_encrypted
         '''
-        pass #delete this line and replace with your code here
+        return self.message_text_encrypted
 
     def change_shift(self, shift):
         '''
@@ -171,7 +220,9 @@ class PlaintextMessage(Message):
 
         Returns: nothing
         '''
-        pass #delete this line and replace with your code here
+        self.shift = shift
+        self.encryption_dict = self.build_shift_dict(self, shift)
+        self.message_text_encrypted = self.apply_shift(self, shift)
 
 
 class CiphertextMessage(Message):
@@ -216,9 +267,20 @@ if __name__ == '__main__':
 #    ciphertext = CiphertextMessage('jgnnq')
 #    print('Expected Output:', (24, 'hello'))
 #    print('Actual Output:', ciphertext.decrypt_message())
+    
+    word_list = load_words(WORDLIST_FILENAME)
 
-    #TODO: WRITE YOUR TEST CASES HERE
+    message = Message('How Are you boy!*&&!')
+    print(message)
+    print(message.apply_shift(4))
+
+    #Example test case (PlaintextMessage)
+    plaintext = PlaintextMessage('hello', 2)
+    print('Expected Output: jgnnq')
+    print('Actual Output:', plaintext.get_message_text_encrypted())
+
+    #TODO: WRITE YOUR TEST CASES HERE 
 
     #TODO: best shift value and unencrypted story 
     
-    pass #delete this line and replace with your code here
+
