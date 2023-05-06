@@ -270,16 +270,48 @@ if __name__ == '__main__':
     
     word_list = load_words(WORDLIST_FILENAME)
 
-    message = Message('How Are you boy!*&&!')
-    print(message)
-    print(message.apply_shift(4))
-
+    #TODO: WRITE YOUR TEST CASES HERE (DONE)
     #Example test case (PlaintextMessage)
-    plaintext = PlaintextMessage('hello', 2)
-    print('Expected Output: jgnnq')
-    print('Actual Output:', plaintext.get_message_text_encrypted())
+    test_message = 'Expected Output: {expected} \nActual Output: {actual}'
+    result = 'PASSED'
 
-    #TODO: WRITE YOUR TEST CASES HERE 
+    plaintext = PlaintextMessage('hello', 2)
+    expected_output = 'jgnnq'
+    actual_output = plaintext.get_message_text_encrypted()   
+    
+    print(test_message.format(expected = expected_output, actual = actual_output))
+    if expected_output != actual_output:
+        result = 'FAILED'
+    print(result, end = '\n\n')
+
+    plaintext = PlaintextMessage('Hello World by Me', 6)
+    expected_output = 'Nkrru Cuxrj he Sk'
+    actual_output = plaintext.get_message_text_encrypted()
+    
+    print(test_message.format(expected = expected_output, actual = actual_output))
+    if expected_output != actual_output:
+        result = 'FAILED'
+    print(result, end = '\n\n')
+    
+    plaintext = PlaintextMessage('!Every Good Boy Does Fine! @^@&(!', 10)
+    expected_output = '!Ofobi Qyyn Lyi Nyoc Psxo! @^@&(!'
+    actual_output = plaintext.get_message_text_encrypted()
+
+    print(test_message.format(expected = expected_output, actual = actual_output))
+    if expected_output != actual_output:
+        result = 'FAILED'
+    print(result, end = '\n\n')
+
+    plaintext = PlaintextMessage('The quick Brown Fox Jump over the lazy Dog$%^&', 24)
+    expected_output = 'Rfc osgai Zpmul Dmv Hskn mtcp rfc jyxw Bme$%^&'
+    actual_output = plaintext.get_message_text_encrypted()
+
+    print(test_message.format(expected = expected_output, actual = actual_output))
+    if expected_output != actual_output:
+        result = 'FAILED'
+    print(result, end = '\n\n')
+
+    
 
     #TODO: best shift value and unencrypted story 
     
