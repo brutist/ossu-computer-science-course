@@ -25,15 +25,14 @@ class Fraction(object):
 # add fraction
     def __add__(self, other):
         lcm = self.denom * other.denom
-        num = self.num * (lcm / self.denom) + ((other.num * (lcm / other.denom)))
+        num = self.num * (other.denom) + (other.num * (self.denom))
         return Fraction(num, lcm)
 
 # subtract fraction
     def subtract(self, other):
         lcm = self.denom * other.denom
-        num = self.num * (lcm / self.denom) - ((other.num * (lcm / other.denom)))
+        num = self.num * (other.denom) - (other.num * (self.denom))
         return Fraction(num, lcm)
-
 
 # print fraction representation
     def __str__(self):
@@ -54,19 +53,19 @@ class Fraction(object):
         return Fraction(self.denom, self.num)
 
 
-c = Coordinate(3, 4)
-origin = Coordinate(0, 0)
+c = Coordinate(3,4)
+origin = Coordinate(0,0)
 
 distance = c.distance(origin)
 print(distance)
 print(c)
 
-f1 = Fraction(2, 3)
-f2 = Fraction(3, 4)
+f1 = Fraction(2,3)
+f2 = Fraction(3,4)
 
+print('f1 =', f1, 'f2 =', f2)
 print('Add = ', f1 + f2)
 print('Subtract = ', f1.subtract(f2))
-print('f1 =', f1, 'f2 =', f2)
 print('Multiply', f1.mult(f2))
-print('Float', f1.float())
+print('Float', float(f1))
 print('Inverse', f1.inverse())
