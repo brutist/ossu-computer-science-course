@@ -34,3 +34,8 @@ def build_shift_dict(shift):
     return shifted_letters
 
 print(build_shift_dict(7))
+
+str = 'Everygoodboydoes'
+
+for l in str:
+    print(l)
