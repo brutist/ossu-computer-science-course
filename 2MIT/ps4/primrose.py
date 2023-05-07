@@ -23,11 +23,10 @@ def bisection_search(L, e):
     else:
         # recursive function
         if L[half] > e:
-            found = bisection_search(L[:half], e)
+            return bisection_search(L[:half], e)
         else:
-            found = bisection_search(L[half:], e)
+            return bisection_search(L[half:], e)
     
-    return found
 
 def number_list(n):
     '''
@@ -77,40 +76,28 @@ def even_number_list(n):
 
 
 # Testing...
-numbers = number_list(100)
-odd_numbers = odd_number_list(100)
-even_numbers = even_number_list(100)
+numbers = number_list(10000)
+odd_numbers = odd_number_list(1000)
+even_numbers = even_number_list(10000)
 
 result = 'PASSED'
 
-actual = bisection_search(numbers, 12)
-expected = True
-if actual != expected:
-    result = 'FAILED'
-else:
-    result = 'PASSED'
-print('Actual:', actual)
-print('Expected:', expected)
-print(result, end = '\n\n')
+i = 0
+for j in odd_numbers:
+    if bisection_search(even_numbers, j):
+        result = 'FAILED'
+    i += 1
 
-actual = bisection_search(odd_numbers, 12)
-expected = False
-if actual != expected:
-    result = 'FAILED'
-else:
-    result = 'PASSED'
+print('TESTING IF ODD IS IN NUMBERS - TRUE')
+print('Number of test done:', i )
+print('Test result:', result, end = '\n\n')
 
-print('Actual:', actual)
-print('Expected:', expected)
-print(result, end = '\n\n')
-
-actual = bisection_search(even_numbers, 82)
-expected = True
-if actual != expected:
-    result = 'FAILED'
-else:
-    result = 'PASSED'
-
-print('Actual:', actual)
-print('Expected:', expected)
-print(result, end = '\n\n')
+i = 0
+for j in even_numbers:
+    if not bisection_search(numbers, j):
+        result = 'FAILED'
+    i += 1
+    
+print('TESTING IF EVEN IS IN NUMBERS - TRUE')
+print('Number of test done:', i )
+print('Test result:', result, end = '\n\n')
