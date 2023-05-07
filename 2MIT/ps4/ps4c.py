@@ -1,7 +1,7 @@
 # Problem Set 4C
 # Name: Jonathan Mauring Jr
 # Collaborators: None
-# Time Spent: May 7
+# Time Spent: started - May 7 finished - May 7
 
 import string
 from ps4a import get_permutations
@@ -219,25 +219,80 @@ class EncryptedSubMessage(SubMessage):
 if __name__ == '__main__':
 
     word_list = load_words(WORDLIST_FILENAME)
+    result = 'PASSED'
 
     # Example test case
     message = SubMessage("Hello World!")
+    original_message = message.get_message_text()
     permutation = "eaiuo"
+    answer = 'Hallu Wurld!'
     enc_dict = message.build_transpose_dict(permutation)
-    print("Original message:", message.get_message_text(), "Permutation:", permutation)
-    print("Expected encryption:", "Hallu Wurld!")
-    print("Actual encryption:", message.apply_transpose(enc_dict))
-    enc_message = EncryptedSubMessage(message.apply_transpose(enc_dict))
-    print("Decrypted message:", enc_message.decrypt_message())
-     
+    ciphertext = message.apply_transpose(enc_dict)
+    message = EncryptedSubMessage(ciphertext)
+    converted_text = message.decrypt_message()
+    
+    print('Original message:', original_message , 'Permutation:', permutation)
+    print('Expected encryption:', answer)
+    print('Actual encryption:', ciphertext)
+    print('Decrypted message:', converted_text)
+    if answer != ciphertext or original_message != converted_text:
+        result = 'FAILED'
+    print('Test result:', result, end = '\n\n')
+    
     #TODO: WRITE YOUR TEST CASES HERE
     
-    message = SubMessage("Chicken in the Corn of the World!")
+    message = SubMessage("The last shall be first and the first last")
+    original_message = message.get_message_text()
     permutation = "eaiuo"
+    answer = 'Tha lest shell ba first end tha first lest'
     enc_dict = message.build_transpose_dict(permutation)
-    print("Original message:", message.get_message_text(), "Permutation:", permutation)
-    print("Expected encryption:", "Hallu Wurld!")
-    print("Actual encryption:", message.apply_transpose(enc_dict))
-    enc_message = EncryptedSubMessage(message.apply_transpose(enc_dict))
-    print("Decrypted message:", enc_message.decrypt_message())
-     
+    ciphertext = message.apply_transpose(enc_dict)
+    message = EncryptedSubMessage(ciphertext)
+    converted_text = message.decrypt_message()
+    
+    print('Original message:', original_message , 'Permutation:', permutation)
+    print('Expected encryption:', answer)
+    print('Actual encryption:', ciphertext)
+    print('Decrypted message:', converted_text)
+    if answer != ciphertext or original_message != converted_text:
+        result = 'FAILED'
+    print('Test result:', result, end = '\n\n')
+
+
+    message = SubMessage("If you wish to make an apple pie from scratch, you must first invent the universe ^&*!(@123124214")
+    original_message = message.get_message_text()
+    permutation = "eaiuo"
+    answer = 'If yuo wish tu meka en eppla pia frum scretch, yuo most first invant tha onivarsa ^&*!(@123124214'
+    enc_dict = message.build_transpose_dict(permutation)
+    ciphertext = message.apply_transpose(enc_dict)
+    message = EncryptedSubMessage(ciphertext)
+    converted_text = message.decrypt_message()
+    
+    print('Original message:', original_message , 'Permutation:', permutation)
+    print('Expected encryption:', answer)
+    print('Actual encryption:', ciphertext)
+    print('Decrypted message:', converted_text)
+    if answer != ciphertext or original_message != converted_text:
+        result = 'FAILED'
+    print('Test result:', result, end = '\n\n')
+    
+
+    message = SubMessage("In every universe, I will always love you.")
+    original_message = message.get_message_text()
+    permutation = "eaiuo"
+    answer = 'In avary onivarsa, I will elweys luva yuo.'
+    enc_dict = message.build_transpose_dict(permutation)
+    ciphertext = message.apply_transpose(enc_dict)
+    message = EncryptedSubMessage(ciphertext)
+    converted_text = message.decrypt_message()
+    
+    print('Original message:', original_message , 'Permutation:', permutation)
+    print('Expected encryption:', answer)
+    print('Actual encryption:', ciphertext)
+    print('Decrypted message:', converted_text)
+    if answer != ciphertext or original_message != converted_text:
+        result = 'FAILED'
+    print('Test result:', result, end = '\n\n')
+    
+
+# Well it seems all tests have been passed!
