@@ -1,7 +1,7 @@
 # Problem Set 4B
 # Name: Jonathan M. Mauring Jr.
 # Collaborators: None
-# Time Spent: started: May 5; ended:
+# Time Spent: started: May 5; ended: May 6 - around 11 pm
 
 import string
 import random
@@ -298,7 +298,8 @@ if __name__ == '__main__':
     word_list = load_words(WORDLIST_FILENAME)
 
     #TODO: WRITE YOUR TEST CASES HERE (DONE)
-    #Example test case (PlaintextMessage)
+
+    # Test case for PlaintextMessage
     test_message = 'Expected Output: {expected} \nActual Output: {actual}'
     result = 'PASSED'
 
@@ -339,7 +340,7 @@ if __name__ == '__main__':
     print(result, end = '\n\n')
 
 
-    #TODO: best shift value and unencrypted story 
+    # Test cases for CiphertextMessage
     test_message = 'Expected Output: {expected} \nActual Output: {actual}'
     result = 'PASSED'
 
@@ -371,4 +372,14 @@ if __name__ == '__main__':
     print(result, end = '\n\n')
 
     
+    #TODO: best shift value and unencrypted story 
+    story = get_story_string()
 
+    # Decode story.txt
+    decoded_story = CiphertextMessage(story).decrypt_message()
+    shift_value = decoded_story[0]
+    decoded_message = decoded_story[1]
+    
+    # print decoded shift value and message
+    print('Shift value:', shift_value)
+    print('Decoded message:', decoded_message)
