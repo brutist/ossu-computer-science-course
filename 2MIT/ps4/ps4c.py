@@ -70,7 +70,15 @@ class SubMessage(object):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass #delete this line and replace with your code here
+        text_list = text.split()
+        valid_words = []
+
+        for word in text_list:
+            if is_word(word_list, word):
+                valid_words.append(word)
+
+        self.message_text = text
+        self.valid_words = valid_words
     
     def get_message_text(self):
         '''
@@ -78,7 +86,7 @@ class SubMessage(object):
         
         Returns: self.message_text
         '''
-        pass #delete this line and replace with your code here
+        return self.message_text
 
     def get_valid_words(self):
         '''
@@ -87,7 +95,7 @@ class SubMessage(object):
         
         Returns: a COPY of self.valid_words
         '''
-        pass #delete this line and replace with your code here
+        return self.valid_words.copy()
                 
     def build_transpose_dict(self, vowels_permutation):
         '''
@@ -156,6 +164,8 @@ class EncryptedSubMessage(SubMessage):
     
 
 if __name__ == '__main__':
+
+    word_list = load_words(WORDLIST_FILENAME)
 
     # Example test case
     message = SubMessage("Hello World!")
