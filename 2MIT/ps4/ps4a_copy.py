@@ -10,6 +10,10 @@
 # 1. Before returning to the function call, append the current local permutations to the 
 #    power set list
 
+# Note: I know that the code could be a lot cleaner and the some helper functions can be removed.
+#       but I was just trying to convert my previous solution to the permutation problem to this 
+#       supposed to be 'power set' problem. If I was really going to work on the power set problem
+#       it would be better to write the code from scratch
 
 def insert_letter(word, letter, i):
     '''
