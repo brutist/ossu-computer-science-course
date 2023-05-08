@@ -3,11 +3,14 @@
 
 # must use recursion
 # must not copy the list; look at the midpoint and compare only when len(list) == 1
+def simple_search(L, e):
+    return e in L
+
 
 def bisection_search(L, e):
     '''
-    L (list) - this could be any list; assume it's not size 0
-    e (string or int) - element to search in the list
+    L (list of int or string) - this could be any list; assume it's not size 0 and is SORTED
+    e (int or string) - element to search in the list
 
     Returns True if the element is in L; False if otherwise
     '''
@@ -27,6 +30,38 @@ def bisection_search(L, e):
         else:
             return bisection_search(L[half:], e)
     
+def bisection_search2(L, e):
+    '''
+    L (list of int or string) - this could be any list. Assume list is SORTED
+    e (int or string) - element to search in the list
+
+    Returns True if the element is found; False if otherwise
+
+    Function specs - must not passed a sublist as an argument to the recursion
+    '''
+
+    def helper(L, e, low, high):
+        
+        if low == high:
+            return L[low] == e
+        
+        mid = (high + low) // 2
+        if L[mid] == e:
+            return True
+        elif L[mid] > e:
+            if low == mid:
+                return False
+            else:
+                return helper(L, e, low, mid -1)
+        else:
+            return helper(L, e, mid + 1, high)
+
+    if len(L) == 0:
+        return False
+    else:
+        return helper(L, e, 0, len(L) - 1)
+        
+
 
 def number_list(n):
     '''
@@ -77,7 +112,7 @@ def even_number_list(n):
 
 # Testing...
 numbers = number_list(10000)
-odd_numbers = odd_number_list(1000)
+odd_numbers = odd_number_list(10000)
 even_numbers = even_number_list(10000)
 
 result = 'PASSED'
@@ -88,6 +123,7 @@ for j in odd_numbers:
         result = 'FAILED'
     i += 1
 
+print('BISECTION SEARCH 1')
 print('TESTING IF ODD IS IN NUMBERS - TRUE')
 print('Number of test done:', i )
 print('Test result:', result, end = '\n\n')
@@ -95,6 +131,53 @@ print('Test result:', result, end = '\n\n')
 i = 0
 for j in even_numbers:
     if not bisection_search(numbers, j):
+        result = 'FAILED'
+    i += 1
+    
+print('TESTING IF EVEN IS IN NUMBERS - TRUE')
+print('Number of test done:', i )
+print('Test result:', result, end = '\n\n')
+
+
+
+result = 'PASSED'
+i = 0
+for j in odd_numbers:
+    if bisection_search2(even_numbers, j):
+        result = 'FAILED'
+    i += 1
+
+print('TESTING IF ODD IS IN NUMBERS - TRUE')
+print('Number of test done:', i )
+print('Test result:', result, end = '\n\n')
+
+i = 0
+for j in even_numbers:
+    if not bisection_search2(numbers, j):
+        result = 'FAILED'
+    i += 1
+
+print('BISECTION SEARCH 2')
+print('TESTING IF EVEN IS IN NUMBERS - TRUE')
+print('Number of test done:', i )
+print('Test result:', result, end = '\n\n')
+
+
+
+result = 'PASSED'
+i = 0
+for j in odd_numbers:
+    if simple_search(even_numbers, j):
+        result = 'FAILED'
+    i += 1
+
+print('TESTING IF ODD IS IN NUMBERS - TRUE')
+print('Number of test done:', i )
+print('Test result:', result, end = '\n\n')
+
+i = 0
+for j in even_numbers:
+    if not simple_search(numbers, j):
         result = 'FAILED'
     i += 1
     
