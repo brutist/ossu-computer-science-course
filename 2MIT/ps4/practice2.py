@@ -1,4 +1,5 @@
 import string
+import math
 
 def build_shift_dict(shift):
     '''
@@ -35,7 +36,50 @@ def build_shift_dict(shift):
 
 print(build_shift_dict(7))
 
-str = 'Everygoodboydoes'
 
-for l in str:
-    print(l)
+print(1%10)
+print(1//10)
+
+x = 2
+x = x + 2
+
+y = 2
+y = 2 + y
+
+print("x: ", x, "y: ", y)
+
+def intToString(i):
+    s = '0123456789'
+    if i == 0:
+        return '0'
+    
+    convert = ''
+    while i > 0:
+        convert = s[i%10] + convert
+        i = i // 10
+
+    return convert
+
+result = 'PASSED'
+for j in range(300):
+    if str(j) != intToString(j):
+        result = 'FAILED'
+        print(j)
+        break
+
+print("IntToString Test result:", result)
+
+
+def factorial(n):
+    if n <= 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+
+result = 'PASSED'
+for j in range(10):
+    if math.factorial(j) != factorial(j):
+        result = 'FAILED'
+
+print('Factorial Test Result:', result)
+print(2**2)
