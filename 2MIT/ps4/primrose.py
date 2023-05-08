@@ -133,7 +133,7 @@ for j in even_numbers:
     if not bisection_search(numbers, j):
         result = 'FAILED'
     i += 1
-    
+
 print('TESTING IF EVEN IS IN NUMBERS - TRUE')
 print('Number of test done:', i )
 print('Test result:', result, end = '\n\n')
@@ -147,6 +147,8 @@ for j in odd_numbers:
         result = 'FAILED'
     i += 1
 
+print('#######################################')
+print('BISECTION SEARCH 2')
 print('TESTING IF ODD IS IN NUMBERS - TRUE')
 print('Number of test done:', i )
 print('Test result:', result, end = '\n\n')
@@ -157,7 +159,7 @@ for j in even_numbers:
         result = 'FAILED'
     i += 1
 
-print('BISECTION SEARCH 2')
+
 print('TESTING IF EVEN IS IN NUMBERS - TRUE')
 print('Number of test done:', i )
 print('Test result:', result, end = '\n\n')
@@ -171,6 +173,8 @@ for j in odd_numbers:
         result = 'FAILED'
     i += 1
 
+print('#######################################')
+print('SIMPLE SEARCH')
 print('TESTING IF ODD IS IN NUMBERS - TRUE')
 print('Number of test done:', i )
 print('Test result:', result, end = '\n\n')
