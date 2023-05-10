@@ -1,7 +1,7 @@
 # 6.0001/6.00 Problem Set 5 - RSS Feed Filter
-# Name:
-# Collaborators:
-# Time:
+# Name: Jonathan Mauring Jr. 
+# Collaborators: None
+# Time: May 9 - 
 
 import feedparser
 import string
@@ -53,9 +53,28 @@ def process(url):
 #======================
 
 # Problem 1
+class NewsStory(object):
+    def __init__(self, guid, title, description, link, pubdate):
+        self.guid = guid
+        self.title = title
+        self.description = description
+        self.link = link
+        self.pubdate = pubdate
 
-# TODO: NewsStory
+    def get_guid(self):
+        return self.guid
 
+    def get_title(self):
+        return self.title
+    
+    def get_description(self):
+        return self.description
+    
+    def get_link(self):
+        return self.link
+    
+    def get_pubdate(self):
+        return self.pubdate
 
 #======================
 # Triggers
@@ -74,6 +93,27 @@ class Trigger(object):
 
 # Problem 2
 # TODO: PhraseTrigger
+
+class PhraseTrigger(Trigger):
+    '''
+    Returns True if phrase is in title, or False otherwise.
+
+    phrase (string) - the title of the story.
+    title (string) - must not be case senstive. E.g. purple rain and PurPLE rain are the same.
+    '''
+    def evaluate(self, phrase, title):
+        word_separator = string.punctuation + ' '
+        title = title.lower()
+        
+        index = 0
+        for i in title:
+            if i in word_separator:
+                title = title.replace(i, '')
+
+        if phrase.lower() in title:
+            return True
+        
+        return False
 
 # Problem 3
 # TODO: TitleTrigger
