@@ -96,27 +96,56 @@ class Trigger(object):
 
 class PhraseTrigger(Trigger):
     '''
-    Returns True if phrase is in title, or False otherwise.
+    This is a parent Class of TitleTrigger and DescriptionTrigger
 
-    phrase (string) - the title of the story.
-    title (string) - must not be case senstive. E.g. purple rain and PurPLE rain are the same.
+    phrase (string) - could be any string
     '''
-    def evaluate(self, phrase, title):
-        word_separator = string.punctuation + ' '
-        title = title.lower()
-        
-        index = 0
-        for i in title:
-            if i in word_separator:
-                title = title.replace(i, '')
+    def __init__(self, phrase):
+        # phrase should be case insensitive
+        self.phrase = phrase.lower()
 
-        if phrase.lower() in title:
-            return True
+    def is_phrase_in(self, text):
+        # text should be in the same case as the phrase
+        word_separator = string.punctuation + ' '
+        text = text.lower()
+
+        # replace all word_separator with ' ' (space)
+        for j in text:
+            if j in word_separator:
+                text = text.replace(j, ' ')
+
+        # split and join to remove ' ' (space) in text
+        text = ' '.join(text.split())
+
+        if self.phrase in text:
+            length_text = len(text)
+            phrase_end = text.index(self.phrase) + len(self.phrase)
+
+            if phrase_end == length_text:
+                return True
+
+            elif text[phrase_end] in word_separator:
+                return True
         
         return False
 
+
 # Problem 3
 # TODO: TitleTrigger
+
+class TitleTrigger(PhraseTrigger):
+    
+    def __init__(self, phrase):
+        PhraseTrigger.__init__(self, phrase)
+    
+    def evaluate(self, story):
+        title = story.get_title()
+
+        return self.is_phrase_in(title)
+
+
+
+
 
 # Problem 4
 # TODO: DescriptionTrigger

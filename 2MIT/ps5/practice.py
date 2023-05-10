@@ -1,14 +1,14 @@
 import string
 
-title = 'The pu!@rplE!!cow is soft and cuddly'
+title = 'The purplE!!cow is soft and cuddly'
 title = title.lower()
-phrase = 'purple Cow'
+word_separator = string.punctuation + ' '
 
-for i in title:
-    if i in string.punctuation:
-        title = title.replace(i, '')
+for j in title:
+    if j in word_separator:
+        title = title.replace(j, ' ')
 
-result = phrase.lower() in title
-print('Phrase:', phrase)
+title = ' '.join(title.split())
+
 print('Title:', title)
-print(result)        
+print(word_separator.index(string.punctuation))
