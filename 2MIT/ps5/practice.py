@@ -18,7 +18,5 @@ print(word_separator.index(string.punctuation))
 
 date_string = "3 Oct 2016 17:00:10"
 date = datetime.strptime(date_string, '%w %b %Y %H:%M:%S')
-print(date.replace(tzinfo = ZoneInfo('US/Eastern')))
-print(datetime.now())
-
-print(zoneinfo.available_timezones())
+print('Date:', date.replace(tzinfo = zoneinfo.ZoneInfo('US/Eastern')))
+print('Modified Date:', date)
