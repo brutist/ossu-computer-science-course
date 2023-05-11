@@ -11,7 +11,7 @@ from project_util import translate_html
 from mtTkinter import *
 from datetime import datetime
 import pytz
-
+from zoneinfo import ZoneInfo
 
 #-----------------------------------------------------------------------
 
@@ -176,9 +176,17 @@ class DescriptionTrigger(PhraseTrigger):
 class TimeTrigger(Trigger):
     
     def __init__(self, time):
-
+       
+        # input EST time only
         time = datetime.strptime(time, '%d %b %Y %H:%M:%S')
+
+        # convert time to a 'aware' format to compare it to pubdate
+        eastern = pytz.timezone('US/Eastern')
+        time = eastern.localize(time)
+        
+        # this part is supposed to convert standard GMT to EST but realized it was not needed
         # time = time.replace(tzinfo = zoneinfo.ZoneInfo('US/Eastern'))
+
         self.time = time
     
 
@@ -190,10 +198,13 @@ class BeforeTrigger(TimeTrigger):
         TimeTrigger.__init__(self, time)
 
     def evaluate(self, story):
-        if self.time > story.get_pubdate():
+        pub_date = story.get_pubdate().replace(tzinfo = ZoneInfo('US/Eastern'))
+        
+        if self.time > pub_date:
             return True
-        else:
-            return False
+        
+        return False
+
         
 class AfterTrigger(TimeTrigger):
 
@@ -201,16 +212,28 @@ class AfterTrigger(TimeTrigger):
         TimeTrigger.__init__(self, time)
 
     def evaluate(self, story):
-        if self.time < story.get_pubdate():
+        pub_date = story.get_pubdate().replace(tzinfo = ZoneInfo('US/Eastern'))
+        
+        if self.time < pub_date:
             return True
-        else:
-            return False
+        
+        return False
 
+        
+        
 
 # COMPOSITE TRIGGERS
 
 # Problem 7
 # TODO: NotTrigger
+class NotTrigger(Trigger):
+
+    def __init__(self, trigger):
+        self.evaluate = not trigger.evaluate(story)
+
+        return self.evaluate
+
+
 
 # Problem 8
 # TODO: AndTrigger
