@@ -92,7 +92,7 @@ class Trigger(object):
 # PHRASE TRIGGERS
 
 # Problem 2
-# TODO: PhraseTrigger
+# TODO: PhraseTrigger ->>> DONE
 
 class PhraseTrigger(Trigger):
     '''
@@ -117,13 +117,19 @@ class PhraseTrigger(Trigger):
         # split and join to remove ' ' (space) in text
         text = ' '.join(text.split())
 
+        # detects whether the text is in title
         if self.phrase in text:
             length_text = len(text)
             phrase_end = text.index(self.phrase) + len(self.phrase)
 
+            # if the end index of the phrase is also the end index of the text - no conflict
+            # we are trying to avoid cases in which the text is a plural form of the phrase
             if phrase_end == length_text:
                 return True
 
+            # if the next char in text is not another letter - no conflict
+            # I'm trying to avoid this confition
+            # phrase = 'sup' text = 'sups' - is_phrase_in(text) should return False
             elif text[phrase_end] in word_separator:
                 return True
         
@@ -131,10 +137,11 @@ class PhraseTrigger(Trigger):
 
 
 # Problem 3
-# TODO: TitleTrigger
+# TODO: TitleTrigger ->>> DONE
 
 class TitleTrigger(PhraseTrigger):
     
+    # PhraseTrigger has is_phrase_in() which takes in a text and check whether the self.phrase is in text
     def __init__(self, phrase):
         PhraseTrigger.__init__(self, phrase)
     
@@ -144,11 +151,20 @@ class TitleTrigger(PhraseTrigger):
         return self.is_phrase_in(title)
 
 
-
-
-
 # Problem 4
-# TODO: DescriptionTrigger
+# TODO: DescriptionTrigger ->>> DONE
+
+class DescriptionTrigger(PhraseTrigger):
+
+    # PhraseTrigger has is_phrase_in() which takes in a text and check whether the self.phrase is in text
+    def __init__(self, phrase):
+        PhraseTrigger.__init__(self, phrase)
+
+    def evaluate(self, story):
+        description = story.get_description()
+
+        return self.is_phrase_in(description)
+
 
 # TIME TRIGGERS
 
