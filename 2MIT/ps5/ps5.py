@@ -300,8 +300,42 @@ def read_trigger_config(filename):
     # TODO: Problem 11
     # line is the list of lines that you need to parse and for which you need
     # to build triggers
+    KEYWORDS_1 = ['TITLE', 'DESCRIPTION', 'AFTER', 'BEFORE', 'NOT']
+    KEYWORDS_2 = ['AND', 'OR']
 
-    print(lines) # for now, print it so you see what it contains!
+    TRIGGER_TYPE_1 = [TitleTrigger, DescriptionTrigger, AfterTrigger, BeforeTrigger, NotTrigger]
+    TRIGGER_TYPE_2 = [AndTrigger, OrTrigger]
+    all_triggers = []
+
+
+
+
+    ##### I am going to sleep first #### This is where I left off future me
+
+    # map the keywords in the file lines to its corresponding functions
+    for line in lines:
+        words = line.split(',')
+        if words[1] in KEYWORDS_1:
+            tname = words[0]
+            ttype = words[1]
+            tparams = words[2]
+
+        if words[1] in KEYWORDS_2:
+            tname = words[0]
+            ttype = words[1]
+            tparams_1 = words[2]
+            tparams_2 = words[3]
+
+        
+
+        print(lines) # for now, print it so you see what it contains!
+
+
+
+
+
+
+
 
 
 
