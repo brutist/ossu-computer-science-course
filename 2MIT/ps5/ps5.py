@@ -169,7 +169,7 @@ class DescriptionTrigger(PhraseTrigger):
 # TIME TRIGGERS
 
 # Problem 5
-# TODO: TimeTrigger
+# TODO: TimeTrigger ->>> DONE
 # Constructor:
 #        Input: Time has to be in EST and in the format of "%d %b %Y %H:%M:%S".
 #        Convert time from string to a datetime before saving it as an attribute.
@@ -191,7 +191,7 @@ class TimeTrigger(Trigger):
     
 
 # Problem 6
-# TODO: BeforeTrigger and AfterTrigger
+# TODO: BeforeTrigger and AfterTrigger ->>> DONE
 class BeforeTrigger(TimeTrigger):
 
     def __init__(self, time):
@@ -220,27 +220,39 @@ class AfterTrigger(TimeTrigger):
         return False
 
         
-        
-
 # COMPOSITE TRIGGERS
 
 # Problem 7
-# TODO: NotTrigger
+# TODO: NotTrigger ->>> DONE
 class NotTrigger(Trigger):
 
     def __init__(self, trigger):
-        self.evaluate = not trigger.evaluate(story)
-
-        return self.evaluate
-
-
+        self.trigger = trigger
+    
+    def evaluate(self, story):
+        return not self.trigger.evaluate(story)
 
 # Problem 8
-# TODO: AndTrigger
+# TODO: AndTrigger ->>> DONE
+class AndTrigger(Trigger):
+
+    def __init__(self, trigger1, trigger2):
+        self.trigger1 = trigger1
+        self.trigger2 = trigger2
+
+    def evaluate(self, story):
+        return self.trigger1.evaluate(story) and self.trigger2.evaluate(story)
 
 # Problem 9
-# TODO: OrTrigger
+# TODO: OrTrigger ->>> DONE
+class OrTrigger(Trigger):
 
+    def __init__(self, trigger1, trigger2):
+        self.trigger1 = trigger1
+        self.trigger2 = trigger2
+
+    def evaluate(self, story):
+        return self.trigger1.evaluate(story) or self.trigger2.evaluate(story)
 
 #======================
 # Filtering
@@ -254,9 +266,14 @@ def filter_stories(stories, triggerlist):
     Returns: a list of only the stories for which a trigger in triggerlist fires.
     """
     # TODO: Problem 10
-    # This is a placeholder
-    # (we're just returning all the stories, with no filtering)
-    return stories
+
+    filtered_stories = []
+    for s in stories:
+        for trigger in triggerlist:
+            if trigger.evaluate(s):
+                filtered_stories.append(s)
+    
+    return filtered_stories
 
 
 
