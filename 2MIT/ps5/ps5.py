@@ -306,32 +306,29 @@ def read_trigger_config(filename):
     TRIGGER_TYPE_1 = [TitleTrigger, DescriptionTrigger, AfterTrigger, BeforeTrigger, NotTrigger]
     TRIGGER_TYPE_2 = [AndTrigger, OrTrigger]
     all_triggers = {}
-    triggers = []
+    trigger_list = []
 
     # map the keywords in the file lines to its corresponding functions
     for line in lines:
-        word = line.split(',')
-        name = word[0]
-        keyword = word[1]
+        line = line.split(',')
+        name = line[0]
 
-        # create a dictionary with name of trigger as key and 'trigger type' and 'params' as values
-        if keyword in KEYWORDS_1:
-            all_triggers[name] = TRIGGER_TYPE_1[KEYWORDS_1.index(keyword)](word[2])
+        # create a dictionary with name of trigger as key and trigger object as values
+        if line[1] in KEYWORDS_1:
+            all_triggers[name] = TRIGGER_TYPE_1[KEYWORDS_1.index(keyword)](line[2])
 
-        if keyword in KEYWORDS_2:
-            all_triggers[name] = TRIGGER_TYPE_1[KEYWORDS_1.index(keyword)](word[2], word[3])
+        if line[1] in KEYWORDS_2:
+            all_triggers[name] = TRIGGER_TYPE_1[KEYWORDS_1.index(keyword)](line[2], line[3])
 
         # create the list of triggers
-        if word[0] == 'ADD':
-            trigger_names = word
-            trigger_names.remove('ADD')
+        if line[0] == 'ADD':
+            trigger_names = line[1:]
 
-    # instantiate all triggers
+    # append the trigger to the trigger_list; returns an error if the trigger name is not found
     for name in trigger_names:
-        trigger = all_triggers.get(name, 0)
-        triggers.append(trigger)
+        trigger_list.append(all_triggers.get(name))
 
-    return triggers
+    return trigger_list
 
 SLEEPTIME = 120 #seconds -- how often we poll
 
