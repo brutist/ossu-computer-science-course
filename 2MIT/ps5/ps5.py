@@ -305,39 +305,37 @@ def read_trigger_config(filename):
 
     TRIGGER_TYPE_1 = [TitleTrigger, DescriptionTrigger, AfterTrigger, BeforeTrigger, NotTrigger]
     TRIGGER_TYPE_2 = [AndTrigger, OrTrigger]
-    all_triggers = []
-
-
-
-
-    ##### I am going to sleep first #### This is where I left off future me
+    all_triggers = {}
+    triggers = []
 
     # map the keywords in the file lines to its corresponding functions
     for line in lines:
-        words = line.split(',')
-        if words[1] in KEYWORDS_1:
-            tname = words[0]
-            ttype = words[1]
-            tparams = words[2]
+        word = line.split(',')
+        keyword = word[1]
 
-        if words[1] in KEYWORDS_2:
-            tname = words[0]
-            ttype = words[1]
-            tparams_1 = words[2]
-            tparams_2 = words[3]
+        # create a dictionary with name of trigger as key and 'trigger type' and 'params' as values
+        if keyword in KEYWORDS_1:
+            all_triggers[word[0]] = [word[1], word[2]]
 
-        
+        if keyword in KEYWORDS_2:
+            all_triggers[word[0]] = [word[1], word[2], word[3]]
 
-        print(lines) # for now, print it so you see what it contains!
+        # create the list of triggers
+        if word[0] == 'ADD':
+            triggers = words
+            triggers.remove('ADD')
 
+    # instantiate all triggers
+    for k, v in all_triggers.items():
+        t_index = KEYWORDS_1.index(v[0])
 
+        if v[0] in KEYWORDS_1:
+            k = TRIGGER_TYPE_1[t_index](v[1])
 
-
-
-
-
-
-
+        if v[0] in KEYWORDS_2:
+            k = TRIGGER_TYPE_2[t_index](v[1], v[2])
+    
+    return triggers
 
 SLEEPTIME = 120 #seconds -- how often we poll
 
