@@ -225,7 +225,9 @@ class AfterTrigger(TimeTrigger):
 # Problem 7
 # TODO: NotTrigger ->>> DONE
 class NotTrigger(Trigger):
-
+    '''
+    Takes in a trigger and evaluates to the opposite of the given trigger.
+    '''
     def __init__(self, trigger):
         self.trigger = trigger
     
@@ -235,7 +237,9 @@ class NotTrigger(Trigger):
 # Problem 8
 # TODO: AndTrigger ->>> DONE
 class AndTrigger(Trigger):
-
+    '''
+    Takes in two triggers and evalutes True if both Triggers are True; False if otherwise.
+    '''
     def __init__(self, trigger1, trigger2):
         self.trigger1 = trigger1
         self.trigger2 = trigger2
@@ -246,7 +250,9 @@ class AndTrigger(Trigger):
 # Problem 9
 # TODO: OrTrigger ->>> DONE
 class OrTrigger(Trigger):
-
+    '''
+    Takes in two triggers and evaluates True if one or two of the Triggers are True.
+    '''
     def __init__(self, trigger1, trigger2):
         self.trigger1 = trigger1
         self.trigger2 = trigger2
@@ -311,14 +317,13 @@ def read_trigger_config(filename):
     # map the keywords in the file lines to its corresponding functions
     for line in lines:
         line = line.split(',')
-        name = line[0]
-
+        
         # create a dictionary with name of trigger as key and trigger object as values
         if line[1] in KEYWORDS_1:
-            all_triggers[name] = TRIGGER_TYPE_1[KEYWORDS_1.index(keyword)](line[2])
+            all_triggers[name] = TRIGGER_TYPE_1[KEYWORDS_1.index(line[1])](line[2])
 
         if line[1] in KEYWORDS_2:
-            all_triggers[name] = TRIGGER_TYPE_1[KEYWORDS_1.index(keyword)](line[2], line[3])
+            all_triggers[name] = TRIGGER_TYPE_1[KEYWORDS_1.index(line[1])](line[2], line[3])
 
         # create the list of triggers
         if line[0] == 'ADD':
