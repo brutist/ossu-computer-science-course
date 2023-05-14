@@ -130,6 +130,8 @@ ACCEPTABLE_URI_SCHEMES = (
 #ACCEPTABLE_URI_SCHEMES = ()
 
 # ---------- required modules (should come with any Python distribution) ----------
+import collections
+collections.Callable = collections.abc.Callable
 import cgi
 import codecs
 import copy
@@ -145,7 +147,7 @@ import urllib.parse
 import warnings
 
 from html.entities import name2codepoint, codepoint2name, entitydefs
-import collections
+
 
 try:
     from io import BytesIO as _StringIO
