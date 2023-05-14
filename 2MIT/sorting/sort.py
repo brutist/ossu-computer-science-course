@@ -19,3 +19,5 @@
 
 
 # TODO : Implement MERGE sort
+# divide the list in until you reach base case (no. of element: 0 or 1)
+# merrge all of those divided list  
