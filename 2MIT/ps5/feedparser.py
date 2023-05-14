@@ -131,7 +131,6 @@ ACCEPTABLE_URI_SCHEMES = (
 
 # ---------- required modules (should come with any Python distribution) ----------
 import collections
-collections.Callable = collections.abc.Callable
 import cgi
 import codecs
 import copy
@@ -147,7 +146,6 @@ import urllib.parse
 import warnings
 
 from html.entities import name2codepoint, codepoint2name, entitydefs
-
 
 try:
     from io import BytesIO as _StringIO
@@ -3654,7 +3652,7 @@ def convert_to_utf8(http_headers, data):
     # try: HTTP encoding, declared XML encoding, encoding sniffed from BOM
     for proposed_encoding in (rfc3023_encoding, xml_encoding, bom_encoding,
                               lazy_chardet_encoding, 'utf-8', 'windows-1252', 'iso-8859-2'):
-        if isinstance(proposed_encoding, collections.Callable):
+        if isinstance(proposed_encoding, collections.abc.Callable ):
             proposed_encoding = proposed_encoding()
         if not proposed_encoding:
             continue

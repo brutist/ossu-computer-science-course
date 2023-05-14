@@ -274,10 +274,10 @@ def filter_stories(stories, triggerlist):
     # TODO: Problem 10
 
     filtered_stories = []
-    for s in stories:
+    for story in stories:
         for trigger in triggerlist:
-            if trigger.evaluate(s):
-                filtered_stories.append(s)
+            if trigger.evaluate(story): #### THIS IS THE PROBLEM LINE. 'str' object has no attribute 'evaluate'
+                filtered_stories.append(story)
     
     return filtered_stories
 
@@ -312,19 +312,18 @@ def read_trigger_config(filename):
     TRIGGER_TYPE_1 = [TitleTrigger, DescriptionTrigger, AfterTrigger, BeforeTrigger, NotTrigger]
     TRIGGER_TYPE_2 = [AndTrigger, OrTrigger]
     all_triggers = {}
-    trigger_list = []
+    triggerlist = []
 
     # map the keywords in the file lines to its corresponding functions
     for line in lines:
         line = line.split(',')
-        print(line)
         
         # create a dictionary with name of trigger as key and trigger object as values
         if line[1] in KEYWORDS_1:
-            all_triggers[name] = TRIGGER_TYPE_1[KEYWORDS_1.index(line[1])](line[2])
+            all_triggers[line[0]] = TRIGGER_TYPE_1[KEYWORDS_1.index(line[1])](line[2])
 
         if line[1] in KEYWORDS_2:
-            all_triggers[name] = TRIGGER_TYPE_1[KEYWORDS_2.index(line[1])](line[2], line[3])
+            all_triggers[line[0]] = TRIGGER_TYPE_2[KEYWORDS_2.index(line[1])](line[2], line[3])
 
         # create the list of triggers
         if line[0] == 'ADD':
@@ -332,10 +331,9 @@ def read_trigger_config(filename):
 
     # append the trigger to the trigger_list; returns an error if the trigger name is not found
     for name in trigger_names:
-        trigger_list.append(all_triggers.get(name))
+        triggerlist.append(all_triggers.get(name))
 
-    
-    return trigger_list
+    return triggerlist
 
 SLEEPTIME = 120 #seconds -- how often we poll
 
@@ -352,7 +350,7 @@ def main_thread(master):
         # Problem 11
         # TODO: After implementing read_trigger_config, uncomment this line 
         triggerlist = read_trigger_config('triggers.txt')
-        
+       
         # HELPER CODE - you don't need to understand this!
         # Draws the popup window that displays the filtered stories
         # Retrieves and filters the stories from the RSS feeds
@@ -385,9 +383,9 @@ def main_thread(master):
             print("Polling . . .", end=' ')
             # Get stories from Google's Top Stories RSS news feed
             stories = process("http://news.google.com/news?output=rss")
-
+    
             # Get stories from Yahoo's Top Stories RSS news feed
-            stories.extend(process("http://news.yahoo.com/rss/topstories"))
+            #stories.extend(process("http://news.yahoo.com/rss/topstories"))
 
             stories = filter_stories(stories, triggerlist)
 
