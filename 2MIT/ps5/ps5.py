@@ -1,7 +1,7 @@
 # 6.0001/6.00 Problem Set 5 - RSS Feed Filter
 # Name: Jonathan Mauring Jr. 
 # Collaborators: None
-# Time: May 9 - 
+# Time: May 9 - May 15 9:30 pm
 
 import feedparser
 import string
