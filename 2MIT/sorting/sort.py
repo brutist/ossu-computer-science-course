@@ -67,12 +67,39 @@ def selectionSort(values):
 # divide the list in until you reach base case (no. of element: 0 or 1)
 # merge all of those divided list
 
+def mergeSort(values):
+    
+    # This helper function will merge two sorted list. The resulting list will also be sorted.
+    def merge(left, right):
+        result = []
+        i, j = 0, 0
 
+        while len(left) != i and len(right) != j:
+            if left[i] < right[j]:
+                result.append(left[i])
+                i += 1
+            else:
+                result.append(right[j])
+                j += 1
+        
+        while len(left) != i:
+            result.append(left[i])
+            i += 1
 
+        while len(right) != j:
+            result.append(right[j])
+            j += 1
+        
+        return result
 
-
-
-
+    # main merge sort function
+    if len(values) == 1:
+        return values
+    else:
+        middle = len(values) // 2
+        left = mergeSort(values[middle:])
+        right = mergeSort(values[:middle])
+        return merge(left, right)
 
 
 
@@ -95,8 +122,16 @@ if bubbleSort(data.copy()) == sorted(data):
 else:
     print('Bubble sort Test FAILED')
 
+
 if selectionSort(data.copy()) == sorted(data):        
     print('Selection sort Successful')
 
 else:    
     print('Selection sort Test FAILED')
+
+
+if mergeSort(data.copy()) == sorted(data):        
+    print('Merge sort Successful')
+
+else:    
+    print('Merge sort Test FAILED')
