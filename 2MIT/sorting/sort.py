@@ -103,7 +103,6 @@ def mergeSort(values):
 
 
 
-
 ITEMS = 1929
 data = []
 for i in range(ITEMS):

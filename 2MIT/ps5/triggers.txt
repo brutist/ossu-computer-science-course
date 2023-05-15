@@ -20,5 +20,8 @@ t5,AND,t2,t4
 // composite trigger named t4
 t6,AND,t1,t4
 
+// not trigger named t7
+t7,NOT,t1
+
 // the trigger list contains t1 and t4
-ADD,t1,t2,t5,t6
+ADD,t1,t2,t5,t6,t7
