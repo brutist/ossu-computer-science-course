@@ -3,22 +3,22 @@
 // stories!
 
 // title trigger named t1
-t1,TITLE,kuwait
+t1,TITLE,Samsung
 
 // description trigger named t2
-t2,DESCRIPTION,filipino
+t2,DESCRIPTION,Iphone
 
 // description trigger named t3
-t3,DESCRIPTION,universe
+t3,DESCRIPTION,phone
 
 // after trigger named t4
-t4,AFTER,3 Feb 2023 17:00:10
+t4,AFTER,3 May 2023 17:00:10
 
 // composite trigger named t4
-t5,AND,t2,t3
+t5,AND,t2,t4
 
 // composite trigger named t4
 t6,AND,t1,t4
 
 // the trigger list contains t1 and t4
-ADD,t5,t6
+ADD,t1,t2,t5,t6
