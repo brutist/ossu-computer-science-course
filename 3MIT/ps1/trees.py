@@ -72,4 +72,21 @@ def greedy(items, maxCost, keyFunction):
 
 
 def testGreedy(items, constraint, keyFunction):
-    print('Testing greedy with highest value:', greedy(items, constraint , Food.getValue))
+    taken, val = greedy(items, constraint, keyFunction)
+    print('Total value of items taken:', val)
+    for item in taken:
+        print('   ', item)
+
+def testGreedys(maxUnits):
+    print('\nUsing greedy by value to allocate', maxUnits, 'calories')
+    testGreedy(foods, maxUnits, Food.getValue)
+
+    print('\nUsing greedy by calories to allocate', maxUnits, 'calories')
+    testGreedy(foods, maxUnits, lambda x: 1/Food.getCost(x))
+
+    print('\nUsing greedy by density to allocate', maxUnits, 'calories')
+    testGreedy(foods, maxUnits, Food.getDensity)
+
+
+foods = menuBuilder(names, values, calories)
+testGreedys(800)
