@@ -5,6 +5,8 @@ All codes here were created from scratch after watching the video '2. Optimizati
 '''
 
 from random import randint
+import sys
+
 
 class Food(object):
     def __init__(self, n, v, c):
@@ -106,9 +108,9 @@ def maxVal(toConsider, avail):
 
         # find the highest value from the left and right leafs
         if withVal > withoutVal:
-            result = withVal, withToTake + (withItem,)
+            result = (withVal, withToTake + (withItem,))
         else:
-            result = withoutVal, withoutToTake
+            result = (withoutVal, withoutToTake)
 
     return result
 
@@ -121,34 +123,35 @@ def fastMaxVal(toConsider, avail, memo={}):
     '''
     This is a dynamic implementation of maxVal().
     '''
+    # check if result in memo
+    if (len(toConsider), avail) in memo:
+        result = memo[(len(toConsider), avail)]
+
     # check for base case
-    if toConsider == [] or avail == 0:
+    elif toConsider == [] or avail == 0:
         return (0, ())
 
     # if the element to consider cost more than what's available consider the next items only
     elif toConsider[0].getCost() > avail:
-        result = fastMaxVal(toConsider[1:], avail)
+        result = fastMaxVal(toConsider[1:], avail, memo)
 
     else:
-      
         # this will get the value of the left branch
         withItem = toConsider[0]
-        withVal, withToTake = maxVal(toConsider[1:], avail - withItem.getCost())
+        withVal, withToTake = fastMaxVal(toConsider[1:], avail - withItem.getCost(), memo)
         withVal += withItem.getValue()
 
         # this takes the value of the right branch
-        withoutVal, withoutToTake = maxVal(toConsider[1:], avail)
+        withoutVal, withoutToTake = fastMaxVal(toConsider[1:], avail, memo)
 
         # compare the values of the left and right branch
         # choose the better branch
         if withVal > withoutVal:
-            result = withVal, withToTake + (withItem,)
-                
-
+            result = (withVal, withToTake + (withItem,))
         else:
-            result = withoutVal, withoutToTake
+            result = (withoutVal, withoutToTake)
                 
-
+    memo[(len(toConsider), avail)] = result
     return result
 
 
@@ -183,7 +186,7 @@ def testMaxVal(items, maxUnits, printItems = True):
 
 def testFastMaxVal(items, maxUnits, printItems = True):
     print('\nUsing search trees with memo to allocate', maxUnits, 'calories')
-    val, taken = fastMaxVal(items, maxUnits)
+    val, taken = fastMaxVal(items, maxUnits, memo={})
     print('Total value of items taken:', val)
     
     if printItems:
@@ -217,11 +220,24 @@ if __name__ == '__main__':
     testGreedys(750)
     testMaxVal(foods, 750, True)
     testFastMaxVal(foods, 750, True)
+    print('End of Manual Test\n\n\n')
 
+
+    # testing for speed of fastMaxVal()
+    sys.setrecursionlimit(4000)
+    for n in [0, 100, 250, 400, 600, 800, 1100]:
+        items = buildLargeMenu(n, 90, 250)
+        print('Testing with', n, 'items', end=' ')
+        testFastMaxVal(items, 750, False)
+       
+
+
+    # testing for correctness of fastMaxVal()
     for n in [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]:
         items = buildLargeMenu(n, 90, 250)
-        print('Testing with', n, 'items', end= ' ')
-        if testFastMaxVal(items, 750, False) == testMaxVal(items, 750, False):
+        print('Testing with', n, 'items', end=' ')
+
+        if testFastMaxVal(items, 750, True) == testMaxVal(items, 750, True):
             print('     ','Test result: SUCESS\n')
         else:
             print('     ','Test result: FAILED\n')
