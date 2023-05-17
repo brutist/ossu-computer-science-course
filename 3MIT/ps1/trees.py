@@ -4,7 +4,7 @@ This file is created to replicate the program in 6.0002 Introduction to Computat
 All codes here were created from scratch after watching the video '2. Optimization Problems'
 '''
 
-import random
+from random import randint
 
 class Food(object):
     def __init__(self, n, v, c):
@@ -42,6 +42,19 @@ def menuBuilder(names, values, calories):
         menu.append(Food(names[i], values[i], calories[i]))
 
     return menu
+
+def buildLargeMenu(n, maxVal, maxCost):
+    '''
+    This function creates a list of Food objects with name from 0-n with values and cost(calories)
+    ranging from '1 to maxval' and '1 to maxCost, respectively.
+
+    returns a list of Food objects with attributes produced randomly.
+    '''
+    items = []
+    for i in range(n):
+        items.append(Food(str(i), randint(1, maxVal), randint(1, maxCost)))
+
+    return items
 
 
 def greedy(items, maxCost, keyFunction):
@@ -100,6 +113,17 @@ def maxVal(toConsider, avail):
 
     return result
 
+# TODO - Modify maxVal() to use a memo (dynamic programming)
+# key of memo is a tuple (items left to be considered or len(toConsider), available weight))
+# the body of the function will check if value is in memo, update the memo if it's not there
+
+def fastMaxVal(toConsider, avail, memo={}):
+    '''
+    This is a dynamic implementation of maxVal().
+    '''
+    pass
+
+
 
 def testGreedy(items, constraint, keyFunction):
     taken, val = greedy(items, constraint, keyFunction)
@@ -118,30 +142,41 @@ def testGreedys(maxUnits):
     testGreedy(foods, maxUnits, Food.getDensity)
 
 
-def testMaxVal(maxUnits):
+def testMaxVal(items, maxUnits, printItems = True):
     print('\nUsing search trees to allocate', maxUnits, 'calories')
-    val, taken = maxVal(foods, maxUnits)
+    val, taken = maxVal(items, maxUnits)
     print('Total value of items taken:', val)
-    for item in taken:
-        print('   ', item)
-
-# list of names, values, and calories to initialize the menu
-names = ['donut', 'pork bbq', 'juice', 'fried chicken', 'spaghetti', 'cake', 'rice', 'burger', 'lechon']
-values = [10, 77, 29, 77, 88, 38, 47, 57, 79]
-calories = [195, 150, 40, 120, 200, 145, 95, 110, 210]
-
-foods = menuBuilder(names, values, calories)
-testGreedys(800)
-testMaxVal(800)
+    
+    if printItems:
+        for item in taken:
+            print('   ', item)
 
 
 
-# This is the list from the lecture. Copied and tested to see if my algorithm works the same way.
-# Note: Yes. My recreation works the same way!
-names = ['wine', 'beer', 'pizza', 'burger', 'fries', 'cola', 'apple', 'donut', 'cake']
-values = [89,90,95,100,90,79,50,10]
-calories = [123,154,258,354,365,150,95,195]
-foods = menuBuilder(names, values, calories)
-testGreedys(750)
-testMaxVal(750)
+if __name__ == '__main__':
 
+    # list of names, values, and calories to initialize the menu
+    # This is my own list for  testing. 
+    names = ['donut', 'pork bbq', 'juice', 'fried chicken', 'spaghetti', 'cake', 'rice', 'burger', 'lechon']
+    values = [10, 77, 29, 77, 88, 38, 47, 57, 79]
+    calories = [195, 150, 40, 120, 200, 145, 95, 110, 210]
+
+    foods = menuBuilder(names, values, calories)
+    testGreedys(800)
+    testMaxVal(foods, 800, True)
+
+
+    # This is the list from the lecture. Copied and tested to see if my algorithm works the same way.
+    # Note: Yes. My re-creation works the same way!
+    names = ['wine', 'beer', 'pizza', 'burger', 'fries', 'cola', 'apple', 'donut', 'cake']
+    values = [89,90,95,100,90,79,50,10]
+    calories = [123,154,258,354,365,150,95,195]
+    foods = menuBuilder(names, values, calories)
+    testGreedys(750)
+    testMaxVal(foods, 750, True)
+
+    for n in [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]:
+        print('Try a menu with number of items:', n, 'items', end='')
+        items = buildLargeMenu(n, 90, 250)
+        testMaxVal(items, 750, False)
+        print('\n')
