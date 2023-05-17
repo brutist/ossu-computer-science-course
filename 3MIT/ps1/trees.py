@@ -92,7 +92,7 @@ def maxVal(toConsider, avail):
     
     # if taking the particular item would cost greater than what is available,
     # do not take the item. i.e. go to the left branch of the tree
-    elif toConsider[0].getCost() >= avail:
+    elif toConsider[0].getCost() > avail:
         result = maxVal(toConsider[1:], avail)
     
     else:
@@ -110,8 +110,8 @@ def maxVal(toConsider, avail):
         else:
             result = withoutVal, withoutToTake
 
-
     return result
+
 
 # TODO - Modify maxVal() to use a memo (dynamic programming)
 # key of memo is a tuple (items left to be considered or len(toConsider), available weight))
@@ -121,8 +121,38 @@ def fastMaxVal(toConsider, avail, memo={}):
     '''
     This is a dynamic implementation of maxVal().
     '''
-    pass
+    # check for base case
+    if toConsider == [] or avail == 0:
+        return (0, ())
 
+    # if the element to consider cost more than what's available consider the next items only
+    elif toConsider[0].getCost() > avail:
+        result = fastMaxVal(toConsider[1:], avail)
+
+    else:
+        try:
+            result = memo[(len(toConsider[0:]), avail)]
+        
+        except:
+            # this will get the value of the left branch
+            withItem = toConsider[0]
+            withVal, withToTake = maxVal(toConsider[1:], avail - withItem.getCost())
+            withVal += withItem.getValue()
+
+            # this takes the value of the right branch
+            withoutVal, withoutToTake = maxVal(toConsider[1:], avail)
+
+            # compare the values of the left and right branch
+            # choose the better branch
+            if withVal > withoutVal:
+                result = withVal, withToTake + (withItem,)
+                memo[(len(toConsider[0:]), avail)] = result
+
+            else:
+                result = withoutVal, withoutToTake
+                memo[(len(toConsider[1:]), avail)] = result
+
+    return result
 
 
 def testGreedy(items, constraint, keyFunction):
@@ -151,7 +181,19 @@ def testMaxVal(items, maxUnits, printItems = True):
         for item in taken:
             print('   ', item)
 
+    return val, taken
 
+
+def testFastMaxVal(items, maxUnits, printItems = True):
+    print('\nUsing search trees with memo to allocate', maxUnits, 'calories')
+    val, taken = fastMaxVal(items, maxUnits)
+    print('Total value of items taken:', val)
+    
+    if printItems:
+        for item in taken:
+            print('   ', item)
+
+    return val, taken
 
 if __name__ == '__main__':
 
@@ -174,9 +216,12 @@ if __name__ == '__main__':
     foods = menuBuilder(names, values, calories)
     testGreedys(750)
     testMaxVal(foods, 750, True)
+    testFastMaxVal(foods, 750, True)
 
     for n in [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]:
-        print('Try a menu with number of items:', n, 'items', end='')
         items = buildLargeMenu(n, 90, 250)
-        testMaxVal(items, 750, False)
-        print('\n')
+        print('Testing with', n, 'items', end= ' ')
+        if testFastMaxVal(items, 750, False) == testMaxVal(items, 750, False):
+            print('     ','Test result: SUCESS\n')
+        else:
+            print('     ','Test result: FAILED\n')
