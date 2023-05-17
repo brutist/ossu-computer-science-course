@@ -1,7 +1,7 @@
 # 6.0001/6.00 Problem Set 5 - RSS Feed Filter
 # Name: Jonathan Mauring Jr. 
 # Collaborators: None
-# Time: May 9 - 
+# Time: May 9 - May 15 9:30 pm
 
 import feedparser
 import string
@@ -276,7 +276,7 @@ def filter_stories(stories, triggerlist):
     filtered_stories = []
     for story in stories:
         for trigger in triggerlist:
-            if trigger.evaluate(story): #### THIS IS THE PROBLEM LINE. 'str' object has no attribute 'evaluate'
+            if trigger.evaluate(story): 
                 filtered_stories.append(story)
     
     return filtered_stories
@@ -306,34 +306,38 @@ def read_trigger_config(filename):
     # TODO: Problem 11
     # line is the list of lines that you need to parse and for which you need
     # to build triggers
-    KEYWORDS_1 = ['TITLE', 'DESCRIPTION', 'AFTER', 'BEFORE', 'NOT']
+    KEYWORDS_1 = ['TITLE', 'DESCRIPTION', 'AFTER', 'BEFORE']
     KEYWORDS_2 = ['AND', 'OR']
 
     TRIGGER_TYPE_1 = [TitleTrigger, DescriptionTrigger, AfterTrigger, BeforeTrigger, NotTrigger]
     TRIGGER_TYPE_2 = [AndTrigger, OrTrigger]
     all_triggers = {}
-    triggerlist = []
-
+    triggers = []
+    names = []
     # map the keywords in the file lines to its corresponding functions
     for line in lines:
-        line = line.split(',')
+        line = line.strip().split(',')
         
         # create a dictionary with name of trigger as key and trigger object as values
         if line[1] in KEYWORDS_1:
             all_triggers[line[0]] = TRIGGER_TYPE_1[KEYWORDS_1.index(line[1])](line[2])
+            
+        if line[1] == 'NOT':
+            all_triggers[line[0]] = NotTrigger(all_triggers[line[2]])
 
         if line[1] in KEYWORDS_2:
-            all_triggers[line[0]] = TRIGGER_TYPE_2[KEYWORDS_2.index(line[1])](line[2], line[3])
+            all_triggers[line[0]] = TRIGGER_TYPE_2[KEYWORDS_2.index(line[1])](all_triggers[line[2]], all_triggers[line[3]])
 
         # create the list of triggers
         if line[0] == 'ADD':
-            trigger_names = line[1:]
+            for i in range(1, len(line)):
+                names.append(line[i])
 
     # append the trigger to the trigger_list; returns an error if the trigger name is not found
-    for name in trigger_names:
-        triggerlist.append(all_triggers.get(name))
+    for name in names:
+        triggers.append(all_triggers.get(name))
 
-    return triggerlist
+    return triggers
 
 SLEEPTIME = 120 #seconds -- how often we poll
 
@@ -341,15 +345,15 @@ def main_thread(master):
     # A sample trigger list - you might need to change the phrases to correspond
     # to what is currently in the news
     try:
-        t1 = TitleTrigger("election")
-        t2 = DescriptionTrigger("Trump")
-        t3 = DescriptionTrigger("Clinton")
+        t1 = TitleTrigger("Philippines")
+        t2 = DescriptionTrigger("dead")
+        t3 = DescriptionTrigger("new")
         t4 = AndTrigger(t2, t3)
         triggerlist = [t1, t4]
 
         # Problem 11
         # TODO: After implementing read_trigger_config, uncomment this line 
-        triggerlist = read_trigger_config('triggers.txt')
+        triggerlist = read_trigger_config('new_triggers.txt')
        
         # HELPER CODE - you don't need to understand this!
         # Draws the popup window that displays the filtered stories

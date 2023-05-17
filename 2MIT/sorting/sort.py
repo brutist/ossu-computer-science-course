@@ -72,6 +72,18 @@ def selectionSort(values):
 
 
 
+
+    # main merge sort function
+    if len(values) == 1:
+        return values
+    else:
+        middle = len(values) // 2
+        left = mergeSort(values[middle:])
+        right = mergeSort(values[:middle])
+        return merge(left, right)
+
+
+
 ITEMS = 1929
 data = []
 for i in range(ITEMS):
@@ -90,8 +102,16 @@ if bubbleSort(data.copy()) == sorted(data):
 else:
     print('Bubble sort Test FAILED')
 
+
 if selectionSort(data.copy()) == sorted(data):        
     print('Selection sort Successful')
 
 else:    
     print('Selection sort Test FAILED')
+
+
+if mergeSort(data.copy()) == sorted(data):        
+    print('Merge sort Successful')
+
+else:    
+    print('Merge sort Test FAILED')
