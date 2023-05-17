@@ -130,27 +130,24 @@ def fastMaxVal(toConsider, avail, memo={}):
         result = fastMaxVal(toConsider[1:], avail)
 
     else:
-        try:
-            result = memo[(len(toConsider[0:]), avail)]
-        
-        except:
-            # this will get the value of the left branch
-            withItem = toConsider[0]
-            withVal, withToTake = maxVal(toConsider[1:], avail - withItem.getCost())
-            withVal += withItem.getValue()
+      
+        # this will get the value of the left branch
+        withItem = toConsider[0]
+        withVal, withToTake = maxVal(toConsider[1:], avail - withItem.getCost())
+        withVal += withItem.getValue()
 
-            # this takes the value of the right branch
-            withoutVal, withoutToTake = maxVal(toConsider[1:], avail)
+        # this takes the value of the right branch
+        withoutVal, withoutToTake = maxVal(toConsider[1:], avail)
 
-            # compare the values of the left and right branch
-            # choose the better branch
-            if withVal > withoutVal:
-                result = withVal, withToTake + (withItem,)
-                memo[(len(toConsider[0:]), avail)] = result
+        # compare the values of the left and right branch
+        # choose the better branch
+        if withVal > withoutVal:
+            result = withVal, withToTake + (withItem,)
+                
 
-            else:
-                result = withoutVal, withoutToTake
-                memo[(len(toConsider[1:]), avail)] = result
+        else:
+            result = withoutVal, withoutToTake
+                
 
     return result
 
@@ -194,6 +191,9 @@ def testFastMaxVal(items, maxUnits, printItems = True):
             print('   ', item)
 
     return val, taken
+
+
+
 
 if __name__ == '__main__':
 
