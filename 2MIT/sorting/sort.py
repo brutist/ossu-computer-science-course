@@ -67,9 +67,30 @@ def selectionSort(values):
 # divide the list in until you reach base case (no. of element: 0 or 1)
 # merge all of those divided list
 
+def mergeSort(values):
+    
+    # This helper function will merge two sorted list. The resulting list will also be sorted.
+    def merge(left, right):
+        result = []
+        i, j = 0, 0
 
+        while len(left) != i and len(right) != j:
+            if left[i] < right[j]:
+                result.append(left[i])
+                i += 1
+            else:
+                result.append(right[j])
+                j += 1
+        
+        while len(left) != i:
+            result.append(left[i])
+            i += 1
 
-
+        while len(right) != j:
+            result.append(right[j])
+            j += 1
+        
+        return result
 
     # main merge sort function
     if len(values) == 1:
@@ -79,6 +100,7 @@ def selectionSort(values):
         left = mergeSort(values[middle:])
         right = mergeSort(values[:middle])
         return merge(left, right)
+
 
 
 
