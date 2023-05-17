@@ -71,8 +71,6 @@ def selectionSort(values):
 
 
 
-
-
     # main merge sort function
     if len(values) == 1:
         return values
