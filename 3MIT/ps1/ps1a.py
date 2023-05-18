@@ -29,9 +29,10 @@ def load_cows(filename):
     data = filhand.read()
     filhand.close()
 
-    # turn the data into a list
+    # turn the data into a list of cows name with their weight separated with a comma
     pairs = data.split('\n')
     
+    # create a dict with name of cows as keys and their weight (int) as values
     cowsData = {}
     for pair in pairs:
         cow = pair.split(',')
@@ -62,8 +63,37 @@ def greedy_cow_transport(cows,limit=10):
     transported on a particular trip and the overall list containing all the
     trips
     """
-    # TODO: Your code here
-    pass
+    # copy cows dict and initialize empty list of trips and cows that have already been taken
+    cows = cows.copy()
+    trips = []
+    takenCows = []
+    
+    # sort the cows; heaviest first
+    cowsName = sorted(cows.keys(), key=cows.get, reverse=True)
+    
+    # iterate through all of the cows
+    for i in range(len(cowsName)):
+        currentWeight = 0
+        currentTrip =[]
+
+        # if the cow fits into the spaceship, take it
+        if (not cowsName[i] in takenCows) and cows[cowsName[i]] <= limit:
+            takenCows.append(cowsName[i])
+            currentTrip.append(cowsName[i])
+            currentWeight += cows[cowsName[i]]
+
+            # iterate through the remaining cows to see if other fits with the other
+            for j in range(i+1, len(cowsName)):
+                if (not cowsName[j] in takenCows) and currentWeight + cows[cowsName[j]] <= limit:
+                    takenCows.append(cowsName[j])
+                    currentTrip.append(cowsName[j])
+                    currentWeight += cows[cowsName[j]]
+        
+        # append the currentTrip to all trips
+        if currentTrip != []:
+            trips.append(currentTrip)
+
+    return trips
 
 # Problem 3
 def brute_force_cow_transport(cows,limit=10):
@@ -105,4 +135,9 @@ def compare_cow_transport_algorithms():
     Does not return anything.
     """
     # TODO: Your code here
+    pass
+
+
+if __name__ == '__main__':
+    
     pass
