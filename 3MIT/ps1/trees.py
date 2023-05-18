@@ -229,7 +229,6 @@ if __name__ == '__main__':
         items = buildLargeMenu(n, 90, 250)
         print('Testing with', n, 'items', end=' ')
         testFastMaxVal(items, 750, False)
-       
 
 
     # testing for correctness of fastMaxVal()

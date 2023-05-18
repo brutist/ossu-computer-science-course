@@ -1,8 +1,8 @@
 ###########################
 # 6.0002 Problem Set 1a: Space Cows 
-# Name: 
-# Collaborators:
-# Time:
+# Name: Jonathan Mauring Jr
+# Collaborators: None
+# Time: start - May 18, 2023
 
 from ps1_partition import get_partitions
 import time
@@ -24,8 +24,20 @@ def load_cows(filename):
     Returns:
     a dictionary of cow name (string), weight (int) pairs
     """
-    # TODO: Your code here
-    pass
+    # open file and save the contents to data
+    filhand = open(filename)
+    data = filhand.read()
+    filhand.close()
+
+    # turn the data into a list
+    pairs = data.split('\n')
+    
+    cowsData = {}
+    for pair in pairs:
+        cow = pair.split(',')
+        cowsData[cow[0]] = cow[1]
+    
+    return cowsData
 
 # Problem 2
 def greedy_cow_transport(cows,limit=10):
