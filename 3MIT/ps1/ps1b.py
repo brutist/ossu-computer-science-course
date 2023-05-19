@@ -1,8 +1,8 @@
 ###########################
 # 6.0002 Problem Set 1b: Space Change
-# Name:
-# Collaborators:
-# Time:
+# Name: Jonathan Mauring 
+# Collaborators: none
+# Time: start - May 19, 2023
 # Author: charz, cdenise
 
 #================================

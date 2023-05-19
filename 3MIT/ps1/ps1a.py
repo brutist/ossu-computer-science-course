@@ -2,7 +2,7 @@
 # 6.0002 Problem Set 1a: Space Cows 
 # Name: Jonathan Mauring Jr
 # Collaborators: None
-# Time: start - May 18, 2023
+# Time: start - May 18, 2023 end - May 19, 2023
 
 from ps1_partition import get_partitions
 import time

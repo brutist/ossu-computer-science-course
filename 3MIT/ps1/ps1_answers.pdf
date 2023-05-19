@@ -1,7 +1,6 @@
 
 1. What were your results from compare_cow_transport_algorithms? 
 Which algorithm runs faster? Why?
-
 '''
 Using compare_cow_transport_algorithms, I have found out that the execution time of the 
 greedy algorithm is so minuscule, it may as well be zero, for the given data (ps1_cow_data.txt)
@@ -36,9 +35,12 @@ L = [9,9,7,6,5,3,3,2,2] - L[i] is weight of cows
 The greedy will go: [9], [9], [7,3], [6,3], [3,2,2],[2] - 6 trips
 but a more optimal solution should be: [9], [9], [7,3], [6,2,2], [3,3,2] - 5 trips
 '''
+
 3. Does the brute force algorithm return the optimal solution? Why/why no
 '''
 Yes. The brute force method always return a global optimal solution because it tries out all possible
-combination and picks the best, in this case the least number of trips.
-
+combination and picks the best, in this case the least number of trips. This algorithm avoids the 
+weakness that the greedy has but it does so by trading time with it. As mentioned in my earlier answers,
+The growth complexity of this algorithm is probably in factorial or exponential time, 
+though this can probably be reduced by using a more efficient? set_partition algorithm.
 '''
