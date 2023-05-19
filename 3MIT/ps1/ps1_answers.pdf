@@ -1,0 +1,18 @@
+
+1. What were your results from compare_cow_transport_algorithms? 
+Which algorithm runs faster? Why?
+
+'''
+Using compare_cow_transport_algorithms, I have found out that the execution time of the 
+greedy algorithm is so minuscule, it may as well be zero, for the given data (ps1_cow_data.txt)
+This stems from the fact that;
+a. There are only a handful cows (11).
+b. My implementation of greedy algorithm's time complexity is 0(n^2).
+
+This is in stark contrast with the brute force method that takes about half a second to run.
+
+
+'''
+2. Does the greedy algorithm return the optimal solution? Why/why not?
+
+3. Does the brute force algorithm return the optimal solution? Why/why no

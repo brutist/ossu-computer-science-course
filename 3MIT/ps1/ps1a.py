@@ -26,17 +26,17 @@ def load_cows(filename):
     """
     # open file and save the contents to data
     filhand = open(filename)
-    data = filhand.read()
+    data = filhand.read().strip()
     filhand.close()
 
     # turn the data into a list of cows name with their weight separated with a comma
     pairs = data.split('\n')
-    
+
     # create a dict with name of cows as keys and their weight (int) as values
     cowsData = {}
     for pair in pairs:
         cow = pair.split(',')
-        cowsData[cow[0]] = cow[1]
+        cowsData[cow[0]] = int(cow[1])
     
     return cowsData
 
@@ -137,14 +137,14 @@ def brute_force_cow_transport(cows,limit=10):
             
             trip += 1
 
+        # checks for the optimal solution. (less number of trips, the better)
         if tripPossible:
             if len(possibleTrips) < maxTrip:
                 result = possibleTrips
                 maxTrip = len(possibleTrips)
-            
-            
-    result.sort(key=len)
-    return result
+                
+   
+    return sorted(result, key=len)
         
 # Problem 4
 def compare_cow_transport_algorithms():
@@ -160,10 +160,22 @@ def compare_cow_transport_algorithms():
     Returns:
     Does not return anything.
     """
-    # TODO: Your code here
-    pass
+    cows = load_cows('ps1_cow_data.txt')
+
+    start = time.time()
+    optimalTrip = greedy_cow_transport(cows, limit=10)
+    end = time.time()
+    print('Greedy number of trips:', len(optimalTrip))
+    print('Greedy execution time:', end - start, '\n')
+
+
+    start = time.time()
+    optimalTrip = brute_force_cow_transport(cows, limit=10)
+    end = time.time()
+    print('Brute-force number of trips:', len(optimalTrip))
+    print('Brute-force execution time:', end - start)
 
 
 if __name__ == '__main__':
     
-    pass
+    compare_cow_transport_algorithms()

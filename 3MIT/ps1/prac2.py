@@ -134,7 +134,25 @@ def brute_force_cow_transport(cows,limit=10):
     return result
     
 
+if __name__ == '__main__':
 
-cows = load_cows('ps1_cow_data_2.txt')
-print(greedy_cow_transport(cows,limit=10))
-print(brute_force_cow_transport(cows, limit=10))
+    cows = load_cows('ps1_cow_data.txt')
+    print('Testing with data v.1...')
+    greedy = greedy_cow_transport(cows,limit=10)
+    bruteForce = brute_force_cow_transport(cows, limit=10)
+    print(greedy, 'Number of trips = ', len(greedy))
+    print(bruteForce, 'Number of trips = ', len(bruteForce))
+
+    cows = load_cows('ps1_cow_data_2.txt')
+    print('Testing with data v.2...')
+    greedy = greedy_cow_transport(cows,limit=10)
+    bruteForce = brute_force_cow_transport(cows, limit=10)
+    print(greedy, 'Number of trips = ', len(greedy))
+    print(bruteForce, 'Number of trips = ', len(bruteForce))
+    
+    cows = load_cows('test_data.txt')
+    print('Testing with test data...')
+    greedy = greedy_cow_transport(cows,limit=10)
+    bruteForce = brute_force_cow_transport(cows, limit=10)
+    print(greedy, 'Number of trips = ', len(greedy))
+    print(bruteForce, 'Number of trips = ', len(bruteForce))
