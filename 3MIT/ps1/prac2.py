@@ -104,23 +104,37 @@ def brute_force_cow_transport(cows,limit=10):
     trips
     """
     cowsCopy = cows.copy()
+    maxTrip = len(cows)
+    result = []
     # this provides all of the possible trip combinations
     for possibleTrips in get_partitions(cowsCopy):
-        
+        trip = 0
+        tripPossible = True
         # iterate through all possible combinations of trips
-        for trip in possibleTrips:
-            currentWeight = 0
+        while tripPossible and trip < len(possibleTrips):
+            tripWeight = 0
 
-            # iterate through all cows in the particular trip
-            for c in trip:
-                currentWeight += cows[c]
-
-                if currentWeight > limit:
-                    continue
-
-            return possibleTrips
+            # iterate through the trips and check if all trips conform to the weight limit
+            for cow in possibleTrips[trip]:
+                tripWeight += cowsCopy[cow]
+                if tripWeight > limit:
+                    tripPossible = False
+                    break
+            
+            trip += 1
+            
+        # pick the smallest number of trip (optimal solution)
+        if tripPossible:
+            if len(possibleTrips) < maxTrip:
+                result = possibleTrips
+                maxTrip = len(possibleTrips)
+            
+            
+    result.sort(key=len)
+    return result
     
 
-cows = load_cows('ps1_cow_data.txt')
+
+cows = load_cows('ps1_cow_data_2.txt')
 print(greedy_cow_transport(cows,limit=10))
 print(brute_force_cow_transport(cows, limit=10))
