@@ -22,8 +22,41 @@ def dp_make_weight(egg_weights, target_weight, memo = {}):
     
     Returns: int, smallest number of eggs needed to make target weight
     """
-    # TODO: Your code here
-    pass
+    # break the problems into subproblems, solve the subproblems then store the solution
+    # Imagine the eggs are items you are packing. What is the objective function? 
+    # What is the weight limit in this case? What are the values of each item? 
+    # What is the weight of each item?
+    
+    # this is greedy algorithm which might be an inherently good solution for this problem.
+    #total_weight = 0
+    #egg_taken = []
+    #j = len(egg_weights) - 1
+    #while total_weight < target_weight:
+    #    if not total_weight + egg_weights[j] > target_weight:
+    #        egg_taken.append(egg_weights[j])
+    #        total_weight += egg_weights[j]
+    #    else:
+    #        j -= 1
+    #return len(egg_taken)
+    
+    # optimal eggs to be taken
+    
+
+    # check for available memos
+    if len(egg_taken) in memo:
+        return memo[len(egg_taken)]
+
+    # base case
+    elif target_weight in egg_weights:
+        return target_weight
+    
+    else:
+        
+        egg_taken = dp_make_weight(egg_weights, target_weight, memo)
+
+
+    return len(egg_taken)
+
 
 # EXAMPLE TESTING CODE, feel free to add more if you'd like
 if __name__ == '__main__':
