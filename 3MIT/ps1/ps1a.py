@@ -138,10 +138,9 @@ def brute_force_cow_transport(cows,limit=10):
             trip += 1
 
         # checks for the optimal solution. (less number of trips, the better)
-        if tripPossible:
-            if len(possibleTrips) < maxTrip:
-                result = possibleTrips
-                maxTrip = len(possibleTrips)
+        if tripPossible and len(possibleTrips) < maxTrip:
+            result = possibleTrips
+            maxTrip = len(possibleTrips)
                 
    
     return sorted(result, key=len)
@@ -179,3 +178,10 @@ def compare_cow_transport_algorithms():
 if __name__ == '__main__':
     
     compare_cow_transport_algorithms()
+
+    cows = load_cows('ps1_cow_data.txt')
+    greedy = greedy_cow_transport(cows, limit=10)
+    brute = brute_force_cow_transport(cows, limit=10)
+
+    print('Greedy Trip:', greedy)
+    print('Brute-force Trip:', brute)
