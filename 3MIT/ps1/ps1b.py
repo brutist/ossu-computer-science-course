@@ -9,6 +9,7 @@
 # Part B: Golden Eggs
 #================================
 
+
 # Problem 1
 def dp_make_weight(egg_weights, target_weight, memo = {}):
     """
@@ -39,28 +40,26 @@ def dp_make_weight(egg_weights, target_weight, memo = {}):
     #        j -= 1
     #return len(egg_taken)
     
-    # optimal eggs to be taken
-    
+    # iterative dynamic version
+    # populate the memo with an imposible no. of coins
+    for j in range(target_weight + 1):
+        memo[j] = target_weight + 1
 
-    # check for available memos
-    # memo key is list of egg taken value is length of that list
-    if target_weight in memo:
-        smallest = memo[target_weight]
+    # iterate through 0 - target_weight-1
+    for target in range(target_weight + 1):
+        if not target:
+            memo[target] = 0
+            continue
 
-    # base case (i dont have it yet fuckkkk!!!)
-    elif target_weight in egg_weights:  
-        return 1
-     
-     else:
-        # iterate through all eggs weight; check if it's still possible to add it to the ship
-        for j in reversed(range(len(egg_weights))):
-            if egg_weights[j] < target_weight:
-                
+        # try all of the possible weights
+        for weight in egg_weights:
+            if weight <= target:
+                temp = 1 + memo[target-weight]
+            if temp < memo[target]:
+                memo[target] = temp
 
-
-
-    return smallest
-
+    return memo[target_weight]
+   
 
 # EXAMPLE TESTING CODE, feel free to add more if you'd like
 if __name__ == '__main__':
