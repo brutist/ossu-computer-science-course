@@ -43,19 +43,23 @@ def dp_make_weight(egg_weights, target_weight, memo = {}):
     
 
     # check for available memos
-    if len(egg_taken) in memo:
-        return memo[len(egg_taken)]
+    # memo key is list of egg taken value is length of that list
+    if target_weight in memo:
+        smallest = memo[target_weight]
 
-    # base case
-    elif target_weight in egg_weights:
-        return target_weight
-    
-    else:
-        
-        egg_taken = dp_make_weight(egg_weights, target_weight, memo)
+    # base case (i dont have it yet fuckkkk!!!)
+    elif target_weight in egg_weights:  
+        return 1
+     
+     else:
+        # iterate through all eggs weight; check if it's still possible to add it to the ship
+        for j in reversed(range(len(egg_weights))):
+            if egg_weights[j] < target_weight:
+                
 
 
-    return len(egg_taken)
+
+    return smallest
 
 
 # EXAMPLE TESTING CODE, feel free to add more if you'd like
