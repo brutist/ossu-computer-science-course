@@ -9,7 +9,8 @@
 # Part B: Golden Eggs
 #================================
 
-
+from random import randint
+import sys
 # Problem 1
 def dp_make_weight(egg_weights, target_weight, memo = {}):
     """
@@ -43,9 +44,10 @@ def dp_make_weight(egg_weights, target_weight, memo = {}):
         memo[target_weight] = target_weight + 1
         # choose from the egg weights
         for j in range(len(egg_weights)):
+            # skip weight if it is larger than the available weight
             if egg_weights[j] > target_weight:
                 continue
-
+            
             if egg_weights[j] <= target_weight:
                 temp = 1 + dp_make_weight(egg_weights, target_weight - egg_weights[j], memo)
 
@@ -56,7 +58,7 @@ def dp_make_weight(egg_weights, target_weight, memo = {}):
     return memo[target_weight]
 
 
-def dp_make_weight_greedy(egg_weights, target_weight, memo = {}):
+def dp_make_weight_greedy(egg_weights, target_weight):
     # this is greedy algorithm which might be a good enough solution for this problem.
     total_weight = 0
     egg_taken = []
@@ -104,23 +106,90 @@ def dp_make_weight_iterative(egg_weights, target_weight, memo = {}):
     return memo[target_weight]
    
 
+def test_dp(egg_weights, total):
+
+    greedy = dp_make_weight_greedy(egg_weights, total)
+    iterative = dp_make_weight_iterative(egg_weights, total, memo={})
+    recursive = dp_make_weight(egg_weights, total, memo={})
+    base_line = minCoins(egg_weights,len(egg_weights) ,total)
+   
+    print('GREEDY OUTPUT:', greedy)
+    print('ITERATIVE OUTPUT:', iterative)
+    print('RECURSIVE OUTPUT:', recursive)
+    print('BASELINE OUTPUT:', base_line)
+    result = 'PASSED'
+    if iterative != recursive:
+        print('     ITERATIVE AND RECURSIVE DOES NOT COINCIDE: TEST FAILED')
+        print('     TEST PARAMETERS', egg_weights, 'TOTAL:', total)
+        result = 'FAILED'
+    if (greedy < iterative or greedy < recursive) and greedy != -1:
+        print('     GREEDY FOUND A BETTER SOLUTION: TEST FAILED')
+        print('     TEST PARAMETERS', egg_weights, 'TOTAL:', total)
+        print('     ITERATIVE RESULT:', iterative)
+        result = 'FAILED'
+    if base_line != iterative:
+        print('     ITERATIVE NOT EQUAL TO BASELINE')
+        print('     TEST PARAMETERS', egg_weights, 'TOTAL:', total)
+        result = 'FAILED'
+    if iterative <= greedy and recursive <= greedy and iterative == recursive:
+        print('     TEST PASSED')
+    print()
+    
+    return result
+
+def tests_dp(no_of_weights, total, no_of_test):
+    for i in range(no_of_test):
+
+        egg_weights = []
+        for i in range(no_of_weights):
+            egg_weights.append(randint(1,total//4))
+    
+        egg_weights = tuple(sorted(egg_weights))
+        result = test_dp(egg_weights, total)
+
+        if result == 'FAILED':
+            print('RESULT FAILED')
+            return
+        
+# source https://www.geeksforgeeks.org/find-minimum-number-of-coins-that-make-a-change/
+# testing purposes
+# m is size of coins array (number of different coins)
+def minCoins(coins, m, V):
+     
+    # table[i] will be storing the minimum
+    # number of coins required for i value.
+    # So table[V] will have result
+    table = [0 for i in range(V + 1)]
+ 
+    # Base case (If given value V is 0)
+    table[0] = 0
+ 
+    # Initialize all table values as Infinite
+    for i in range(1, V + 1):
+        table[i] = sys.maxsize
+ 
+    # Compute minimum coins required
+    # for all values from 1 to V
+    for i in range(1, V + 1):
+         
+        # Go through all coins smaller than i
+        for j in range(m):
+            if (coins[j] <= i):
+                sub_res = table[i - coins[j]]
+                if (sub_res != sys.maxsize and
+                    sub_res + 1 < table[i]):
+                    table[i] = sub_res + 1
+     
+    if table[V] == sys.maxsize:
+        return -1
+       
+    return table[V]
+ 
+    
 # EXAMPLE TESTING CODE, feel free to add more if you'd like
 if __name__ == '__main__':
-    egg_weights = (1, 5, 10, 25)
-    n = 99
-    print("Egg weights = (1, 5, 10, 25)")
-    print("n = 99")
-    print("Expected ouput: 9 (3 * 25 + 2 * 10 + 4 * 1 = 99)")
-    print("Actual output RECURSIVE :", dp_make_weight(egg_weights, n))
-    print("Actual output ITERATIVE:", dp_make_weight_iterative(egg_weights, n))
-    print("Actual output GREEDY :", dp_make_weight_greedy(egg_weights, n))
-    print()
 
-    egg_weights = (1,3,4,5)
-    n = 7
-    print("n = 7")
-    print("Expected ouput: 2")
-    print("Actual output RECURSIVE :", dp_make_weight(egg_weights, n))
-    print("Actual output ITERATIVE:", dp_make_weight_iterative(egg_weights, n))
-    print("Actual output GREEDY :", dp_make_weight_greedy(egg_weights, n))
-    print()
+    no_of_weights = 3
+    total = 100
+    no_of_test = 100000
+    tests_dp(no_of_weights, total, no_of_test)
