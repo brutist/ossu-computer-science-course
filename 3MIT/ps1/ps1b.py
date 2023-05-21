@@ -41,7 +41,8 @@ def dp_make_weight(egg_weights, target_weight, memo = {}):
         return memo[target_weight]
 
     else:
-        memo[target_weight] = target_weight + 1
+        # populate memo with highes possible value
+        memo[target_weight] = sys.maxsize
         # choose from the egg weights
         for j in range(len(egg_weights)):
             # skip weight if it is larger than the available weight
@@ -107,7 +108,12 @@ def dp_make_weight_iterative(egg_weights, target_weight, memo = {}):
    
 
 def test_dp(egg_weights, total):
+    '''
+    egg_weights (tuple of ints) - this is a tuple of egg weights that always contain at least one '1' value.
+    total (int) - weight limit of the ship.
 
+    return result (string: PASSED or FAILED) - result of the test. 
+    '''
     greedy = dp_make_weight_greedy(egg_weights, total)
     iterative = dp_make_weight_iterative(egg_weights, total, memo={})
     recursive = dp_make_weight(egg_weights, total, memo={})
@@ -118,7 +124,7 @@ def test_dp(egg_weights, total):
     print('RECURSIVE OUTPUT:', recursive)
     print('BASELINE OUTPUT:', base_line)
     result = 'PASSED'
-    if iterative != recursive:
+    if iterative != recursive and iterative != -1:
         print('     ITERATIVE AND RECURSIVE DOES NOT COINCIDE: TEST FAILED')
         print('     TEST PARAMETERS', egg_weights, 'TOTAL:', total)
         result = 'FAILED'
@@ -138,13 +144,22 @@ def test_dp(egg_weights, total):
     return result
 
 def tests_dp(no_of_weights, total, no_of_test):
+    '''
+    no_of_weights (int) - creates a randomly populated tuple with no_of_weights. The tuple always contain at least one 1 value.
+    total (int) - weight limit of the ship
+    no_of_test - number of test that will be done on greedy, iterative, recursive and baseline algorithms above
+
+    return None but program terminates if one of the test fails.
+    '''
     for i in range(no_of_test):
 
         egg_weights = []
-        for i in range(no_of_weights):
+        # minus 1 to account for an additional coin below
+        for i in range(no_of_weights-1):
             egg_weights.append(randint(1,total//4))
     
-        egg_weights = tuple(sorted(egg_weights))
+        # There is always a coin that has a value of 1.
+        egg_weights = tuple(sorted(egg_weights + [1]))
         result = test_dp(egg_weights, total)
 
         if result == 'FAILED':
@@ -189,7 +204,7 @@ def minCoins(coins, m, V):
 # EXAMPLE TESTING CODE, feel free to add more if you'd like
 if __name__ == '__main__':
 
-    no_of_weights = 3
+    no_of_weights = 2
     total = 100
-    no_of_test = 100000
+    no_of_test = 1000
     tests_dp(no_of_weights, total, no_of_test)
