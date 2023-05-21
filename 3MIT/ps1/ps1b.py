@@ -30,31 +30,30 @@ def dp_make_weight(egg_weights, target_weight, memo = {}):
     
     # recursive dynamic version (top-down version)
     
-    # populate dict with impossible values
-    for j in range(target_weight + 1):
-        memo[j] = target_weight + 1
-
     # check if answer in memo
-    if target_weight in memo and not memo[target_weight] > target_weight:
+    if target_weight in memo:
         return memo[target_weight]
     
     # base case
     elif target_weight == 0:
-        return 0
+        memo[target_weight] = 0
+        return memo[target_weight]
 
     else:
-        for j in reversed(range(len(egg_weights))):
+        memo[target_weight] = target_weight + 1
+        # choose from the egg weights
+        for j in range(len(egg_weights)):
             if egg_weights[j] > target_weight:
                 continue
 
             if egg_weights[j] <= target_weight:
                 temp = 1 + dp_make_weight(egg_weights, target_weight - egg_weights[j], memo)
 
+            # save new smallest to the memo
             if temp < memo[target_weight]:
                 memo[target_weight] = temp
-    print(memo)
-    return memo[target_weight]
 
+    return memo[target_weight]
 
 
 def dp_make_weight_greedy(egg_weights, target_weight, memo = {}):
@@ -112,7 +111,16 @@ if __name__ == '__main__':
     print("Egg weights = (1, 5, 10, 25)")
     print("n = 99")
     print("Expected ouput: 9 (3 * 25 + 2 * 10 + 4 * 1 = 99)")
-    print("Actual output GREEDY :", dp_make_weight(egg_weights, n))
+    print("Actual output RECURSIVE :", dp_make_weight(egg_weights, n))
+    print("Actual output ITERATIVE:", dp_make_weight_iterative(egg_weights, n))
+    print("Actual output GREEDY :", dp_make_weight_greedy(egg_weights, n))
+    print()
+
+    egg_weights = (1,3,4,5)
+    n = 7
+    print("n = 7")
+    print("Expected ouput: 2")
+    print("Actual output RECURSIVE :", dp_make_weight(egg_weights, n))
     print("Actual output ITERATIVE:", dp_make_weight_iterative(egg_weights, n))
     print("Actual output GREEDY :", dp_make_weight_greedy(egg_weights, n))
     print()
