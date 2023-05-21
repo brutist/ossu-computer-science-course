@@ -1,3 +1,5 @@
+Problem A.5: Writeup
+
 
 1. What were your results from compare_cow_transport_algorithms? 
 Which algorithm runs faster? Why?
@@ -43,4 +45,35 @@ combination and picks the best, in this case the least number of trips. This alg
 weakness that the greedy has but it does so by trading time with it. As mentioned in my earlier answers,
 The growth complexity of this algorithm is probably in factorial or exponential time, 
 though this can probably be reduced by using a more efficient? set_partition algorithm.
+'''
+
+
+
+
+Problem B.2: Writeup
+
+Answer the following questions in the same PDF file ps1_answers.pdf.
+1. Explain why it would be difficult to use a brute force algorithm to solve this problem if there were 
+30 different egg weights. You do not need to implement a brute force algorithm in order to answer this.
+'''
+Exploring all possible combinations in all possible lengths would be too time consuming. The order of growth 
+of a naive brute-force algorithm would be a O(n^n).
+'''
+
+2. If you were to implement a greedy algorithm for finding the minimum number of eggs needed, what would 
+the objective function be? What would the constraints be? What strategy would your greedy algorithm follow 
+to pick which coins to take? You do not need to implement a greedy algorithm in order to answer this.
+'''
+One greedy solution would be to sort the weights in reversed picking the heaviest first and pick the next 
+element if there is still some space until there are no more weights to choose from that will fit in the remaining limit 
+or the weight limit has been achieved. I have acutally implemented this particular greedy algorithm and my objective
+function is similar to the others which is to minimize the number of eggs taken.
+'''
+
+3. Will a greedy algorithm always return the optimal solution to this problem? Explain why it is optimal or 
+give an example of when it will not return the optimal solution. Again, you do not need to implement a greedy 
+algorithm in order to answer this.
+'''
+Before implmenting the greedy algorithm, I really thought it would return the optimal solution every time. But just like
+with Problem A, there are instances in which the greedy would fail to choose the global optimal.
 '''
