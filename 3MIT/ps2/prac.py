@@ -18,7 +18,7 @@ class Node(object):
         return self.name
 
 
-class Edges(object):
+class Edge(object):
     '''
     Edges are represented with a source and a destination both of which are node Objects
     Assumes that src and dest are nodes
@@ -83,3 +83,12 @@ class Digraph(object):
                 result = result + src.getName() + ' ->> ' + dest.getName() + '\n'
 
         return result[:-1] # omit final newline
+
+class Graph(Digraph):
+    def __init__(self):
+        Digraph.__init__(self)
+        
+    def addEdge(self, edge):
+        Digraph.addEdge(self, edge)
+        rev = Edge(edge.getDestination(), edge.getSource())
+        Digraph.addEdge(self, rev)
