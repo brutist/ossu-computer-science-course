@@ -1,8 +1,8 @@
 # 6.0002 Problem Set 5
 # Graph optimization
-# Name:
-# Collaborators:
-# Time:
+# Name: Jonathan Mauring Jr
+# Collaborators: None
+# Time: start: May 22, 2023
 
 import unittest
 
@@ -55,17 +55,18 @@ class Edge(object):
 
 class WeightedEdge(Edge):
     def __init__(self, src, dest, total_distance, outdoor_distance):
-        pass  # TODO
+        Edge.__init__(self, src, dest)
+        self.total_dist = total_distance
+        self.outdoor_dist = outdoor_distance
 
     def get_total_distance(self):
-        pass  # TODO
+        return self.total_dist
 
     def get_outdoor_distance(self):
-        pass  # TODO
+        return self.outdoor_dist
 
     def __str__(self):
-        pass  # TODO
-
+        return '{}->{} ({}, {})'.format(self.get_source(), self.get_destination(), self.get_total_distance(), self.get_outdoor_distance())
 
 class Digraph(object):
     """Represents a directed graph of Node and Edge objects"""
@@ -90,14 +91,22 @@ class Digraph(object):
     def add_node(self, node):
         """Adds a Node object to the Digraph. Raises a ValueError if it is
         already in the graph."""
-        pass  # TODO
-
+        if node in self.nodes:
+            raise ValueError('node already in the graph')
+        self.nodes.add(node)
+    
     def add_edge(self, edge):
         """Adds an Edge or WeightedEdge instance to the Digraph. Raises a
         ValueError if either of the nodes associated with the edge is not
         in the  graph."""
-        pass  # TODO
+        src = edge.get_source()
+        dest = edge.get_destination()
 
+        if src not in self.nodes or dest not in self.nodes:
+            raise ValueError('nodes in edge is not in the graph')
+        self.edges[src] = []
+        self.edges[src].append(edge)
+        
 
 # ================================================================
 # Begin tests -- you do not need to modify anything below this line

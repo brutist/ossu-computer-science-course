@@ -1,7 +1,8 @@
 '''
 This file is created to replicate the program in 6.0002 Introduction to Computational Thinking and Data Science.
 
-All codes here were created from scratch after watching the video '3. Graph-theoretic Models'
+All codes here were created with the help of the video and some occassional peeking on the source code provided
+Video: 3. Graph-theoretic Models from 6.0002 Introduction to Computational Thinking and Data Science
 '''
 import random
 
