@@ -2,5 +2,5 @@ This folder contains all of my work with regards to the 6.0002 Introduction To C
 
 It may include the following:
 a. solution for problem sets
-b. practice coding sessions (named pracx.py, accordingly)
+b. practice coding sessions named pracXX.py, accordingly
 c. writeups for problem sets
