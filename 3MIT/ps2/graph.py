@@ -66,7 +66,7 @@ class WeightedEdge(Edge):
         return self.outdoor_dist
 
     def __str__(self):
-        return '{}->{} ({}, {})'.format(self.get_source(), self.get_destination(), self.get_total_distance(), self.get_outdoor_distance())
+        return '{}->{} ({}, {})'.format(self.src, self.dest, self.total_dist, self.outdoor_dist)
 
 class Digraph(object):
     """Represents a directed graph of Node and Edge objects"""
@@ -104,9 +104,12 @@ class Digraph(object):
 
         if src not in self.nodes or dest not in self.nodes:
             raise ValueError('nodes in edge is not in the graph')
-        self.edges[src] = []
-        self.edges[src].append(edge)
         
+        # add source if not yet in dicitonary (this took me fucking hours to figure out!!!)
+        if src not in self.edges:
+            self.edges[src] = []
+        # else append into it
+        self.edges[src].append(edge)     
 
 # ================================================================
 # Begin tests -- you do not need to modify anything below this line
