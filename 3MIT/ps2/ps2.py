@@ -9,7 +9,7 @@
 #
 import unittest
 from graph import Digraph, Node, WeightedEdge
-
+import time
 #
 # Problem 2: Building up the Campus Map
 #
@@ -19,8 +19,8 @@ from graph import Digraph, Node, WeightedEdge
 # do the graph's edges represent? Where are the distances
 # represented?
 #
-# Answer:
-#
+# Answer: The nodes are the buildings and the edges are the total distance and total outdoor distance from 
+#          one building to the next (denoted by building numbers). The distances were represented 
 
 
 # Problem 2b: Implementing load_map
@@ -46,18 +46,47 @@ def load_map(map_filename):
     # TODO
     print("Loading map from file...")
 
+    # open file
+    filhand = open(map_filename)
+    
+    g = Digraph()
+    for d in filhand:
+        d = d.strip().split(' ')
+        src = Node(d[0])
+        dest = Node(d[1])
+        edge = WeightedEdge(src, dest, int(d[2]), int(d[3]))
+
+        # create nodes in the map
+        if not g.has_node(src):
+            g.add_node(src)
+        if not g.has_node(dest):
+            g.add_node(dest)
+
+        # add edge to the graph
+        g.add_edge(edge)
+    
+    filhand.close()
+    return g
+
 # Problem 2c: Testing load_map
 # Include the lines used to test load_map below, but comment them out
-
-
+class testLoadMap(unittest.TestCase):
+    def test_load_map(self):
+        expected = 'a->b (10, 9)\na->c (12, 2)\nb->c (1, 1)'
+        graph = load_map('test_load_map.txt')
+        self.assertEqual(str(graph), expected)
+    
+    
 #
-# Problem 3: Finding the Shorest Path using Optimized Search Method
+# Problem 3: Finding the Shortest Path using Optimized Search Method
 #
 # Problem 3a: Objective function
 #
 # What is the objective function for this problem? What are the constraints?
 #
-# Answer:
+# Answer: The objective function is minimizing the amount of time walking outdoors. 
+#           i.e best path is one with the smallest outdoor distance sum
+        
 #
 
 # Problem 3b: Implement get_best_path
@@ -217,4 +246,6 @@ class Ps2Test(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main() 
+    
+    

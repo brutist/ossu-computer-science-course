@@ -105,7 +105,7 @@ class Digraph(object):
         if src not in self.nodes or dest not in self.nodes:
             raise ValueError('nodes in edge is not in the graph')
         
-        # add source if not yet in dicitonary (this took me fucking hours to figure out!!!)
+        # add source if not yet in dictionary (this took me fucking hours to figure out!!!)
         if src not in self.edges:
             self.edges[src] = []
         # else append into it
