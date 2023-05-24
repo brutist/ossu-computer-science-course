@@ -200,8 +200,7 @@ if __name__ == '__main__':
     #    testSP(randomNodeName(graph), randomNodeName(graph))
     #    print()
 
-    path = [['hey'], 1, 1]
+    path = [['hey'], 1, 1] + [['start'], 2, 2]
     
-    path[1] = path[1] + 2
-    
+
     print(path)
