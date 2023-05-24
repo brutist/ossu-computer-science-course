@@ -136,8 +136,8 @@ def DFS(graph, start, end, path, shortest, toPrint=False):
     '''
     graph (graph object) - could be a digraph or a graph
     start and end (node object) - the nodes to find a path from and to
-    path (list) - MUST BE SET TO EMPTY LIST FIRST ([])
-    shortest (None) - MUST BE SET TO NONE FIRST
+    path (list of string) - MUST BE SET TO EMPTY LIST FIRST ([])
+    shortest (list of string) - MUST BE SET TO NONE FIRST
     toPrint (bool) - True if you want to print some debugging messages; false otherwise
 
     returns shortest (list of nodes) - the shortest path that leads from start to end nodes. 
@@ -194,9 +194,14 @@ if __name__ == '__main__':
     graph = buildCityGraph(Graph)
  
 
-    TEST = 10
+    #TEST = 10
 
-    for i in range(TEST):
-        testSP(randomNodeName(graph), randomNodeName(graph))
-        print()
+    #for i in range(TEST):
+    #    testSP(randomNodeName(graph), randomNodeName(graph))
+    #    print()
+
+    path = [['hey'], 1, 1]
     
+    path[1] = path[1] + 2
+    
+    print(path)

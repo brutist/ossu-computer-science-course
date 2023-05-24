@@ -20,7 +20,8 @@ import time
 # represented?
 #
 # Answer: The nodes are the buildings and the edges are the total distance and total outdoor distance from 
-#          one building to the next (denoted by building numbers). The distances were represented 
+#          one building to the next (denoted by building numbers). The distances were represented as edges
+#           which will be stored as a weighted edge- a value in dictionary of nodes
 
 
 # Problem 2b: Implementing load_map
@@ -84,10 +85,11 @@ class testLoadMap(unittest.TestCase):
 #
 # What is the objective function for this problem? What are the constraints?
 #
-# Answer: The objective function is minimizing the amount of time walking outdoors. 
-#           i.e best path is one with the smallest outdoor distance sum
+# Answer: The objective function is minimizing the distance traveled. 
+#           i.e best path is one with the smallest total distance
+#         The constraint is sum of outdoor distance <= maximum distance outdoors.
         
-#
+        
 
 # Problem 3b: Implement get_best_path
 def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
@@ -124,8 +126,34 @@ def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
         If there exists no path that satisfies max_total_dist and
         max_dist_outdoors constraints, then return None.
     """
-    # TODO
-    pass
+    path[0].append(start.get_name())
+    
+    # base case
+    if start == end:
+        return path
+
+    # main recursive body
+    # explore all nodes of start node
+    # keep track that outdoor_distance <= max_dist_outdoors
+
+    # edges are represented with [start, end, total_dist, outdoor_dist]
+    for edge in get_edges_for_node(start):
+        start = edge[0]
+        next = edge[1]
+        total_dist = edge[2]
+        outdoor_dist = edge[3]
+        best_dist += total_dist
+
+        if outdoor_dist <= max_dist_outdoors and str(next) not in path[0]:
+            max_dist_outdoors -= edge[3]
+            newPath = get_best_path(digraph, node, path, max_dist_outdoors, best_dist, best_path)
+
+        if best_path == None or len(newPath) < len(best_path):
+            best_path = newPath
+
+
+
+
 
 
 # Problem 3c: Implement directed_dfs
