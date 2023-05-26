@@ -153,7 +153,7 @@ def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
                     print(result)
                     return result[0], result[1]
                 
-    return path[0], path[1]
+    return path[0], path[1], path[2]
 
 
 # Problem 3c: Implement directed_dfs
