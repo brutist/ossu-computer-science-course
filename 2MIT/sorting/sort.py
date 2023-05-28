@@ -96,7 +96,7 @@ def mergeSort(values):
     if len(values) == 1:
         return values
     else:
-        middle = len(values) // 2
+        middle = len(values) // 2  
         left = mergeSort(values[middle:])
         right = mergeSort(values[:middle])
         return merge(left, right)
