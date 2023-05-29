@@ -150,36 +150,43 @@ def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
         If there exists no path that satisfies max_total_dist and
         max_dist_outdoors constraints, then return None.
     """
-    start = Node(start)
-    end = Node(end)
+    print('PATH:' ,path)
+    print('Best dist:', best_dist)
+    print('Best path:', best_path)
+    print()
 
-    path[0] += [str(start)]
+    # keep track of the current path
+    path[0] += [start]
 
-    # if start and end are not valid nodes, raise an error
-    if (not digraph.has_node(Node(start))) or (not digraph.has_node(Node(end))):
+    if (not digraph.has_node(Node(start)) or (not digraph.has_node(Node(end)))):
         raise ValueError('nodes not in graph')
-    
-    # base case
+
     elif start == end:
         return path[0], path[1]
 
-    # weighted edge representation: [src, dest, total_dist, outdoor_dist]
-    # path representation: [[list of path(strings)], total_dist, outdoor_dist]
-    for e in digraph.get_edges_for_node(start):
-        # checks if node is valid
-        node = e.get_destination()
-        if e.get_destination().get_name() not in path[0] and e.get_outdoor_distance() + path[2] <= max_dist_outdoors:
-            path[1] += e.get_total_distance()
-            path[2] += e.get_outdoor_distance()
+    else:
+        # path is represented with [[list of node names], total_distance, outdoor_distance]
+        # weighted edges are represented [src, dest, total_distance, outdoor_distance]
+        for e in digraph.get_edges_for_node(Node(start)):
+            child = e.get_destination().get_name()
+            dist = e.get_total_distance() + path[1]
+            outdoor_dist = e.get_outdoor_distance() + path[2]
 
-            if best_dist == None or path[1] < best_dist:
-                result = get_best_path(digraph, node, end, path, max_dist_outdoors, path[1], path[0])
+            if child not in path[0] and outdoor_dist <= max_dist_outdoors:
+                updated_path = [path[0], dist, outdoor_dist]
+            
+                possible_path = get_best_path(digraph, child, end, updated_path,
+                max_dist_outdoors, best_dist - dist, best_path)
 
-                if result != None:
-                    print(result)
-                    return result[0], result[1]
-                
-    return path[0], path[1]
+                if possible_path != None:
+                    if possible_path[1] < best_dist:
+                        best_path = possible_path[0]
+                        best_dist = possible_path[1]
+
+   
+    return best_path, best_dist
+
+
 
 
 # Problem 3c: Implement directed_dfs
@@ -211,20 +218,17 @@ def directed_dfs(digraph, start, end, max_total_dist, max_dist_outdoors):
         If there exists no path that satisfies max_total_dist and
         max_dist_outdoors constraints, then raises a ValueError.
     """
-    NO_PATH = None
-    result = get_best_path(digraph, Node(start), Node(end), [[], 0, 0], max_dist_outdoors, max_total_dist, None)
-
-    result = get_best_path(digraph, Node(start), Node(end), [[], 0, 0], max_dist_outdoors, None, None)
+    path = [[], 0, 0]
+    best_path = None
+    result = get_best_path(digraph, start, end, path, max_dist_outdoors, max_total_dist, best_path)
 
     if result == None:
-        raise ValueError('No path found')
+        raise ValueError('No available paths')
+ 
     elif result[1] > max_total_dist:
-        raise ValueError('No path found')
+        raise ValueError('Exceeded maximum allowable distance')
     else:
         return result[0]
-    
-    return NO_PATH
-   
 
 # ================================================================
 # Begin tests -- you do not need to modify anything below this line
