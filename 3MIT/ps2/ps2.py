@@ -2,7 +2,7 @@
 # Graph optimization
 # Name: Jonathan Mauring Jr
 # Collaborators: None
-# Time:
+# Time: start May 22, 2023 end: May 29, 2023
 
 #
 # Finding shortest paths through MIT buildings
@@ -150,10 +150,45 @@ def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
         If there exists no path that satisfies max_total_dist and
         max_dist_outdoors constraints, then return None.
     """
+    # keep track of current path
+    path[0] = path[0] + [start]
+
+    # check if nodes are valid
+    if (not digraph.has_node(Node(start)) or (not digraph.has_node(Node(end)))):
+        raise ValueError('nodes not in graph')
+
+    # check if already exceeded maximum outdoor distance
+    if path[2] > max_dist_outdoors:
+        return None
     
+    # cuts the search if the current path's distance is already longer than the best distance
+    if best_dist and path[1] > best_dist:
+        return None
 
+    # base case
+    elif start == end:
+        return path
 
+    # recursively find possible paths. (a complete path is just n1 + n2 -> nk)
+    for e in digraph.get_edges_for_node(Node(start)):
+        child = e.get_destination().get_name()
+        dist = e.get_total_distance() + path[1]
+        outdoor_dist = e.get_outdoor_distance() + path[2]
 
+        # check for cycles
+        if child not in path[0]:
+            updated_path = [path[0], dist, outdoor_dist]
+
+            possible_path = get_best_path(digraph, child, end, updated_path, max_dist_outdoors, best_dist, best_path)
+
+            if possible_path:
+                if best_dist == None or possible_path[1] < best_dist:
+                    best_path, best_dist = possible_path[0], possible_path[1]
+
+    if best_dist == None:
+        return None
+
+    return best_path, best_dist 
 
 
 # Problem 3c: Implement directed_dfs
@@ -193,6 +228,7 @@ def directed_dfs(digraph, start, end, max_total_dist, max_dist_outdoors):
 
     elif result[1] > max_total_dist:
         raise ValueError('Exceeded maximum allowable distance')
+
     else:
         return result[0]
 
