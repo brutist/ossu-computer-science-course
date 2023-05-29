@@ -150,41 +150,7 @@ def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
         If there exists no path that satisfies max_total_dist and
         max_dist_outdoors constraints, then return None.
     """
-    # keep track of the path
-    path[0] = path[0] + [start]
-
-    # check if the nodes are valid
-    if (not digraph.has_node(Node(start)) or (not digraph.has_node(Node(end)))):
-        raise ValueError('nodes not in graph')
     
-    # check if the max_outdoor distance not yet exceeded
-    if path[2] > max_dist_outdoors:
-        return None
-
-    # base case
-    elif start == end:
-        return path
-
-    for e in digraph.get_edges_for_node(Node(start)):
-        child = e.get_destination().get_name()
-        dist = e.get_total_distance() + path[1]
-        outdoor_dist = e.get_outdoor_distance() + path[2]
-
-        # check for cycles
-        if child not in path[0]:
-            updated_path = [path[0], dist, outdoor_dist]
-
-            possible_path = get_best_path(digraph, child, end, updated_path, max_dist_outdoors, best_dist, best_path)
-
-            if possible_path:
-                if best_dist == None or possible_path[1] < best_dist:
-                    best_path, best_dist = possible_path[0], possible_path[1]
-
-    if best_dist == None:
-        return None
-        
-    return best_path, best_dist
-
 
 
 
