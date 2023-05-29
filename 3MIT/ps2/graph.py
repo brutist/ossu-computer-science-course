@@ -88,6 +88,13 @@ class Digraph(object):
     def has_node(self, node):
         return node in self.nodes
 
+    def get_node(self, name):
+        for node in self.nodes:
+            if node.get_name()== name:
+                return node
+        
+        raise KeyError('node not in graph')
+
     def add_node(self, node):
         """Adds a Node object to the Digraph. Raises a ValueError if it is
         already in the graph."""
