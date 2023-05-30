@@ -77,7 +77,7 @@ class testLoadMap(unittest.TestCase):
         graph = load_map('test_load_map.txt')
         self.assertEqual(str(graph), expected)
     
-    
+
 #
 # Problem 3: Finding the Shortest Path using Optimized Search Method
 #
