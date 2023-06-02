@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # Problem Set 3: Simulating robots
-# Name:
+# Name: Jonathan M. Mauring Jr
 # Collaborators (discussion):
-# Time:
+# Time: start - June 2, 2023
 
 import math
 import random
@@ -77,11 +77,28 @@ class RectangularRoom(object):
         Initializes a rectangular room with the specified width, height, and 
         dirt_amount on each tile.
 
+        Each tile is represented as a key in a dictionary (tuple of x,y coordinate values; 
+        NOT Position object) mapped to its corresponding dirt amount. Each time that the 
+        robot passes in a particular tile, it cleans the tile according to its cleaning 
+        capacity by reducing the value until 0, which means the tile is already 'cleaned'.
+
         width: an integer > 0
         height: an integer > 0
         dirt_amount: an integer >= 0
         """
-        raise NotImplementedError
+        # just to make sure that I don't come up with unknown errors later in the code
+        assert width > 0, 'width should not be less than or equal to zero'
+        assert height > 0, 'height should not be less than or equal to zero'
+        assert dirt_amount >= 0, 'dirt amount should not be less than zero'
+        
+        self.width = width
+        self.height = height
+        self.tiles = {}
+        
+        for i in range(width):
+            for j in range(height):
+                self.tiles[(i, j)] = dirt_amount
+         
     
     def clean_tile_at_position(self, pos, capacity):
         """
@@ -96,7 +113,17 @@ class RectangularRoom(object):
         Note: The amount of dirt on each tile should be NON-NEGATIVE.
               If the capacity exceeds the amount of dirt on the tile, mark it as 0.
         """
-        raise NotImplementedError
+        x = math.floor(pos.get_x())
+        y = math.floor(pos.get_y())
+    
+        assert type(x) == int, 'x-value of Position should be an integer'
+        assert type(y) == int, 'y-value of Position should be an integer'
+
+        self.tiles[(x,y)] = self.tiles[(x,y)] - capacity
+
+        if self.tiles[(x,y)] < 0:
+            self.tiles[(x,y)] = 0
+
 
     def is_tile_cleaned(self, m, n):
         """
@@ -112,13 +139,21 @@ class RectangularRoom(object):
         Note: The tile is considered clean only when the amount of dirt on this
               tile is 0.
         """
-        raise NotImplementedError
+        if self.tiles[(m,n)] > 0:
+            return False
+
+        return True
 
     def get_num_cleaned_tiles(self):
         """
         Returns: an integer; the total number of clean tiles in the room
         """
-        raise NotImplementedError
+        tiles_cleaned = 0
+        for k, v in self.tiles.items():
+            if v <= 0:
+                tiles_cleaned += 1
+        
+        return tiles_cleaned
         
     def is_position_in_room(self, pos):
         """
@@ -127,7 +162,10 @@ class RectangularRoom(object):
         pos: a Position object.
         Returns: True if pos is in the room, False otherwise.
         """
-        raise NotImplementedError
+        x = math.floor(pos.get_x())
+        y = math.floor(pos.get_y())
+
+        return (x,y) in self.tiles
         
     def get_dirt_amount(self, m, n):
         """
@@ -140,7 +178,8 @@ class RectangularRoom(object):
 
         Returns: an integer
         """
-        raise NotImplementedError
+
+        return self.tiles[(m,n)]
         
     def get_num_tiles(self):
         """
