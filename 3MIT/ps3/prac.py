@@ -1,6 +1,7 @@
 import random
 from matplotlib import pyplot as plt
 import pylab
+import math
 
 
 def normal_data():
@@ -77,10 +78,10 @@ class Ball(object):
 
         returns Location object - random location on the table
         '''
-        LENGTH = 12
+        LENGTH = 5
         WIDTH = 3
-        x = random.randint(-LENGTH, LENGTH + 1)
-        y = random.randint(-WIDTH, WIDTH + 1)
+        x = random.randint(-LENGTH, LENGTH)
+        y = random.randint(-WIDTH, WIDTH)
 
         return Location(x, y)
     
@@ -100,10 +101,6 @@ class Ball(object):
         
 
 class Shape(object):
-    def __init__(self):
-        CENTER = Location(0, 0)
-        self.origin = CENTER
-    
     def isBallIn(self, loc):
         '''
         This is a parent class of Square and Circle class.
@@ -120,18 +117,17 @@ class Circle(Shape):
     The circle has a radius of 1 unit. 
     '''
     def __init__(self):
-        CENTER = Location(-3, 0)
-        self.origin = CENTER
+        self.origin = Location(-3,0)
         self.radius = 2
 
     def distance(self, other):
-        x = (self.getX() - other.getX())**2
-        y = (self.getY() - other.getY())**2
+        x = (self.origin.getX() - other.getX())**2
+        y = (self.origin.getY() - other.getY())**2
 
-        return (x + y)**0.5
+        return math.sqrt(x+y)
 
     def isBallIn(self, loc):
-        if self.distance(self.origin, loc) <= self.radius:
+        if self.distance(loc) <= self.radius:
             return True
 
         return False
@@ -144,12 +140,10 @@ class Square(Shape):
     The square has sides of length 1 unit.
     '''
     def __init__(self):
-        Shape.__init__(self)
-        CENTER = Location(3, 0)
-        self.origin = CENTER
+        self.origin = Location(1,0)
 
     def isBallIn(self, loc):
-        if loc.getX() >= 2 and loc.getX() <= 4 and loc.getY() >= -1 and loc.getY() <= 1:
+        if loc.getX() >= 0 and loc.getX() <= 2 and loc.getY() >= -1 and loc.getY() <= 1:
             return True
 
         return False
@@ -169,23 +163,21 @@ class CalculatePi(object):
         nSquare = 0
         nCircle = 0
         for loc in self.ball.dropBalls(n):
-            if self.square.isBallIn(loc):
-                nSquare += 1
-            elif self.circle.isBallIn(loc):
+            if self.circle.isBallIn(loc):
                 nCircle += 1
-            
+            elif self.square.isBallIn(loc):
+                nSquare += 1
+    
         return nCircle/nSquare
-
 
 
 if __name__ == '__main__':
     #normal_data()
 
     # Buffon-Laplace Method on Finding Pi
-    #pi = throwNeedles(100000000)
-    #print('Buffon Laplace Pi:', pi)
+    pi = throwNeedles(100000)
+    print('Buffon Laplace Pi:', pi)
 
     # Monte Carlo Simulation on Finding Pi
-    p = CalculatePi()
-    pi = p.generatePi(1000000)
+    pi = CalculatePi().generatePi(100000)
     print('Monte Carlo Simulation Pi:', pi)
