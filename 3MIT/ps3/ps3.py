@@ -91,8 +91,8 @@ class RectangularRoom(object):
         assert height > 0, 'height should not be less than or equal to zero'
         assert dirt_amount >= 0, 'dirt amount should not be less than zero'
         
-        self.width = width
-        self.height = height
+        self.width = int(width)
+        self.height = int(height)
         self.tiles = {}
         
         for i in range(self.width):
@@ -484,8 +484,10 @@ s2 = time.time()
 # test_robot_movement(FaultyRobot, EmptyRoom)
 e2 = time.time()
 
-print('Standard Robot TIME:', e1 - s1)
-print('Faulty Robot TIME:', e2 - s2)
+# I was being stupid and tried to measure the relative difference between execution time
+# using one sample. heheh
+# print('Standard Robot TIME:', e1 - s1)
+# print('Faulty Robot TIME:', e2 - s2)
 
 
 # === Problem 5
@@ -534,11 +536,11 @@ def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_
     
     return avg_steps
 
-# print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 5, 5, 3, 1.0, 50, StandardRobot)))
-# print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 10, 10, 3, 0.8, 50, StandardRobot)))
-# print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 10, 10, 3, 0.9, 50, StandardRobot)))
-# print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 20, 20, 3, 0.5, 50, StandardRobot)))
-# print ('avg time steps: ' + str(run_simulation(3, 1.0, 1, 20, 20, 3, 0.5, 50, StandardRobot)))
+print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 5, 5, 3, 1.0, 50, StandardRobot)))
+print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 10, 10, 3, 0.8, 50, StandardRobot)))
+print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 10, 10, 3, 0.9, 50, StandardRobot)))
+print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 20, 20, 3, 0.5, 50, StandardRobot)))
+print ('avg time steps: ' + str(run_simulation(3, 1.0, 1, 20, 20, 3, 0.5, 50, StandardRobot)))
 
 # === Problem 6
 #
@@ -546,13 +548,21 @@ def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_
 #
 # 1)How does the performance of the two robot types compare when cleaning 80%
 #       of a 20x20 room?
-#
+#       There is a relatively small difference between the two types of robots. 
+#       It was also expected that as the number of robots grow, the time steps 
+#       taken to clean the room decreases. Overall, there's not a lot of surprises
+#       in this data set.
 #
 # 2) How does the performance of the two robot types compare when two of each
 #       robot cleans 80% of rooms with dimensions 
 #       10x30, 20x15, 25x12, and 50x6?
-#
-#
+#       There was a huge gap beetween the robots' performance (faulty robot is 20-40% slower). 
+#       I think this gap stems from the fact that in a sufficiently large room the 15% change 
+#       of the faulty robot to not being able to clean a tile adds up. We can also see that although 
+#       increasing aspect ratio has a detrimental effect on the performance of both robots, it was 
+#       more pronounced on the faulty robot. 
+#       
+
 
 def show_plot_compare_strategies(title, x_label, y_label):
     """
@@ -596,5 +606,5 @@ def show_plot_room_shape(title, x_label, y_label):
     pylab.show()
 
 
-#show_plot_compare_strategies('Time to clean 80% of a 20x20 room, for various numbers of robots','Number of robots','Time / steps')
-#show_plot_room_shape('Time to clean 80% of a 300-tile room for various room shapes','Aspect Ratio', 'Time / steps')
+show_plot_compare_strategies('Time to clean 80% of a 20x20 room, for various numbers of robots','Number of robots','Time / steps')
+show_plot_room_shape('Time to clean 80% of a 300-tile room for various room shapes','Aspect Ratio', 'Time / steps')
