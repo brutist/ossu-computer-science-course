@@ -8,6 +8,9 @@ import unittest
 import random
 import test
 import ps3
+# just to get rid of some annoying deprecation errors on Daemon. IDK about it.
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
 def xyrange(x_upper_bound, y_upper_bound):
     """ Returns the cartesian product of range(x_upper_bound) and range(y_upper_bound).
@@ -493,7 +496,7 @@ class SimulationTester(unittest.TestCase):
         thr.start()
         # Allow SIMULATION_TIME_LIMIT seconds for test to finish
         thr.join(SIMULATION_TIME_LIMIT)
-        if thr.isAlive():
+        if thr.is_alive():
             self.fail("Simulation took too long (more than %d seconds)" %
                       SIMULATION_TIME_LIMIT)
         elif thr.getExceptionInfo():

@@ -6,7 +6,7 @@
 
 import math
 import random
-
+import time
 import ps3_visualize
 import pylab
 
@@ -227,6 +227,7 @@ class Robot(object):
         capacity: a positive interger; the amount of dirt cleaned by the robot 
                   in a single time-step
         """
+        self.room = room
         self.position = room.get_random_position()
         self.robot_direction = random.uniform(0, 360.0)
         self.robot_speed = speed
@@ -301,9 +302,10 @@ class EmptyRoom(RectangularRoom):
         """
         Returns: a Position object; a valid random position (inside the room).
         """
+        # I kind of don't like how inefficient this 2 random calls are
         x = random.uniform(0, self.width)
         y = random.uniform(0, self.height)
-
+        
         return Position(x,y)
 
 class FurnishedRoom(RectangularRoom):
@@ -385,6 +387,7 @@ class FurnishedRoom(RectangularRoom):
         """
         rand_tile = None
 
+        # use random module to generate a random tile and  check if it is furnished
         while rand_tile == None or self.is_position_valid(rand_tile) == False:
             x = random.uniform(0, self.width)
             y = random.uniform(0, self.height)
@@ -402,6 +405,11 @@ class StandardRobot(Robot):
     direction; when it would hit a wall or furtniture, it *instead*
     chooses a new direction randomly.
     """
+    # i always forget __init__ statements
+    def __init__(self, room, speed, capacity):
+        Robot.__init__(self, room, speed, capacity)
+
+
     def update_position_and_clean(self):
         """
         Simulate the raise passage of a single time-step.
@@ -410,11 +418,20 @@ class StandardRobot(Robot):
         rotate once to a random new direction, and stay stationary) and clean the dirt on the tile
         by its given capacity. 
         """
-        raise NotImplementedError
+        new_position = self.position.get_new_position(self.robot_direction, self.robot_speed)
+
+        if self.room.is_position_valid(new_position):
+            self.set_robot_position(new_position)
+            self.room.clean_tile_at_position(new_position, self.capacity)
+        else:
+            self.set_robot_direction(random.uniform(0, 360.0))
 
 # Uncomment this line to see your implementation of StandardRobot in action!
-#test_robot_movement(StandardRobot, EmptyRoom)
-#test_robot_movement(StandardRobot, FurnishedRoom)
+s1 = time.time()
+# test_robot_movement(StandardRobot, EmptyRoom)
+e1 = time.time()
+
+# test_robot_movement(StandardRobot, FurnishedRoom)
 
 # === Problem 4
 class FaultyRobot(Robot):
@@ -454,10 +471,22 @@ class FaultyRobot(Robot):
         StandardRobot at this time-step (checking if it can move to a new position,
         move there if it can, pick a new direction and stay stationary if it can't)
         """
-        raise NotImplementedError
         
-    
-#test_robot_movement(FaultyRobot, EmptyRoom)
+        new_position = self.position.get_new_position(self.robot_direction, self.robot_speed)
+
+        if self.room.is_position_valid(new_position) and not self.gets_faulty():
+            self.set_robot_position(new_position)
+            self.room.clean_tile_at_position(new_position, self.capacity)
+        else:
+            self.set_robot_direction(random.uniform(0,360.0))
+
+s2 = time.time()
+# test_robot_movement(FaultyRobot, EmptyRoom)
+e2 = time.time()
+
+print('Standard Robot TIME:', e1 - s1)
+print('Faulty Robot TIME:', e2 - s2)
+
 
 # === Problem 5
 def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_coverage, num_trials,
@@ -481,8 +510,29 @@ def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_
     robot_type: class of robot to be instantiated (e.g. StandardRobot or
                 FaultyRobot)
     """
-    raise NotImplementedError
+    # run the simulation num_trials of times
+    time_steps = []
 
+    for i in range(num_trials):
+        room = EmptyRoom(width, height, dirt_amount)
+        robots = []
+
+        # instantiate the robots into the room
+        for j in range(num_robots):
+            robots.append(robot_type(room, speed, capacity))
+
+        # keep track of how many time steps have passed to reached min_coverage
+        time_step = 0
+        while not (room.get_num_cleaned_tiles() / room.get_num_tiles() >= min_coverage):
+            for robot in robots:
+                robot.update_position_and_clean() # make sure to update the position of the robots
+            time_step += 1
+
+        time_steps.append(time_step)
+
+    avg_steps = sum(time_steps) / num_trials
+    
+    return avg_steps
 
 # print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 5, 5, 3, 1.0, 50, StandardRobot)))
 # print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 10, 10, 3, 0.8, 50, StandardRobot)))
