@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # Problem Set 3: Simulating robots
 # Name: Jonathan M. Mauring Jr
-# Collaborators (discussion):
-# Time: start - June 2, 2023
+# Collaborators (discussion): None
+# Time: start - June 2, 2023 end - June 3, 2023
 
 import math
 import random
@@ -605,6 +605,6 @@ def show_plot_room_shape(title, x_label, y_label):
     pylab.ylabel(y_label)
     pylab.show()
 
-
-show_plot_compare_strategies('Time to clean 80% of a 20x20 room, for various numbers of robots','Number of robots','Time / steps')
-show_plot_room_shape('Time to clean 80% of a 300-tile room for various room shapes','Aspect Ratio', 'Time / steps')
+# Uncomment this lines if you want to see the plots of several simulations
+# show_plot_compare_strategies('Time to clean 80% of a 20x20 room, for various numbers of robots','Number of robots','Time / steps')
+# show_plot_room_shape('Time to clean 80% of a 300-tile room for various room shapes','Aspect Ratio', 'Time / steps')
