@@ -68,9 +68,24 @@ def run_sims(goal, trials, samples, to_print=False):
 
     return mean
 
+
+def same_date(num_people, num_same):
+    possible_dates = range(366)
+    birthdays = [0] * 366
+
+    for i in range(num_people):
+        birth_date = random.choice(possible_dates)
+        birthdays[birth_date] += 1
+
+    return max(birthdays) >= num_same
+
 if __name__ == '__main__':
     GOAL = '1111'
     TRIALS = 10000
     SAMPLES = 50
-    mean = run_sims(GOAL, TRIALS, SAMPLES, True)
-    print('Estimated probability:', mean)
+    #mean = run_sims(GOAL, TRIALS, SAMPLES, True)
+    #print('Estimated probability:', mean)
+
+    PEOPLE = 100
+    SAME = 4
+    print(same_date(PEOPLE, SAME))
