@@ -1,6 +1,5 @@
 import random
 
-random.seed(0)
 def roll_die():
     ''' Returns a random int from 1 - 6'''
     return random.choice([1,2,3,4,5,6])
@@ -27,9 +26,11 @@ def run_sim(goal, trials, to_print=False):
         Parameters
         goal (string) - expected result from die rolls. Assumes the 
                         string is only composed of numbers 1-6.
-        trial (int)       - number of die rolls.
+        trial (int)   - number of die rolls.
 
-        prints the probability of getting the goal. Returns None
+        prints the probability of getting the goal, if to_print=True.
+        Returns sim_prob(float with 8 decimals only) - simulation probability 
+                            that the goal is drawn.
     '''
     goal_achieved = 0
     for i in range(trials):
@@ -39,13 +40,37 @@ def run_sim(goal, trials, to_print=False):
     
     act_prob = round(1/(6 ** len(goal)), 8)
     sim_prob = round(goal_achieved / trials, 8)
-
+    
     if to_print:
         print('Actual probability of', goal, '=', act_prob)
         print('Simulation probability of', goal, '=', sim_prob)
+        print()
 
-    return goal_achieved
+    return sim_prob
 
+def run_sims(goal, trials, samples, to_print=False):
+    ''' Simulate n number of run_sim()
+        Parameters:
+        goal (string) - expected result from die rolls. Assumes the 
+                        string is only composed of numbers 1-6.
+        trial (int)   - number of die rolls.
+        samples (int) - number of samples drawn for each trials.
+
+        prints the probability of getting the goal, if to_print=True.
+        returns mean (float) - mean of the probabilities of all samples.
+    '''
+    probs = []
+    for i in range(samples):
+        probability = run_sim(goal, trials, to_print)
+        probs.append(probability)
+    
+    mean = sum(probs) / len(probs)
+
+    return mean
 
 if __name__ == '__main__':
-    print(run_sim('3', 99999, True))
+    GOAL = '1111'
+    TRIALS = 10000
+    SAMPLES = 50
+    mean = run_sims(GOAL, TRIALS, SAMPLES, True)
+    print('Estimated probability:', mean)
