@@ -138,22 +138,92 @@ def play_roulettte(game, num_spins, pocket, bet, to_print=True):
 
     return total/num_spins
 
-def simulate_games(trials, num_spins, pocket, bet, to_print=True):
-        # This is the different types of roulettes were playing
+def simulate_games(trials, num_spins, pocket, bet, to_print=False):
+    """ Simulate trials number of games with each trail having num_spins amount of games.
+
+    :params trials (int) - number of trials or samples
+            num_spins (int) - number of spins or sample size
+            pocket (int) - pocket that you want to bet on
+            bet (int) - amount to bet per game
+            to_print (bool) - prints data per trial for debugging, if True
+
+    return (dict) - dictionary with 'game type'(str) as keys and a'verage expected result'(float) 
+                    in percent as values
+    """
+    result = {}
+    # This is the different types of roulettes were playing
     games = [FairRoulette(), EuropeanRoulette(), AmericanRoulette()]
-    
-    for i in range(trials):
+    # map the type of game with its result
+    for g in games:
+        result[g.__str__()] = []
+
+    # simulate trial amounts of num_spins
+    for i in range(1, trials + 1):
         if to_print:
             print('Simulate', trials, 'trials of', num_spins, 'spins each.')
-
+        else:
+            print('Simulating trial number', i, '...')
         for game in games:
             exp_return = play_roulettte(game, num_spins, pocket, bet, False)
+            result[game.__str__()].append(exp_return)
 
             if to_print:
                 print('Exp. return for', game, '=', str(100*exp_return), '%')
         
-        print()
+        if to_print:
+            print()
+
+    for k,v in result.items():
+        result[k] = 100 * sum(v)/len(v)
+
+    return result
+
+def get_mean_and_std(data):
+    """ Calculates the mean and standard deviation from a given data.
+    :params data (list of int) - list of data
+
+    returns tuple - (mean, standard deviation) calculated from the given data
+    """
+    mean = sum(data) / len(data)
+    # calculate std by multiplying two values: summation of the difference of x and mean,
+    # and 1/no. of items
+    factor1 = 0
+    for n in data:
+        factor1 += ((n - mean)**2)
+
+    factor2 = 1 / len(data)
+
+    std = (factor1 * factor2)**0.5
+
+    return mean, std
+
+def find_pocket_return(game, trials, num_spins, to_print=False):
+    returns = []
+
+    for i in range(trials):
+        returns.append(play_roulettte(game, num_spins, pocket=2, bet=1, to_print=False))
+
+    return returns
+
+def test_empirical_rule(games, trials, to_print=False):
+    result = {}
+    # instantiate the dictionary keys with string names of the game
+    for game in games:
+        result[game.__str__()] = []
+
+    for num_spins in [1000, 100000, 1000000]:
+        print('\nSimulate betting a pocket for', trials, 'trials of', num_spins, 'spins each')
+
+        for game in games:
+            returns = find_pocket_return(game, trials, num_spins, to_print)
+            mean, std = get_mean_and_std(returns)
+            # append the spins, mean and std to the dictionary
+            result[game.__str__()].append((num_spins, 100*mean, 100*std))
+
+            print('Expected return for', game, '=', str(round(100*mean, 3)) + '%', 
+            '+/-', str(round(100*1.96*std, 3)) +'% with 95% confidence')
     
+    return result
 if __name__ == '__main__':
     GOAL = '1111'
     TRIALS = 100000
@@ -172,9 +242,13 @@ if __name__ == '__main__':
     #    for i in range(3):
     #        play_roulettte(game, num_spin, POCKET, BET, True)
 
+    #TRIALS = 20
+    #NUM_SPINS = 1000000
+    #POCKET = 2
+    #BET = 1
+    #result = simulate_games(TRIALS, NUM_SPINS, POCKET, BET, False)
+    #print(result)
+
+    games = [FairRoulette(), EuropeanRoulette(), AmericanRoulette()]
     TRIALS = 20
-    NUM_SPINS = 1000000
-    POCKET = 2
-    BET = 1
-    simulate_games(TRIALS, NUM_SPINS, POCKET, BET)
-            
+    test_empirical_rule(games, TRIALS)
