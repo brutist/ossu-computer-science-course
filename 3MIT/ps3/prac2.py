@@ -206,6 +206,15 @@ def find_pocket_return(game, trials, num_spins, to_print=False):
     return returns
 
 def test_empirical_rule(games, trials, to_print=False):
+    """ Use empirical rule to calculate the confidence interval of expected returns in different types of 
+        roulette games.
+
+        :params games (list of roulette object) - list of roulette games that we are testing
+                trials (int) - number of trials per games. Sample sizes will be [1000, 100000, 1000000]
+                to_print (bool) - if True, prints data associated with EACH trials.
+
+        returns dict - game name(str) as keys and list of tuples (sample_size, mean in %, std in %) as values.
+    """
     result = {}
     # instantiate the dictionary keys with string names of the game
     for game in games:
@@ -224,6 +233,7 @@ def test_empirical_rule(games, trials, to_print=False):
             '+/-', str(round(100*1.96*std, 3)) +'% with 95% confidence')
     
     return result
+    
 if __name__ == '__main__':
     GOAL = '1111'
     TRIALS = 100000
