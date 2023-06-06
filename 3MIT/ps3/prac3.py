@@ -43,7 +43,47 @@ def check_empirical_rule(num_trials):
 
         f.write('\n')
 
+def roulette_plot(num_pockets, num_trials):
+    """ Shows a plot of the result of num_trials number of roulette games with num_pockets number of pockets.
+    
+    :params num_pockets (int) - total number of pockets to bet on
+            num_trials (int) - number of roulette games
+
+    return (float) - average probability of all pockets, rounded to 4 decimal places.
+    """
+    # populate the dictionary of pockets mapped to the number of times it was drawn.
+    pocket_choices = range(1, num_pockets+1)
+    pockets = {}
+    for i in pocket_choices:
+        pockets[i] = 0
+
+    # play num_trials number of roulette games and record the result in the pockets dictionary
+    for i in range(num_trials):
+        result = random.choice(pocket_choices)
+        pockets[result] += 1
+
+    # plot the result
+    x_axis = []
+    y_axis = []
+
+    for k, v in pockets.items():
+        x_axis.append(k)
+        y_axis.append((v/num_trials)*100) # to show y_axis in percentages
+
+    plt.plot(x_axis, y_axis)
+    plt.xlabel('Pockets')
+    plt.ylabel('Occurrence in percent (%)')
+    plt.show()
+
+    # calculates the mean of all pockets probabilities.
+    mean = round(sum(y_axis) / len(y_axis), 4)
+
+    return mean
+
 if __name__ == '__main__':
 
     #normal_distribution(0, 100, 1000000)
-    check_empirical_rule(20)
+    #check_empirical_rule(20)
+
+    mean = roulette_plot(36, 100000)
+    print('Probability per pocket = ', mean)
