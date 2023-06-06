@@ -2,6 +2,7 @@ import random
 from matplotlib import pyplot as plt
 from matplotlib import pylab
 import scipy.integrate
+from prac2 import get_mean_and_std
 
 def normal_distribution(mu, sigma, num_samples):
     data = []
@@ -80,10 +81,63 @@ def roulette_plot(num_pockets, num_trials):
 
     return mean
 
+def plot_means(num_dice, num_rolls, num_bins, legend, color, style):
+    """ Shows a histogram of sample means of a continuous dice roll (includes floats instead of just ints)
+        in num_dice sample size with num_rolls no. of trials.
+
+    :params num_dice (int) - number of trials
+            num_rolls (int) - sample size
+            num_bins (int) - number of bins in histogram
+            legend (str) - legend for the histogram
+            color (str) - color for the histogram
+            style (str) - style for the histogram
+
+    return (float) - tuple of size 2, (mean, standard deviation) of the means of trials (sample means).
+    """
+    means = []
+
+    for i in range(num_rolls // num_dice):
+        values = 0
+        # simulate dice rolls num_dice times
+        for j in range(num_dice):
+            values += random.random() * 5
+        # record the current mean to the list of means
+        means.append(values/float(num_dice))
+    
+    # create the histogram
+    pylab.hist(means, num_bins, color=color, label=legend, weights=[1/len(means)]*len(means), hatch=style)
+    # return a tuple of size 2 - (mean, standard deviation) of the means
+    return get_mean_and_std(means)
+
 if __name__ == '__main__':
 
     #normal_distribution(0, 100, 1000000)
     #check_empirical_rule(20)
 
-    mean = roulette_plot(36, 100000)
-    print('Probability per pocket = ', mean)
+    #mean = roulette_plot(36, 100000)
+    #print('Probability per pocket = ', mean)
+
+    # CHECK THE CENTRAL LIMIT THEOREM FOR A CONTINUOUS DIE 
+    DIE = 1
+    ROLLS = 100000
+    BINS = 19
+    LEGEND = '1 die'
+    COLOR = 'b'
+    STYLE = '*'
+    mean, std = plot_means(DIE, ROLLS, BINS, LEGEND, COLOR, STYLE)
+    print('Sample means of 1 die:', mean, 'with an std:', std)
+
+    DIE = 50
+    ROLLS = 10000000
+    BINS = 19
+    LEGEND = 'Mean of 50 dice'
+    COLOR = 'r'
+    STYLE = '//'
+    mean, std = plot_means(DIE, ROLLS, BINS, LEGEND, COLOR, STYLE)
+    print('Sample means of 50 dice:', mean, 'with an std:', std)
+    
+    pylab.title('Means of Continuous Die')
+    pylab.xlabel('Values')
+    pylab.ylabel('Probability')
+    pylab.legend()
+    pylab.show()
