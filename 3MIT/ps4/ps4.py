@@ -1,7 +1,7 @@
 # Problem Set 4: Simulating the Spread of Disease and Bacteria Population Dynamics
 # Name: Jonathan Mauring Jr.
 # Collaborators (Discussion): None
-# Time: start: June 7, 2023 end:
+# Time: start: June 7, 2023 end: June 8, 2023
 
 import math
 import numpy as np
@@ -10,7 +10,7 @@ import random
 import matplotlib.pyplot as plt
 
 # for debugging purposes
-random.seed(0)
+# random.seed(0)
 
 ##########################
 # End helper code
@@ -44,7 +44,7 @@ def make_one_curve_plot(x_coords, y_coords, x_label, y_label, title):
     pl.title(title)
     # saving the file for writeup submission
     # plt.savefig('without_antibiotics.png')
-    pl.show()
+    #pl.show()
 
 
 def make_two_curve_plot(x_coords,
@@ -654,24 +654,44 @@ def simulation_with_antibiotic(num_bacteria,
     return (populations, resistant_populations)
 
 
-# When you are ready to run the simulations, uncomment the next lines one
-# at a time
-total_pop, resistant_pop = simulation_with_antibiotic(num_bacteria=100,
-                                                      max_pop=1000,
-                                                      birth_prob=0.3,
-                                                      death_prob=0.2,
-                                                      resistant=False,
-                                                      mut_prob=0.8,
-                                                      num_trials=50)
-print('     Simulation A - Results')
+
+if __name__ == '__main__':
+
+    populations = simulation_without_antibiotic(100, 1000, 0.1, 0.025, 50)
+    t = 299
+    total_pop_mean, total_pop_width = calc_95_ci(populations, t)
+    print('     Simulation Without Antibiotics - Results')
+    print('Total Population Mean without Antibiotics at t=', t, ':' , total_pop_mean, '+/-', total_pop_width)
+  
+
+    # When you are ready to run the simulations, uncomment the next lines one
+    # at a time
+    total_pop, resistant_pop = simulation_with_antibiotic(num_bacteria=100,
+                                                        max_pop=1000,
+                                                        birth_prob=0.3,
+                                                        death_prob=0.2,
+                                                        resistant=False,
+                                                        mut_prob=0.8,
+                                                        num_trials=50)
+    t = 299
+    total_pop_mean, total_pop_width = calc_95_ci(total_pop, t)
+    resistant_pop_mean, resistant_pop_width = calc_95_ci(resistant_pop, t)
+    print('     Simulation A - Results')
+    print('Total Population Mean at t=', t, ':' , total_pop_mean, '+/-', total_pop_width)
+    print('Resistant Population Mean at t=', t, ':' , resistant_pop_mean, '+/-', resistant_pop_width)
 
 
-
-
-total_pop, resistant_pop = simulation_with_antibiotic(num_bacteria=100,
-                                                      max_pop=1000,
-                                                      birth_prob=0.17,
-                                                      death_prob=0.2,
-                                                      resistant=False,
-                                                      mut_prob=0.8,
-                                                      num_trials=50)
+    total_pop, resistant_pop = simulation_with_antibiotic(num_bacteria=100,
+                                                        max_pop=1000,
+                                                        birth_prob=0.17,
+                                                        death_prob=0.2,
+                                                        resistant=False,
+                                                        mut_prob=0.8,
+                                                        num_trials=50)
+    
+    t = 299
+    total_pop_mean, total_pop_width = calc_95_ci(total_pop, t)
+    resistant_pop_mean, resistant_pop_width = calc_95_ci(resistant_pop, t)
+    print('     Simulation B - Results')
+    print('Total Population Mean at t=', t, ':' , total_pop_mean, '+/-', total_pop_width)
+    print('Resistant Population Mean at t=', t, ':' , resistant_pop_mean, '+/-', resistant_pop_width)
