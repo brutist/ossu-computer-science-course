@@ -383,11 +383,14 @@ class ResistantBacteria(SimpleBacteria):
                 bacteria cell. This is the maximum probability of the
                 offspring acquiring antibiotic resistance
         """
-        pass  # TODO
+        self.birth_prob = birth_prob
+        self.death_prob = death_prob
+        self.resistant = resistant
+        self.mut_prob = mut_prob
 
     def get_resistant(self):
         """Returns whether the bacteria has antibiotic resistance"""
-        pass  # TODO
+        return self.resistant
 
     def is_killed(self):
         """Stochastically determines whether this bacteria cell is killed in
@@ -401,7 +404,10 @@ class ResistantBacteria(SimpleBacteria):
             bool: True if the bacteria dies with the appropriate probability
                 and False otherwise.
         """
-        pass  # TODO
+        if self.resistant:
+            return random.random() <= self.death_prob
+        else:
+            return random.random() <= (self.death_prob / 4)
 
     def reproduce(self, pop_density):
         """
@@ -432,8 +438,19 @@ class ResistantBacteria(SimpleBacteria):
             as this bacteria. Otherwise, raises a NoChildException if this
             bacteria cell does not reproduce.
         """
-        pass  # TODO
+        # calculate if the bacteria reproduce
+        does_reproduce = random.random() <= (self.birth_prob * (1 - pop_density))
 
+        # instantiate the resistance of the daughter bacteria
+        resistant = self.resistant
+        if not resistant:
+            resistant = random.random() <= (self.mu_prob * (1 - pop_density))
+
+        # if the bacteria reproduce, return a resistant bacteria daughter
+        if does_reproduce:
+            return ResistantBacteria(self.birth_prob, self.death_prob, resistant, self.mut_prob)
+        else:
+            raise NoChildException
 
 class TreatedPatient(Patient):
     """
@@ -455,14 +472,15 @@ class TreatedPatient(Patient):
         Don't forget to call Patient's __init__ method at the start of this
         method.
         """
-        pass  # TODO
+        Patient.__init__(self, bacteria, max_pop)
+        self.on_antibiotic = False
 
     def set_on_antibiotic(self):
         """
         Administer an antibiotic to this patient. The antibiotic acts on the
         bacteria population for all subsequent time steps.
         """
-        pass  # TODO
+        self.on_antibiotic = True
 
     def get_resist_pop(self):
         """
@@ -471,7 +489,12 @@ class TreatedPatient(Patient):
         Returns:
             int: the number of bacteria with antibiotic resistance
         """
-        pass  # TODO
+        reistant_count = 0
+        for bacteria in self.bacteria:
+            if bacteria.get_resistant():
+                resistant_count += 1
+
+        return resistant_count
 
     def update(self):
         """
@@ -498,7 +521,36 @@ class TreatedPatient(Patient):
         Returns:
             int: The total bacteria population at the end of the update
         """
-        pass  # TODO
+        # check for surviving bacteria in a timestep
+        surviving_bacteria = []
+        for bacteria in self.bacteria:
+            if not bacteria.is_killed():
+                surviving_bacteria.append(bacteria)
+
+        # if the patient is on antibiotics,
+        if self.on_antibiotic:
+            resistant_bacteria = []
+            for bacteria in surviving_bacteria:
+                if bacteria.get_resistant():
+                    resistant_bacteria.append(bacteria)
+            # only resistant bacteria will survive
+            surviving_bacteria = resistant_bacteria
+
+        # calculate the current population density
+        self.pop_density = len(surviving_bacteria) / self.max_pop
+        
+        # get a list of offsprings for the current timestep
+        offsprings = []
+        for bacteria in surviving_bacteria:
+            if bacteria.reproduce(self.pop_density):
+                offsprings.append(bacteria)
+
+        # reassign the patient's current bacteria list to be the list of 
+        # surviving bacteria and its offspings
+        self.bacteria = surviving_bacteria + offsprings
+
+        # return the new population size of bacteria at this timestep
+        return len(self.bacteria)
 
 
 ##########################
