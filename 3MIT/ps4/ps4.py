@@ -77,8 +77,8 @@ def make_two_curve_plot(x_coords,
     pl.ylabel(y_label)
     pl.title(title)
     # saving the file for writeup submission
-    # plt.savefig('without_antibiotics.png')
-    pl.show()
+    plt.savefig('with_antibiotics.png')
+    #pl.show()
 
 
 ##########################
@@ -601,18 +601,54 @@ def simulation_with_antibiotic(num_bacteria,
             resistant_pop[i][j] is the number of resistant bacteria for
             trial i at time step j
     """
-    pass  # TODO
+    TIMESTEPS = range(400)
+    GIVE_ANTIBIOTICS = 150
+    populations = []
+    resistant_populations = []
+
+    for trial in range(num_trials):
+        trial_population = []
+        resistant_population = []
+
+        # instantiate a list of resistant bacteria
+        resistant_bacteria = []
+        for i in range(num_bacteria):
+            resistant_bacteria.apppend(ResistantBacteria(birth_prob, death_prob, resistant, mut_prob))
+        
+        # instantiate a patient
+        treated_patient = TreatedPatient(resistant_bacteria, max_pop)
+
+        # simulate patient with no antibiotics
+        for t in TIME_STEPS_NO_ANTIBIOTICS:
+            
+            # give antibiotic to patient at timestep 150
+            if t == GIVE_ANTIBIOTICS:
+                treated_patient.set_on_antibiotic()
+
+            timestep_population = treated_patient.update()
+            timestep_resistants = treated_patient.get_resist_pop() 
+
+            # record the timestep result in a list; bacteria pop and resistants pop
+            trial_population.append(timestep_population)
+            resistant_population.append(timestep_resistants)
+        
+        # record total population and resistant population for each trials
+        populations.append(trial_population)
+        resistant_populations.append(resistant_population)
+
+    # return a tuple of size 2 with 2D list (total population for each trial, resistant_population for each trial)
+    return (populations, resistant_populations)
 
 
 # When you are ready to run the simulations, uncomment the next lines one
 # at a time
-#total_pop, resistant_pop = simulation_with_antibiotic(num_bacteria=100,
-#                                                      max_pop=1000,
-#                                                      birth_prob=0.3,
-#                                                      death_prob=0.2,
-#                                                      resistant=False,
-#                                                      mut_prob=0.8,
-#                                                      num_trials=50)
+total_pop, resistant_pop = simulation_with_antibiotic(num_bacteria=100,
+                                                      max_pop=1000,
+                                                      birth_prob=0.3,
+                                                      death_prob=0.2,
+                                                      resistant=False,
+                                                      mut_prob=0.8,
+                                                      num_trials=50)
 
 #total_pop, resistant_pop = simulation_with_antibiotic(num_bacteria=100,
 #                                                      max_pop=1000,
