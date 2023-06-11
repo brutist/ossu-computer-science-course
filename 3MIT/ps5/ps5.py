@@ -163,9 +163,14 @@ def generate_models(x, y, degs):
         a list of pylab arrays, where each array is a 1-d array of coefficients
         that minimizes the squared error of the fitting polynomial
     """
-    # TODO
-    pass
-
+    # calculate the best fitting line for each degree of polynomial
+    models = []
+    for deg in degs:
+        model = pylab.polyfit(x, y, deg)
+        models.append(pylab.array(model))
+    
+    return models
+    
 
 def r_squared(y, estimated):
     """
@@ -180,8 +185,17 @@ def r_squared(y, estimated):
     Returns:
         a float for the R-squared error term
     """
-    # TODO
-    pass
+    mean = sum(y) / len(y)
+    error = ((y - estimated) ** 2).sum()
+    variability = ((y - mean) ** 2).sum()
+
+    return (1 - (error/variability))
+    
+    """ Another way of calculating for r2. """
+    #mean_error = ((y - estimated) ** 2).sum() / len(y)
+    #variance = pylab.var(y)
+
+    #return (1 - (mean_error / variance))
 
 def evaluate_models_on_training(x, y, models):
     """
@@ -209,8 +223,20 @@ def evaluate_models_on_training(x, y, models):
     Returns:
         None
     """
-    # TODO
-    pass
+    # degree of polynomial as key, list of [r2, SEM/slope, predicted y-values] as values
+    best_models = {}
+    for model in models:
+        # generate predicted y-values for each models
+        estimated_y = pylab.polyval(model, x)
+
+        # calculate coefficient of determination and standar error over slope
+        r2 = r_squared(y, estimated_y)
+        se_slope = se_over_slope(x, y, estimated_y, model)
+
+        # record for plotting later
+        best_models[len(model)] = [r2, se_slope, estimated_y]
+
+    
 
 def gen_cities_avg(climate, multi_cities, years):
     """

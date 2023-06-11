@@ -3,6 +3,10 @@ import pylab
 import math
 
 import ps5
+# remove some annoying deprecation warnings that I have no idea to fix
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
+
 
 class TestPS5(unittest.TestCase):
 
