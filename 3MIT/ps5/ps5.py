@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # Problem Set 5: Experimental Analysis
-# Name: 
-# Collaborators (discussion):
-# Time:
+# Name: Jonathan M. Mauring Jr
+# Collaborators (discussion): None
+# Time: start: June 11 end:
 
 import pylab
 import re
