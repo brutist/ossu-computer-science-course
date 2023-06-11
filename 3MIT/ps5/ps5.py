@@ -223,8 +223,6 @@ def evaluate_models_on_training(x, y, models):
     Returns:
         None
     """
-    # degree of polynomial as key, list of [r2, SEM/slope, predicted y-values] as values
-    best_models = {}
     for model in models:
         # generate predicted y-values for each models
         estimated_y = pylab.polyval(model, x)
@@ -233,9 +231,14 @@ def evaluate_models_on_training(x, y, models):
         r2 = r_squared(y, estimated_y)
         se_slope = se_over_slope(x, y, estimated_y, model)
 
-        # record for plotting later
-        best_models[len(model)] = [r2, se_slope, estimated_y]
-
+        # plot each models
+        pylab.plot(x, y, 'b.')
+        pylab.plot(x, estimated_y, 'r-')
+        pylab.xlabel('Year')
+        pylab.ylabel('Temperature in Celcius')
+        pylab.title('Fit of degree ' + str(len(model) + ', ' + 'R2 = ' + str(round(r2, 5)) ))
+        pylab.savefig('graph_model_{}'.format(len(model)))
+        pylab.figure()
     
 
 def gen_cities_avg(climate, multi_cities, years):
