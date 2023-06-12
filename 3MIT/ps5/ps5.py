@@ -197,7 +197,7 @@ def r_squared(y, estimated):
 
     #return (1 - (mean_error / variance))
 
-def evaluate_models_on_training(x, y, models):
+def evaluate_models_on_training(x, y, models, plot_name=None):
     """
     For each regression model, compute the R-squared value for this model with the
     standard error over slope of a linear regression line (only if the model is
@@ -235,10 +235,17 @@ def evaluate_models_on_training(x, y, models):
         pylab.plot(x, y, 'b.')
         pylab.plot(x, estimated_y, 'r-')
         pylab.xlabel('Year')
-        pylab.ylabel('Temperature in Celcius')
-        pylab.title('Fit of degree ' + str(len(model) + ', ' + 'R2 = ' + str(round(r2, 5)) ))
-        pylab.savefig('graph_model_{}'.format(len(model)))
-        pylab.figure()
+        pylab.ylabel('Temperature in Celsius')
+        pylab.title('Fit of degree {}, R2 = {}'.format(len(model) - 1, round(r2, 5)))
+        
+        if plot_name:
+            pylab.savefig(plot_name + '_{}'.format(len(model) - 1))
+        else:
+            pylab.savefig('graph_model_{}'.format(len(model) - 1))
+
+        if not model is model[-1]:
+            pylab.figure()
+
     
 
 def gen_cities_avg(climate, multi_cities, years):
@@ -256,9 +263,24 @@ def gen_cities_avg(climate, multi_cities, years):
         this array corresponds to the average annual temperature over the given
         cities for a given year.
     """
-    # TODO
-    pass
+    # get the mean temperature for each year
+    yearly_means = []
+    for year in years:
+        city_means = []
+        # get the mean temperature for each city
+        for city in multi_cities:
+            city_temps = climate.get_yearly_temp(city, year)
+            city_mean = city_temps.sum() / len(city_temps)
+            city_means.append(city_mean)
 
+        # get the national avg temp
+        year_mean = sum(city_means) / len(city_means)
+        yearly_means.append(year_mean)
+
+    # convert yearly_means list to pylab.array
+    return pylab.array(yearly_means)
+
+    
 def moving_average(y, window_length):
     """
     Compute the moving average of y with specified window length.
@@ -339,13 +361,63 @@ def evaluate_models_on_testing(x, y, models):
 
 if __name__ == '__main__':
 
-    pass 
+    # climate data
+    climate = Climate('data.csv')
+    CITY = 'NEW YORK'
+    DEGREE = [1]
 
-    # Part A.4
-    # TODO: replace this line with your code
+    # Part A.4 - I. Daily Temperature
+    # generate data sample (daily temp [Jan 10] in New York)
+    MONTH = 1
+    DAY = 10
+    x, y = [], []
+
+    for year in TRAINING_INTERVAL:
+        x.append(year)
+        y.append(climate.get_daily_temp(CITY, MONTH, DAY, year))
+
+    x = pylab.array(x)
+    y = pylab.array(y)
+
+    # fit the data sample to a degree one polynomial
+    models = generate_models(x, y, DEGREE)
+
+    # plot the data and the model 
+    evaluate_models_on_training(x, y, models, plot_name='daily_temp_NY')
+
+
+    # Part A.4 - II. Annual Temperature
+    # generate data sample (annual temperature in New York)
+    x = []
+    year_avgs = []
+
+    for year in TRAINING_INTERVAL:
+        temperatures = climate.get_yearly_temp(CITY, year)
+        year_avgs.append(temperatures.sum() / len(temperatures))
+        x.append(year)
+
+    x = pylab.array(x)
+    year_avgs = pylab.array(year_avgs)
+    
+    # fit the data sample to a degree one polynomial
+    models = generate_models(x, year_avgs, DEGREE)
+
+    # plot the data and the model
+    evaluate_models_on_training(x, year_avgs, models, plot_name='annual_temp_NY')
+
 
     # Part B
-    # TODO: replace this line with your code
+    # generate data sample
+    x = [year for year in TRAINING_INTERVAL]
+    yearly_means = gen_cities_avg(climate, CITIES, TRAINING_INTERVAL)
+    x = pylab.array(x)
+    yearly_means = pylab.array(yearly_means)
+
+    # fit the data sample to a degree one polynomial
+    models = generate_models(x, yearly_means, DEGREE)
+
+    # plot the data and the model
+    evaluate_models_on_training(x, yearly_means, models, plot_name='national_temp')
 
     # Part C
     # TODO: replace this line with your code
