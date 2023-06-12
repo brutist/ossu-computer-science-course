@@ -10,3 +10,11 @@ for e in examples:
 
 centroid = vals / len(examples)
 print(centroid)
+
+
+for i in range(4, 0, -1):
+    print(i)
+
+
+
+
