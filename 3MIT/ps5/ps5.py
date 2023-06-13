@@ -530,6 +530,17 @@ if __name__ == '__main__':
     # plot the actual testing data and the training models' predicted data
     evaluate_models_on_testing(testing_years, testing_moving_avg, models, plot_name='D_national_moving_avg_testing')
 
+#######################################################################################
+#######################################################################################
 
     # Part E
-    # TODO: replace this line with your code
+    # creating data samples from testing years
+    years_std = gen_std_devs(climate, CITIES, training_years)
+    std_moving_avg = moving_average(years_std, WINDOW_LENGTH)
+
+    # create a model from the training data
+    models = generate_models(training_years, std_moving_avg, DEGREE)
+
+    # plot the 5-year moving average standard devation and the predicted data
+    evaluate_models_on_training(training_years, std_moving_avg, models, plot_name='E_std_moving_avg')
+
