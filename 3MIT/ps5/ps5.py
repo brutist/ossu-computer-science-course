@@ -224,6 +224,8 @@ def evaluate_models_on_training(x, y, models, plot_name=None):
         None
     """
     for model in models:
+        degree_poly = len(model) - 1
+
         # generate predicted y-values for each models
         estimated_y = pylab.polyval(model, x)
 
@@ -236,12 +238,16 @@ def evaluate_models_on_training(x, y, models, plot_name=None):
         pylab.plot(x, estimated_y, 'r-')
         pylab.xlabel('Year')
         pylab.ylabel('Temperature in Celsius')
-        pylab.title('Fit of degree {}, R2 = {}'.format(len(model) - 1, round(r2, 5)))
-        
-        if plot_name:
-            pylab.savefig(plot_name + '_{}'.format(len(model) - 1))
+
+        if degree_poly == 1:
+            pylab.title('Fit of degree {}, R2 = {}\nStandard Error over slope = {}'.format(degree_poly, round(r2, 5), round(se_slope, 5)))
         else:
-            pylab.savefig('graph_model_{}'.format(len(model) - 1))
+            pylab.title('Fit of degree {}, R2 = {}'.format(degree_poly, round(r2, 5)))
+
+        if plot_name:
+            pylab.savefig(plot_name + '_{}'.format(degree_poly))
+        else:
+            pylab.savefig('graph_model_{}'.format(degree_poly))
 
         if not model is model[-1]:
             pylab.figure()
@@ -322,8 +328,10 @@ def rmse(y, estimated):
     Returns:
         a float for the root mean square error term
     """
-    # TODO
-    pass
+    sum_error_sqr = ((y - estimated) ** 2).sum()
+
+    return (sum_error_sqr / len(y)) ** 0.5
+
 
 def gen_std_devs(climate, multi_cities, years):
     """
@@ -343,7 +351,7 @@ def gen_std_devs(climate, multi_cities, years):
     # TODO
     pass
 
-def evaluate_models_on_testing(x, y, models):
+def evaluate_models_on_testing(x, y, models, plot_name=None):
     """
     For each regression model, compute the RMSE for this model and plot the
     test data along with the model’s estimation.
@@ -367,8 +375,38 @@ def evaluate_models_on_testing(x, y, models):
     Returns:
         None
     """
-    # TODO
-    pass
+    for model in models:
+        # this is the degree of polynomial of the model
+        degree_poly = len(model) - 1
+
+        # generate predicted y-values for each models
+        estimated_y = pylab.polyval(model, x)
+
+        # calculate rmse
+        root_mean_square_error = rmse(y, estimated_y)
+
+        # plot each models
+        pylab.plot(x, y, 'b.')
+        pylab.plot(x, estimated_y, 'r-')
+        pylab.xlabel('Year')
+        pylab.ylabel('Temperature in Celsius')
+
+        # include SE over slope model is a degree-one polynomial
+        if degree_poly == 1:
+            pylab.title('Fit of degree {}, rmse = {}'.format(degree_poly, round(root_mean_square_error, 5)))
+        else:
+            pylab.title('Fit of degree {}, rmse = {}'.format(degree_poly, round(root_mean_square_error, 5)))
+
+        if plot_name:
+            pylab.savefig(plot_name + '_{}'.format(degree_poly))
+        else:
+            pylab.savefig('graph_model_testing_{}'.format(degree_poly))
+
+        if not model is model[-1]:
+            pylab.figure()
+
+
+
 
 if __name__ == '__main__':
 
@@ -377,6 +415,7 @@ if __name__ == '__main__':
     CITY = 'NEW YORK'
     DEGREE = [1]
     training_years = pylab.array([year for year in TRAINING_INTERVAL])
+    testing_years = pylab.array([year for year in TESTING_INTERVAL])
 
 #######################################################################################
 #######################################################################################
@@ -396,7 +435,7 @@ if __name__ == '__main__':
     models = generate_models(training_years, y, DEGREE)
 
     # plot the data and the model 
-    evaluate_models_on_training(training_years, y, models, plot_name='daily_temp_NY')
+    evaluate_models_on_training(training_years, y, models, plot_name='A_NY_Jan_10_temp')
 
 
     # Part A.4 - II. Annual Temperature
@@ -413,20 +452,20 @@ if __name__ == '__main__':
     models = generate_models(training_years, year_avgs, DEGREE)
 
     # plot the data and the model
-    evaluate_models_on_training(training_years, year_avgs, models, plot_name='annual_temp_NY')
+    evaluate_models_on_training(training_years, year_avgs, models, plot_name='A_NY_avg_annual_temp')
 
 #######################################################################################
 #######################################################################################
 
     # Part B
     # generate data sample
-    yearly_means = pylab.array(gen_cities_avg(climate, CITIES, TRAINING_INTERVAL))
+    yearly_means = pylab.array(gen_cities_avg(climate, CITIES, training_years))
 
     # fit the data sample to a degree one polynomial
     models = generate_models(training_years, yearly_means, DEGREE)
 
     # plot the data and the model
-    evaluate_models_on_training(training_years, yearly_means, models, plot_name='national_temp')
+    evaluate_models_on_training(training_years, yearly_means, models, plot_name='B_avg_national_temp')
 
 #######################################################################################
 #######################################################################################
@@ -435,21 +474,41 @@ if __name__ == '__main__':
 
     # generate data samples
     WINDOW_LENGTH = 5
-    yearly_means = gen_cities_avg(climate, CITIES, TRAINING_INTERVAL)
+    yearly_means = gen_cities_avg(climate, CITIES, training_years)
     moving_avg = moving_average(yearly_means, WINDOW_LENGTH)
 
     # fit the data sample to a degree one polynomial
     models = generate_models(training_years, moving_avg, DEGREE)
 
-    # plot the data and the model
-    evaluate_models_on_training(training_years, moving_avg, models, plot_name='moving_avg')
+    # plot the data and the model on training data
+    evaluate_models_on_training(training_years, moving_avg, models, plot_name='C_national_moving_avg')
 
 #######################################################################################
 #######################################################################################
-
 
     # Part D.2
-    # TODO: replace this line with your code
+
+    # I. generate more models
+
+    DEGREES = [1, 2, 20]
+    # create models from training years
+    WINDOW_LENGTH = 5
+    yearly_means = gen_cities_avg(climate, CITIES, training_years)
+    moving_avg = moving_average(yearly_means, WINDOW_LENGTH)
+    models = generate_models(training_years, moving_avg, DEGREES)
+
+    # plot the actual training and predicted data
+    evaluate_models_on_training(training_years, moving_avg, models, plot_name='D_national_moving_avg_training')
+
+
+    # II. predict the results
+    # create data samples from testing years
+    testing_yearly_means = gen_cities_avg(climate, CITIES, testing_years)
+    testing_moving_avg = moving_average(testing_yearly_means, WINDOW_LENGTH)
+
+    # plot the actual testing data and the training models' predicted data
+    evaluate_models_on_testing(testing_years, testing_moving_avg, models, plot_name='D_national_moving_avg_testing')
+
 
     # Part E
     # TODO: replace this line with your code
