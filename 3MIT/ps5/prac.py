@@ -12,9 +12,10 @@ centroid = vals / len(examples)
 print(centroid)
 
 
-for i in range(4, 0, -1):
-    print(i)
 
+val = pylab.array([1, 2, 3])
+val2 = pylab.array([4, 5, 6])
 
-
+result = val + val2
+print(result)
 

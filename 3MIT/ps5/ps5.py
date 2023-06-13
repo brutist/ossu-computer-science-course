@@ -6,6 +6,7 @@
 
 import pylab
 import re
+import numpy as np
 
 # cities in our weather data
 CITIES = [
@@ -348,8 +349,28 @@ def gen_std_devs(climate, multi_cities, years):
         this array corresponds to the standard deviation of the average annual 
         city temperatures for the given cities in a given year.
     """
-    # TODO
-    pass
+    year_stds = []
+    
+    for year in years:
+        daily_avgs = []
+        # get the total temp for each day in all cities
+        for city in multi_cities:
+            if city is multi_cities[0]:
+                daily_total = climate.get_yearly_temp(city, year)
+            else:
+                daily_total = daily_total + climate.get_yearly_temp(city, year)
+        
+        # get the average for each day
+        daily_avg = daily_total / len(multi_cities)
+        daily_avgs.append(daily_avg)
+        
+        # get the std of the daily temperatures of a certain year
+        # there was no constraint about not using third-party std functions
+        std = np.std(daily_avgs)
+        # append the year std to the list of year stds
+        year_stds.append(std)
+
+    return pylab.array(year_stds)
 
 def evaluate_models_on_testing(x, y, models, plot_name=None):
     """
