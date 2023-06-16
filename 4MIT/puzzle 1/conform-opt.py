@@ -6,6 +6,7 @@
 
 caps = ['F', 'F', 'B', 'B', 'B', 'F', 'B', 'B', 'B', 'F', 'F', 'B', 'F' ]
 cap2 = ['F', 'F', 'B', 'B', 'B', 'F', 'B', 'B', 'B', 'F', 'F', 'F', 'F' ]
+cap3 = ['F','F','B','H','B','F','B', 'B','B','F','H','F','F']
 
 def pleaseConformOpt(caps):
     #Initialization
