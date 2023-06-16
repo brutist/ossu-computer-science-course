@@ -5,9 +5,9 @@
 # identifying the intervals of similar directions and flipping the caps of 
 # the people whose interval count is the smallest
 
-caps = ['F', 'F', 'B', 'B', 'B', 'F', 'B',
-        'B', 'B', 'F', 'F', 'B', 'F' ]
-cap2 = ['F', 'F', 'B', 'B', 'B', 'F', 'B', 'B', 'B', 'F', 'F', 'F', 'F' ]
+caps = ['F', 'F', 'B', 'B', 'B', 'F', 'B', 'B', 'B', 'F', 'F', 'B', 'F' ]
+
+cap2 = ['F', 'F', 'B', 'B', 'B', 'F', 'B', 'B', 'B', 'F', 'F', 'F', 'F', 'B']
 
 cap3 = ['F','F','B','H','B','F','B', 'B','B','F','H','F','F']
 
@@ -25,6 +25,7 @@ def pleaseConform(people):
         print('There are no people in line')
         return None
 
+    people = people + ['end']
     # record the caps' direction of people in the line
     orientations = {}
     direction, first = None, None
@@ -41,17 +42,19 @@ def pleaseConform(people):
             # record the number of interval
             if orientations[(first, i - 1)] == 'B':
                 backwards += 1
-            elif orientations[(first, i -g 1)] == 'F':
+            elif orientations[(first, i - 1)] == 'F':
                 forwards += 1
             
             direction = people[i]
             first = i
- 
+    
     # identify what direction to conform to
     if backwards < forwards:
-        conform_to = 'B'
-    else:
         conform_to = 'F'
+    elif backwards == forwards:
+        conform_to = str(people[0])
+    else:
+        conform_to = 'B'
 
     # flip the caps to the conform_to direction
     # ex. 'People in positions 2 through 4 flip your caps!'
@@ -61,10 +64,10 @@ def pleaseConform(people):
                 print('People in positions {} through {} flip your caps!'.format(k[0], k[1]))
             else:
                 print('Person at position {} flip your cap!'.format(k[0]))
-
+  
     print()
 
-def pleaseConform_v2(people):
+def pleaseConform_v2(caps):
     """ Prints the position of people that must flip their caps. Satisying the constraint that
         the amount of commands done is the lowest possible.
 
@@ -77,9 +80,44 @@ def pleaseConform_v2(people):
 
     Returns: None
     """
-    
+    # fucking unreadable, i would hate to read it in the future
+    # i am quite sure that one can simplify the conditions in the loop but my head 
+    # hurts just thinking about it, though this convuluted thing solves the one loop constraint of the problem
+    caps = caps + ['end']
+    best_direction = str(caps[0])
+    starts = []
+    ends = []
+    j = 0
 
+    # the idea here is you go through the list once, record the start and end index of the interval that
+    # don't follow the first cap's direction and print it in the same loop
+    for i in range(len(caps)):
+        # record start index
+        if caps[i] != best_direction and caps[i] != caps[i - 1] and caps[i] != 'end':
+            starts.append(i)
+        # record end index, too many conditions hurts my brain
+        elif i > 0 and (caps[i] == best_direction or caps[i] == 'end') and caps[i - 1] != caps[i] and len(starts) > len(ends):
+            ends.append(i - 1)
+
+            # printing the commands in the same loop once an interval identified 
+            # using j as an index for the starts and ends index of each intervals
+            if ends[j] != starts[j]:
+                print('People in positions {} through {} flip your caps!'.format(starts[j], ends[j]))
+            else:
+                print('Person at position {} flip your cap!'.format(starts[j]))
+            
+            j += 1
+        
 
 
 if __name__ == '__main__':
-    pleaseConform(cap3)
+
+    pleaseConform(caps)
+    print()
+    pleaseConform_v2(caps)
+    print()
+
+    pleaseConform(cap2)
+    print()
+    pleaseConform_v2(cap2)
+  
