@@ -7,7 +7,7 @@
 
 caps = ['F', 'F', 'B', 'B', 'B', 'F', 'B', 'B', 'B', 'F', 'F', 'B', 'F' ]
 
-cap2 = ['F', 'F', 'B', 'B', 'B', 'F', 'B', 'B', 'B', 'F', 'F', 'F', 'F', 'B']
+cap2 = ['F', 'F', 'B', 'B', 'B', 'F', 'B', 'B', 'B', 'F', 'F', 'F', 'F' ]
 
 cap3 = ['F','F','B','H','B','F','B', 'B','B','F','H','F','F']
 
@@ -83,6 +83,11 @@ def pleaseConform_v2(caps):
     # fucking unreadable, i would hate to read it in the future
     # i am quite sure that one can simplify the conditions in the loop but my head 
     # hurts just thinking about it, though this convuluted thing solves the one loop constraint of the problem
+    
+    if len(caps) == 0:
+        print('There are no people in line.')
+        return None
+
     caps = caps + ['end']
     best_direction = str(caps[0])
     starts = []
@@ -91,12 +96,12 @@ def pleaseConform_v2(caps):
 
     # the idea here is you go through the list once, record the start and end index of the interval that
     # don't follow the first cap's direction and print it in the same loop
-    for i in range(len(caps)):
+    for i in range(1, len(caps)):
         # record start index
-        if caps[i] != best_direction and caps[i] != caps[i - 1] and caps[i] != 'end':
+        if caps[i] != best_direction and caps[i] != caps[i - 1] and caps[i] != 'end' and caps[i] != 'H':
             starts.append(i)
         # record end index, too many conditions hurts my brain
-        elif i > 0 and (caps[i] == best_direction or caps[i] == 'end') and caps[i - 1] != caps[i] and len(starts) > len(ends):
+        elif (caps[i] == best_direction or caps[i] == 'end' or caps[i] == 'H') and caps[i] != caps[i - 1] and len(starts) > len(ends):
             ends.append(i - 1)
 
             # printing the commands in the same loop once an interval identified 
@@ -120,4 +125,14 @@ if __name__ == '__main__':
     pleaseConform(cap2)
     print()
     pleaseConform_v2(cap2)
-  
+    print()
+    
+    pleaseConform(cap3)
+    print()
+    pleaseConform_v2(cap3)
+    print()
+    
+    pleaseConform([])
+    print()
+    pleaseConform_v2([])
+    print()
