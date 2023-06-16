@@ -1,5 +1,4 @@
 
-
 # Solution No. 1 - Simple Solution for Exercise 1 and 2
 # determine the minimum effort to conform the caps' direction by
 # identifying the intervals of similar directions and flipping the caps of 
