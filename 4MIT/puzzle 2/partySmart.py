@@ -32,6 +32,7 @@ def bestTimeToPartySmart(schedule):
     print ('Best time to attend the party is at', time,\
            'o\'clock', ':', maxcount, 'celebrities will be attending!')
     
+    return time
 
 #Sort the elements of tlist in ascending order
 #Sorting is based on the value of the element tuple (both items!)
