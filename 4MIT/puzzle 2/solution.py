@@ -88,10 +88,42 @@ def tests_more_lengths(lengths, trials):
         test_best_time(l, trials)
 
 def bestTimeToPartySmart_weights(schedule, ystart=0, yend=23):
+    
+    # consolidate 'similar' celebrities into one
+    celeb_weights = {}
+    for start, end, w in schedule:
+        try:
+            celeb_weights[(start, end)] += w
+        except:
+            celeb_weights[(start, end)] = w
 
-    pass
+    # list of celebrities entry times
+    entry_times = [start for start, end in celeb_weights]
 
+    # shit time complexity but works for now
+    # instantiate celeb_present
+    celeb_present = {}
+    for time in entry_times:
+        celeb_present[time] = 0
 
+        for (celeb_start, celeb_end), weight in celeb_weights.items():
+            # account for celebrities entering the party
+
+            if time >= celeb_start and time < celeb_end:
+                celeb_present[time] += weight
+            elif celeb_start > time and time >= celeb_end:
+                celeb_present[time] -= weight
+    
+    print(celeb_present)
+    best_hr = None
+    max_weight = None
+    for hr, weight in celeb_present.items():
+        if (not max_weight) or weight > max_weight:
+            best_hr = hr
+            max_weight = weight
+
+    print('Best time to attend the party is at {} o\'clock : {} is the likeability of the celebrities attending!'.format(best_hr, max_weight))
+    return best_hr
 
 
 
@@ -105,11 +137,5 @@ if __name__ == '__main__':
     sched = [(6.0, 8.0, 2), (6.5, 12.0, 1), (6.5, 7.0, 2), (7.0, 8.0, 2), (7.5, 10.0, 3), (8.10, 9.0, 2),
             (8.0, 10.0, 1), (9.0, 12.0, 2), (9.5, 10.0, 4), (10.0, 11.0, 2), (10.0, 12.0, 3), (11.0, 12.0, 7)]
 
-    celeb_weights = {}
-    for start, end, w in sched:
-        if (start, end) in celeb_weights:
-            celeb_weights[(start, end)] += w
-        else:
-            celeb_weights[(start, end)] = w
 
-    print(celeb_weights)
+    bestTimeToPartySmart_weights(sched)
