@@ -60,7 +60,7 @@ def bestTimeToPartySmart_mine(schedule, ystart = 0, yend = 23):
         if (not max_present or max_present < present) and hr >= ystart and hr < yend:
             best_hr = hr
             max_present = present
-
+    print(celebs_attendance)
     print('Best time to attend the party is at {} o\'clock : {} celebrities will be attending!'.format(best_hr, max_present))
     return best_hr
 
@@ -107,25 +107,43 @@ def bestTimeToPartySmart_weights(schedule, ystart=0, yend=23):
         celeb_present[time] = 0
 
         for (celeb_start, celeb_end), weight in celeb_weights.items():
-            # account for celebrities entering the party
-
+            # account for celebrities present during the party
             if time >= celeb_start and time < celeb_end:
                 celeb_present[time] += weight
-            elif celeb_start > time and time >= celeb_end:
-                celeb_present[time] -= weight
     
-    print(celeb_present)
     best_hr = None
     max_weight = None
     for hr, weight in celeb_present.items():
         if (not max_weight) or weight > max_weight:
             best_hr = hr
             max_weight = weight
-
+    print(celeb_present)
     print('Best time to attend the party is at {} o\'clock : {} is the likeability of the celebrities attending!'.format(best_hr, max_weight))
     return best_hr
 
 
+def test_best_times(num_trials):
+    for t in range(num_trials):
+        
+        # create a random schedule
+        sched = []
+        sched_weights = []
+        for i in range(20):
+            start = random.choice(range(0, 15))
+            end = random.choice(range(10, 23))
+            while end <= start:
+                end = random.choice(range(8, 17))
+
+            sched.append((start, end))
+            sched_weights.append((start, end, 1))
+
+        # test on two methods   
+        if bestTimeToPartySmart_mine(sched) != bestTimeToPartySmart_weights(sched_weights):
+            print(sched_weights)
+            print(bestTimeToPartySmart_mine(sched), bestTimeToPartySmart_weights(sched_weights))
+            raise AssertionError('TEST FAILED')
+        
+        print('SUCCESSFUL TEST NO. {}'.format(t))
 
 
 if __name__ == '__main__':
@@ -134,8 +152,10 @@ if __name__ == '__main__':
     #TRIALS = 50
     #tests_more_lengths(LENGTHS, TRIALS)
 
-    sched = [(6.0, 8.0, 2), (6.5, 12.0, 1), (6.5, 7.0, 2), (7.0, 8.0, 2), (7.5, 10.0, 3), (8.10, 9.0, 2),
-            (8.0, 10.0, 1), (9.0, 12.0, 2), (9.5, 10.0, 4), (10.0, 11.0, 2), (10.0, 12.0, 3), (11.0, 12.0, 7)]
+    # sched = [(6.0, 8.0, 2), (6.5, 12.0, 1), (6.5, 7.0, 2), (7.0, 8.0, 2), (7.5, 10.0, 3), (8.10, 9.0, 2),
+    #        (8.0, 10.0, 1), (9.0, 12.0, 2), (9.5, 10.0, 4), (10.0, 11.0, 2), (10.0, 12.0, 3), (11.0, 12.0, 7)]
 
 
-    bestTimeToPartySmart_weights(sched)
+    # bestTimeToPartySmart_weights(sched)
+    num_trials = 20
+    test_best_times(num_trials)
