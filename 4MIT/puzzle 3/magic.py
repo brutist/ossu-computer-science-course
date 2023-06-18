@@ -168,17 +168,22 @@ def ComputerAssistant():
     while number < 99999:
         number = int(input('Please give random number' +
                                ' of at least 6 digits:'))
-    for i in range(5):
-        number = number * (i + 1) // (i + 2)
+    counter = 0
+    while counter < 5:
+        number = number * (counter + 1) // (counter + 2)
         n = number % 52
-        cards.append(deck[n])
-        cind.append(n)
-        cardsuits.append(n % 4)
-        cnumbers.append(n // 4)
-        numsuits[n % 4] += 1
-        if numsuits[n % 4] > 1:
-            pairsuit = n % 4
+
+        if not deck[n] in cards:
+            cards.append(deck[n])
+            cind.append(n)
+            cardsuits.append(n % 4)
+            cnumbers.append(n // 4)
+            numsuits[n % 4] += 1
+            if numsuits[n % 4] > 1:
+                pairsuit = n % 4
             
+            counter += 1
+    print(cards)
 ##    #Just for debugging
 ##    print (cards)
     cardh = []
@@ -204,3 +209,7 @@ def ComputerAssistant():
 
     return
 
+
+
+if __name__ == '__main__':
+    ComputerAssistant()
