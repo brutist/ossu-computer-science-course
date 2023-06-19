@@ -212,4 +212,6 @@ def ComputerAssistant():
 
 
 if __name__ == '__main__':
-    ComputerAssistant()
+    for i in range(10):
+        ComputerAssistant()
+        

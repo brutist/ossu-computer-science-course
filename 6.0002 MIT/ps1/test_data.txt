@@ -1,0 +1,4 @@
+Jessie,6
+Maybel,5
+Callie,2
+Maggie,5
