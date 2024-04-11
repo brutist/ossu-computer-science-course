@@ -1,4 +1,3 @@
-
 ;; aisle-starter.rkt
 
 ; 
