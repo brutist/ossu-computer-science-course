@@ -1,4 +1,3 @@
-
 ;; countdown-starter.rkt
 
 ; 

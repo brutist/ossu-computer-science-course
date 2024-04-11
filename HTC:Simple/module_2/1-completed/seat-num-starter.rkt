@@ -1,4 +1,3 @@
-
 ;; seat-num-starter.rkt
 
 ; 

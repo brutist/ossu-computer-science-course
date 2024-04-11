@@ -1,4 +1,3 @@
-
 ;; demolish-starter.rkt
 
 ;; =================

@@ -1,4 +1,3 @@
-
 ;; letter-grade-starter.rkt
 
 ; 

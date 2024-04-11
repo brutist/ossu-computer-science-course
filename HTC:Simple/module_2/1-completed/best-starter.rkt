@@ -1,4 +1,3 @@
-
 ;; best-starter.rkt
 
 ; 

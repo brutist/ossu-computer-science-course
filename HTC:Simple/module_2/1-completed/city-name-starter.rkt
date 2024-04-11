@@ -1,4 +1,3 @@
-
 ;; city-name-starter.rkt
 
 ; 
