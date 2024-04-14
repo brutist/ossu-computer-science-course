@@ -29,6 +29,9 @@
 ; nose hits the edge of the window, not the center of its body.
 ; 
 
+;; TODOs
+;; make the images rotate slightly as cow moves as if cow waddles
+
 
 ;; shows a moving cow back and forth automatically turning or using space key
 ;; === CONSTANTS ===
@@ -48,6 +51,7 @@
 
 (define R-COW (beside BODY HEAD))
 (define L-COW (flip-horizontal R-COW))
+(define FRNT-CTR (/ (image-width R-COW) 2))
 
 
 ;; empty scene
@@ -86,7 +90,8 @@
 (define (main sp)
   (big-bang (make-cow 1 "right" sp)    ; Cow
             (on-tick   move-cow)       ; Cow -> Cow
-            (to-draw   cow-render)))   ; Cow -> Image
+            (to-draw   cow-render)     ; Cow -> Image
+            (on-key    handle-key)))   ; KeyEvent -> Cow
             
 
 
@@ -113,20 +118,20 @@
 ;; moves the cow to the appropriate direction by (sp) pixels. if the cow hits the screen,
 ;; it turns to the opposite dirc and retains its x position
 ;; examples
-(check-expect (move-cow (make-cow 0 "left" 5))
-              (make-cow 0 "right" 5))                    ;cow that hits the left screen and turns right
+(check-expect (move-cow (make-cow FRNT-CTR "left" 5))
+              (make-cow FRNT-CTR "right" 5))                            ;cow's head hits the left screen and turns right
 
-(check-expect (move-cow (make-cow WIDTH "right" 5))  
-              (make-cow WIDTH "left" 5))                 ;cow that hits the right screen and turns left
+(check-expect (move-cow (make-cow (- WIDTH FRNT-CTR) "right" 5))  
+              (make-cow (- WIDTH FRNT-CTR) "left" 5))                   ;cow's head hits the right screen and turns left
 
 (check-expect (move-cow (make-cow (/ WIDTH 2) "right" 5))  
-              (make-cow (+ (/ WIDTH 2) 5) "right" 5))     ;cow continue to move right
+              (make-cow (+ (/ WIDTH 2) 5) "right" 5))                   ;cow continue to move right
 
 (check-expect (move-cow (make-cow (/ WIDTH 2) "left" 5))  
-              (make-cow (- (/ WIDTH 2) 5) "left" 5))      ;cow continue to move left
+              (make-cow (- (/ WIDTH 2) 5) "left" 5))                    ;cow continue to move left
 
 (check-expect (move-cow (make-cow (/ WIDTH 2) "left" 0))  
-              (make-cow (/ WIDTH 2) "left" 0))             ;cow stays in place (zero sp)
+              (make-cow (/ WIDTH 2) "left" 0))                          ;cow stays in place (zero sp)
 
 ;; stub
 #;
@@ -135,15 +140,15 @@
 ;; <template from Cow>
 
 (define (move-cow c)
-  (cond [(= (cow-sp c) 0)                                           ;cow stays in place
+  (cond [(= (cow-sp c) 0)                                                        ;cow stays in place
         c] 
-        [(and (<= (cow-x c) 0) (string=? (cow-dirc c) "left"))      ;cow hits left screen
+        [(and (<= (cow-x c) FRNT-CTR) (string=? (cow-dirc c) "left"))            ;cow hits left screen
+        (turn-cow c)] 
+        [(and (>= (cow-x c) (- WIDTH FRNT-CTR)) (string=? (cow-dirc c) "right")) ;cow hits right screen 
         (turn-cow c)]
-        [(and (>= (cow-x c) WIDTH) (string=? (cow-dirc c) "right")) ;cow hits right screen 
-        (turn-cow c)]
-        [(string=? (cow-dirc c) "right")                            ;cow continue to move right
+        [(string=? (cow-dirc c) "right")                                         ;cow continue to move right
         (make-cow (+ (cow-x c) (cow-sp c)) "right" (cow-sp c))]
-        [(string=? (cow-dirc c) "left")                             ;cow continue to move left
+        [(string=? (cow-dirc c) "left")                                          ;cow continue to move left
         (make-cow (- (cow-x c) (cow-sp c)) "left" (cow-sp c))]))
 
 
@@ -166,3 +171,19 @@
       (place-image R-COW (cow-x c) CTR-Y MTS)
       (place-image L-COW (cow-x c) CTR-Y MTS)))       
 
+
+;; KeyEvent -> Cow
+;; change the <dirc> direction of the cow when the <space> key is pressed
+;; examples/tests
+(check-expect (handle-key (make-cow 5 "left" 5) " ") (make-cow 5 "right" 5))
+(check-expect (handle-key (make-cow WIDTH "right" 5) " ") (make-cow WIDTH "left" 5))
+(check-expect (handle-key (make-cow WIDTH "right" 5) "a") (make-cow WIDTH "right" 5))
+
+;; stub
+#;
+(define (handle-key c ke) (make-cow 4 "right" 5))
+
+;; <template from HTDP recipe>
+(define (handle-key c ke)
+  (cond [(key=? ke " ") (turn-cow c)]
+        [else c]))
