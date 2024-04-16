@@ -1,5 +1,5 @@
 
-;; double-starter.rkt
+;; largest-starter.rkt
 
 ;; =================
 ;; Data definitions:
@@ -35,25 +35,27 @@
 ; 
 ; PROBLEM:
 ; 
-; Design a function that consumes a list of numbers and doubles every number 
-; in the list. Call it double-all.
+; Design a function that consumes a list of numbers and produces the largest number 
+; in the list. You may assume that all numbers in the list are greater than 0. If
+; the list is empty, produce 0.
 ; 
 
 
 
-;; ListOfNumber -> ListOfNumber
-;; takes in a list of numbers and doubles every number in that list
+;; ListOfNumber -> Number
+;; produces the largest number  in a list of number, produces 0 if the list is empty
 ;; examples/tests
-(check-expect (double-all empty) empty)
-(check-expect (double-all (cons 1 empty)) (cons (* 2 1) empty))
-(check-expect (double-all (cons 4.1 (cons 2 empty))) (cons (* 4.1 2) (cons (* 2 2) empty)))
+(check-expect (largest empty) 0)
+(check-expect (largest (cons 3.1 empty)) 3.1)
+(check-expect (largest (cons 4.2 (cons 9.2 (cons 1.2 empty)))) 9.2)
 
 ;; stub
 #;
-(define (double-all lon) (cons 0.0001 (cons 0.100123 empty)))
+(define (largest lon) 0.0001)
 
-
-(define (double-all lon)
-  (cond [(empty? lon) empty]
+(define (largest lon)
+  (cond [(empty? lon) 0]
         [else
-         (cons (* (first lon) 2) (double-all (rest lon)))]))
+         (if ( > (first lon) (largest (rest lon)))
+             (first lon)
+             (largest (rest lon)))]))
