@@ -157,7 +157,3 @@
 (define (mouse-handler f x y me)
   (cond [(mouse=? me "button-down") (make-flower 0 0.5 x y)]
         [else f]))
-
-
-
-
