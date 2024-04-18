@@ -1,4 +1,3 @@
-
 ;; odd-from-n-starter.rkt
 
 ;  PROBLEM:
@@ -26,4 +25,3 @@
   (cond [(zero? n) empty]                              ;base case
         [(odd? n) (cons n (odd-from-n (sub1 n)))]      ;odd case
         [else (odd-from-n (sub1 n))]))                 ;even case
-
