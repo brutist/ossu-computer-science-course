@@ -99,37 +99,53 @@
 ;; BST -> Image
 ;; produce a simple rendering of a BST
 ;; examples/tests
-(check-expect (render-bst false) FILLER)
+(check-expect (render-bst false) BLANK)
 (check-expect (render-bst BST1) (text "1:abc" SIZE COLOR))
-(check-expect (render-bst BST3) (above (text "3:ilk" SIZE COLOR)
-                                       VSPACE
-                                       (beside (text "1:abc" SIZE COLOR)
-                                               HSPACE
-                                               (text "4:dcj" SIZE COLOR))
-                                       VSPACE
-                                       (beside FILLER
-                                               HSPACE
-                                               FILLER
-                                               HSPACE
-                                               (text "7:ruf" SIZE COLOR))))
 
-(check-expect (render-bst BST10) false)
+
+(check-expect (render-bst BST3)
+              (above/align "middle"
+                           (text "3:ilk" SIZE COLOR)
+                           VSPACE
+                           (beside/align "top"
+                                         (render-bst BST1)
+                                         HSPACE
+                                         (above/align "middle"
+                                                      (text "4:dcj" SIZE COLOR)
+                                                      VSPACE
+                                                      (beside/align "top"
+                                                                    FILLER
+                                                                    HSPACE
+                                                                    (text "7:ruf" SIZE COLOR))))))
+
+
 #;
 (define (render-bst t) false) ;stub
 
 
 (define (render-bst t)
-  (cond [(false? t) FILLER]
-        [(and (false? (node-l t)) (false? (node-r t))) BLANK]
-        [else
-         (above (node->img t)    
-                VSPACE
-                (cond 
-                      [(false? (node-l t)) (beside FILLER
-                                                   HSPACE
-                                                   (render-bst (node-r t)))]
-                      [(false? (node-r t)) (beside (render-bst (node-l t))
-                                                   HSPACE
-                                                   FILLER)]))]))
-
-
+  (cond [(false? t) BLANK]
+        [(and (false? (node-r t)) (false? (node-l t))) (node->img t)]
+        [(and (not (false? (node-r t))) (not (false? (node-l t))))
+         (above/align "middle"
+                      (node->img t)    
+                      VSPACE
+                      (beside/align "top"
+                                    (render-bst (node-l t))
+                                    HSPACE
+                                    (render-bst (node-r t))))]
+        
+        [(false? (node-l t)) (above/align "center"
+                                          (node->img t)    
+                                          VSPACE
+                                          (beside/align "top"
+                                                        FILLER
+                                                        HSPACE
+                                                        (render-bst (node-r t))))]
+        [(false? (node-r t)) (above/align "center"
+                                          (node->img t)    
+                                          VSPACE
+                                          (beside/align "top"
+                                                        (render-bst (node-l t))
+                                                        HSPACE
+                                                        FILLER))]))
