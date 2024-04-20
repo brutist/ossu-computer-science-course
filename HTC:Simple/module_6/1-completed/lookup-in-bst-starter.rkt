@@ -65,6 +65,8 @@
 ;; examples/tests
 (check-expect (lookup-key BST0 1) false)
 (check-expect (lookup-key BST1 10) false)
+(check-expect (lookup-key BST1 0) false)
+(check-expect (lookup-key BST1 5) false)
 (check-expect (lookup-key BST42 27) "wit")
 (check-expect (lookup-key BST10 1) "abc")
 
