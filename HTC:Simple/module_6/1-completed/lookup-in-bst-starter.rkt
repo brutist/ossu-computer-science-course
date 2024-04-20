@@ -69,12 +69,12 @@
 (check-expect (lookup-key BST1 5) false)
 (check-expect (lookup-key BST42 27) "wit")
 (check-expect (lookup-key BST10 1) "abc")
-
+(check-expect (lookup-key BST10 "asd") false)
 #;
 (define (lookup-key t k) "") ;stub
 
 (define (lookup-key t k)
-  (cond [(false? t) false]
+  (cond [(or (false? t) (not (number? k))) false]
         [(= (node-key t) k) (node-val t)]
         [(< (node-key t) k) (lookup-key (node-r t) k)]
-        [else (lookup-key (node-l t) k)]))
+        [(> (node-key t) k) (lookup-key (node-l t) k)]))

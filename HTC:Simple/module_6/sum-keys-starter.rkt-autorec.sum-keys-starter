@@ -1,3 +1,7 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-intermediate-reader.ss" "lang")((modname sum-keys-starter) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+
 ;; sum-keys-starter.rkt
 
 ; 
@@ -33,9 +37,7 @@
              false))
 (define BST10 (make-node 10 "why" BST3 BST42))
 
-
 ; .
-
 
 #;
 (define (fn-for-bst t)
@@ -52,22 +54,3 @@
 ;;  - compound: (make-node Integer String BST BST)
 ;;  - self reference: (node-l t) has type BST
 ;;  - self reference: (node-r t) has type BST
-
-
-;;  === Functions ====
-
-;; BST -> Integer
-;; produce the sum of all keys in the BST
-;; examples/tests
-(check-expect (sum-key false) 0)
-(check-expect (sum-key BST1) 1)
-(check-expect (sum-key BST3) 15)
-(check-expect (sum-key BST42) 83)
-
-
-(define (sum-key t)
-  (cond [(false? t) 0]
-        [else
-         (+ (node-key t)       
-            (sum-key (node-l t))
-            (sum-key (node-r t)))]))
