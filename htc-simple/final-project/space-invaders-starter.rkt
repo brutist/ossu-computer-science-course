@@ -140,7 +140,7 @@
         [else (cons (make-invader (+ (invader-x (first loi)) INVADER-X-SPEED)
                                   (+ (invader-y (first loi)) INVADER-Y-SPEED)
                                   (invader-dx (first loi)))
-                                  (update-invaders (rest loi)))]))
+                    (update-invaders (rest loi)))]))
 
 
 ;; List -> List
@@ -163,7 +163,7 @@
   (cond [(empty? lom) empty]                  
         [else (cons (make-missile (missile-x (first lom))
                                   (- (missile-y (first lom)) MISSILE-SPEED))
-                                  (update-missiles (rest lom)))]))
+                    (update-missiles (rest lom)))]))
 
 
 
@@ -178,6 +178,8 @@
 ;; Game -> Game
 ;; update the missiles and invaders position
 ;; examples/tests
+;; TODOs - needs to be updated to account for the screen boundary
+;;       - add bounce if it hits either side
 
 (check-expect (update-miss-inv G0) (make-game empty empty T0))
 
@@ -260,13 +262,15 @@
 ;; produces an image rendering of the game-state
 ;; examplest/tests
 
-(check-expect (render-game G0) (render-invaders (game-invaders G0)
-                                                (render-missiles (game-missiles G0)
-                                                                 (place-image TANK (tank-x (game-tank G0)) TANK-Y BACKGROUND))))
+(check-expect (render-game G0)
+              (render-invaders (game-invaders G0)
+                               (render-missiles (game-missiles G0)
+                                                (place-image TANK (tank-x (game-tank G0)) TANK-Y BACKGROUND))))
 
-(check-expect (render-game G2) (render-invaders (game-invaders G2)
-                                                (render-missiles (game-missiles G2)
-                                                                 (place-image TANK (tank-x (game-tank G2)) TANK-Y BACKGROUND))))
+(check-expect (render-game G2)
+              (render-invaders (game-invaders G2)
+                               (render-missiles (game-missiles G2)
+                                                (place-image TANK (tank-x (game-tank G2)) TANK-Y BACKGROUND))))
 #;
 (define (render-game g) "false")  ;stub
 
@@ -322,44 +326,6 @@
                     (game-missiles ws)
                     (change-dir (game-tank ws) "right"))]
         [else ws]))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
