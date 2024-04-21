@@ -1,3 +1,6 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-abbr-reader.ss" "lang")((modname |space-invaders-starter (copy)|) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 (require 2htdp/universe)
 (require 2htdp/image)
 
@@ -142,31 +145,6 @@
                                   (invader-dx (first loi)))
                                   (update-invaders (rest loi)))]))
 
-
-;; List -> List
-;; takes in a list of missiles and update its positions accordingly
-;;     - decrease missile-y by MISSILE-SPEED
-;;     - retain missile-x
-;; examples/tests
-(check-expect (update-missiles empty) empty)
-(check-expect (update-missiles (list M1))
-              (cons (make-missile 150 (- 300 MISSILE-SPEED))
-                    empty))
-(check-expect (update-missiles (list M2 M1))
-              (cons (make-missile (invader-x I1) (- (+ (invader-y I1) 10) MISSILE-SPEED))
-                    (cons (make-missile 150 (- 300 MISSILE-SPEED))
-                          empty)))
-
-#;(define (update-invaders loi) "false") ;stub
-
-(define (update-missiles lom)
-  (cond [(empty? lom) empty]                  
-        [else (cons (make-missile (missile-x (first lom))
-                                  (- (missile-y (first lom)) MISSILE-SPEED))
-                                  (update-missiles (rest lom)))]))
-
-
-
 ;; relevant info
 ;; (define-struct game ((list-of-invaders) (list-of-missiles) tank))
 ;; (define-struct invader (x y dx))
@@ -178,22 +156,21 @@
 ;; Game -> Game
 ;; update the missiles and invaders position
 ;; examples/tests
-
-(check-expect (update-miss-inv G0) (make-game empty empty T0))
-
-(check-expect (update-miss-inv G2)
+#;
+(check-expect (move-miss-inv G0) (make-game empty empty T0))
+#;
+(check-expect (move-miss-inv G2)
               (make-game (update-invaders (list I1))    (update-missiles (list M1)) T1))
-
-(check-expect (update-miss-inv G3)
+#;
+(check-expect (move-miss-inv G3)
               (make-game (update-invaders (list I1 I2)) (update-missiles (list M1 M2)) T1))
 
 #;
-(define (update-miss-inv g) "false") ;stub
+(define (move-miss-inv g) "false") ;stub
 
-(define (update-miss-inv g)
-  (make-game (update-invaders (game-invaders g))
-             (update-missiles (game-missiles g))
-             (game-tank g)))
+
+
+
 
 
 
