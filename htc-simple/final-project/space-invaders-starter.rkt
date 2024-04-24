@@ -1,3 +1,6 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-abbr-reader.ss" "lang")((modname space-invaders-starter) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 (require 2htdp/universe)
 (require 2htdp/image)
 
@@ -119,28 +122,77 @@
     (on-key    key-handler)))       ; Game KeyEvent -> WS
 
 
+;; Invader -> Boolean
+;; produce true if an (invader's position + invader-dx) is already out of the screen
+;;         false otherwise
+;; examples/tests
+
+(check-expect (out-of-screen? (make-invader (/ WIDTH 2) 100 0)) false)
+;; going right scenarios
+(check-expect (out-of-screen? (make-invader (/ WIDTH 2) 100 12)) false)   ;middle
+(check-expect (out-of-screen? (make-invader WIDTH 100 12)) true)          ;end of screen
+(check-expect (out-of-screen? (make-invader (- WIDTH 10) 100 12)) true)   ;will be out-of-screen
+;; going left scenarios
+(check-expect (out-of-screen? (make-invader (/ WIDTH 2) 100 -35)) false)  ;middle
+(check-expect (out-of-screen? (make-invader 0 100 -35)) true)             ;left-end of screen
+(check-expect (out-of-screen? (make-invader (+ 0 10) 100 -35)) true)      ;will be out-of-screen
+
+(define (out-of-screen? invader)
+  (cond [(> (invader-dx invader) 0)
+          (if (> (+ (invader-x invader) (invader-dx invader)) WIDTH)
+              true
+              false)]
+        [(< (invader-dx invader) 0)
+          (if (< (+ (invader-x invader) (invader-dx invader)) 0)
+              true
+              false)]
+        [else false]))
+
+
 ;; List -> List
 ;; takes in a list of invaders and update its positions accordingly
-;;     - increase invader-x by INVADER-X-SPEED
-;;     - increase invader-y by INVADER-Y-SPEED
+;;     - increase invader-x by invader-dx
+;;     - increase invader-y by invader-dx
 ;; examples/tests
-(check-expect (update-invaders empty) empty)
-(check-expect (update-invaders (list I1))
-              (cons (make-invader (+ 150 INVADER-X-SPEED) (+ 100 INVADER-Y-SPEED) 12)
-                    empty))
-(check-expect (update-invaders (list I1 I2))
-              (cons (make-invader (+ 150 INVADER-X-SPEED) (+ 100 INVADER-Y-SPEED) 12)
-                    (cons (make-invader (+ 150 INVADER-X-SPEED) (+ HEIGHT INVADER-Y-SPEED) -10)
-                          empty)))
+;; TODOs - needs to be updated to account for the screen boundary
+;;       - add bounce if it hits either side
+(check-expect (update-invaders (cons (make-invader (/ WIDTH 2) 100 0) empty))
+                               (cons (make-invader (/ WIDTH 2) 100 0) empty))
+;; going right scenarios
+(check-expect (update-invaders (cons (make-invader (/ WIDTH 2)           100 12) empty))
+                               (cons (make-invader (+ (/ WIDTH 2) 12) (+ 100 12) 12) empty))  ;middle
+
+(check-expect (update-invaders (cons (make-invader (+ WIDTH 2)      100  8) empty))           ;end of screen
+                               (cons (make-invader       WIDTH (+ 100 8) 8) empty))     
+   
+;; going left scenarios
+(check-expect (update-invaders (cons (make-invader         (/ WIDTH 2)        100 -12) empty))
+                               (cons (make-invader (+ (/ WIDTH 2) -12) (+ 100 12) -12) empty))  ;middle
+
+
+
 
 #;(define (update-invaders loi) "false") ;stub
 
 (define (update-invaders loi)
   (cond [(empty? loi) empty]                  
-        [else (cons (make-invader (+ (invader-x (first loi)) INVADER-X-SPEED)
+        [else (if (out-of-screen? (first loi))
+              (cons (make-invader (+ (invader-x (first loi)) INVADER-X-SPEED)
+                                  (+ (invader-y (first loi)) INVADER-Y-SPEED)
+                                  (- (invader-dx (first loi))))
+                    (update-invaders (rest loi)))
+              (cons (make-invader (+ (invader-x (first loi)) INVADER-X-SPEED)
                                   (+ (invader-y (first loi)) INVADER-Y-SPEED)
                                   (invader-dx (first loi)))
-                    (update-invaders (rest loi)))]))
+                    (update-invaders (rest loi))))]))
+
+
+
+;; relevant info
+;; (define-struct game ((list-of-invaders) (list-of-missiles) tank))
+;; (define-struct invader (x y dx))
+;; (define-struct missile (x y))
+;; (define-struct tank (x dir))
 
 
 ;; List -> List
@@ -167,19 +219,10 @@
 
 
 
-;; relevant info
-;; (define-struct game ((list-of-invaders) (list-of-missiles) tank))
-;; (define-struct invader (x y dx))
-;; (define-struct missile (x y))
-;; (define-struct tank (x dir))
-
-
-
 ;; Game -> Game
 ;; update the missiles and invaders position
 ;; examples/tests
-;; TODOs - needs to be updated to account for the screen boundary
-;;       - add bounce if it hits either side
+
 
 (check-expect (update-miss-inv G0) (make-game empty empty T0))
 
