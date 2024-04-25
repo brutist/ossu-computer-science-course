@@ -263,10 +263,25 @@
         [else loi]))
 
 
+;; Natural Natural Natural -> Boolean
+;; produces true if the first natural is between the s(maller) and l(arger) natural
+;; examples/tests
+(check-expect (between 10 9 11) true)
+(check-expect (between 12 15 18) false)
+
+(define (between n s l)
+  (cond [(and (>= n s) (<= n l)) true]
+        [(or (= n s) (= n l)) true]
+        [else false]))
+
+
 ;; Invader ListOfMissiles -> Boolean
 ;; produces true if invader occupies the same space with at least one missile
 ;; examples/tests
+(check-expect (invader-hit? (make-invader 10 10 -1) (list (make-missile 10 10) M2)) true)
+#;
 (check-expect (invader-hit? I1 (list M1 M2)) true)
+
 
 ;; TODO - Complete helper (within-hitrange?)
 #;
@@ -274,16 +289,21 @@
 
 (define (invader-hit? i lom)
     (cond [(empty? lom) false]
-          [(= (+ (invader-y i) (image-height INVADER)) (- (missile-y (first lom)) (image-height MISSILE)))
-                            (if (within-hitrange? i (first lom))
-                                true
-                                (invader-hit? i (rest lom)))]))
+          [(and (between (+ (image-height MISSILE) (missile-y (first lom))) 
+                    (- (invader-y i) (image-height INVADER))
+                    (+ (invader-y i) (image-height INVADER)))
+                (between (missile-x (first lom))
+                    (- (invader-x i) (image-width INVADER))
+                    (+ (invader-x i) (image-width INVADER))))
+            true]
+          [else (invader-hit? i (rest lom))]))
                                 
 
 ;; ListOfInvaders ListOfMissiles -> ListOfInvaders
 ;; remove the invaders that have the same position with at least 1 missile
 ;; examples/tests
 (check-expect (destroy-invaders empty empty) empty)
+#;
 (check-expect (destroy-invaders (list I1 I2) (list M1 M2)) 
               (list I2))
 ;; TODO - Complete helper (invader-hit?)
@@ -291,8 +311,8 @@
 (define (destroy-invaders loi lom) "false")  ;stub
 
 (define (destroy-invaders loi lom)
-    (cond [(or (empty? loi)) loi]
-          [(invader-hit? (first loi) lom) (cons (destroy-invaders (rest loi) lom))]
+    (cond [(empty? loi) loi]
+          [(invader-hit? (first loi) lom) (destroy-invaders (rest loi) lom)]
           [else (cons (first loi) (destroy-invaders (rest loi) lom))]))
 
 
