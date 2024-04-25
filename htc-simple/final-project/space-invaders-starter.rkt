@@ -1,6 +1,3 @@
-;; The first three lines of this file were inserted by DrRacket. They record metadata
-;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-beginner-abbr-reader.ss" "lang")((modname space-invaders-starter) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 (require 2htdp/universe)
 (require 2htdp/image)
 
@@ -16,7 +13,7 @@
 (define INVADER-Y-SPEED 1.5)
 (define TANK-SPEED 2)
 (define MISSILE-SPEED 10)
-
+(define MAX-MISSILES 100)
 (define HIT-RANGE 10)
 
 (define INVADE-RATE 100)
@@ -52,7 +49,7 @@
 ;; Game constants defined below Missile data definition
 
 #;
-(define (fn-for-game s)
+(define (fn-for-game s) 
   (... (fn-for-loinvader (game-invaders s))
        (fn-for-lom (game-missiles s))
        (fn-for-tank (game-tank s))))
@@ -93,9 +90,9 @@
 ;; Missile is (make-missile Number Number)
 ;; interp. the missile's location is x y in screen coordinates
 
-(define M1 (make-missile 150 300))                       ;not hit U1
-(define M2 (make-missile (invader-x I1) (+ (invader-y I1) 10)))  ;exactly hit U1
-(define M3 (make-missile (invader-x I1) (+ (invader-y I1)  5)))  ;> hit U1
+(define M1 (make-missile 150 300))                               ;not hit I1
+(define M2 (make-missile (invader-x I1) (+ (invader-y I1) 10)))  ;exactly hit I1
+(define M3 (make-missile (invader-x I1) (+ (invader-y I1)  5)))  ;> hit I1
 
 #;
 (define (fn-for-missile m)
@@ -114,39 +111,27 @@
 ;; Game -> Game
 ;; start the world with (main g)
 ;;
-#;
+
 (define (main ws)
-  (big-bang ws                              ; Game
-    (on-tick   next-game-state)     ; Game -> Game
+  (big-bang ws                      ; Game
+    (on-tick   update-game-state)   ; Game -> Game
     (to-draw   render-game)         ; Game -> Image
     (on-key    key-handler)))       ; Game KeyEvent -> WS
 
 
-;; Invader -> Boolean
-;; produce true if an (invader's position + invader-dx) is already out of the screen
-;;         false otherwise
+;; Natural Natural Image -> Boolean
+;; produce true if the sum of the given natural is greater than (WIDTH - (width of image))
+;;         or sum is less than the width of the image, false if otherswise
 ;; examples/tests
+(check-expect (out-of-screen? 30 2 INVADER) false)
+(check-expect (out-of-screen? (- WIDTH 10) 5 INVADER) true)
+(check-expect (out-of-screen? (/ WIDTH 2) 5 TANK) false)
+(check-expect (out-of-screen? (- WIDTH 10) 5 TANK) true)
 
-(check-expect (out-of-screen? (make-invader (/ WIDTH 2) 100 0)) false)
-;; going right scenarios
-(check-expect (out-of-screen? (make-invader (/ WIDTH 2) 100 12)) false)   ;middle
-(check-expect (out-of-screen? (make-invader WIDTH 100 12)) true)          ;end of screen
-(check-expect (out-of-screen? (make-invader (- WIDTH 10) 100 12)) true)   ;will be out-of-screen
-;; going left scenarios
-(check-expect (out-of-screen? (make-invader (/ WIDTH 2) 100 -35)) false)  ;middle
-(check-expect (out-of-screen? (make-invader 0 100 -35)) true)             ;left-end of screen
-(check-expect (out-of-screen? (make-invader (+ 0 10) 100 -35)) true)      ;will be out-of-screen
 
-(define (out-of-screen? invader)
-  (cond [(> (invader-dx invader) 0)
-          (if (> (+ (invader-x invader) (invader-dx invader)) WIDTH)
-              true
-              false)]
-        [(< (invader-dx invader) 0)
-          (if (< (+ (invader-x invader) (invader-dx invader)) 0)
-              true
-              false)]
-        [else false]))
+(define (out-of-screen? n1 n2 img)
+  (or (> (+ n1 n2) (- WIDTH (image-width img))) 
+      (< (+ n1 n2) (image-width img))))
 
 
 ;; List -> List
@@ -154,45 +139,44 @@
 ;;     - increase invader-x by invader-dx
 ;;     - increase invader-y by invader-dx
 ;; examples/tests
-;; TODOs - needs to be updated to account for the screen boundary
-;;       - add bounce if it hits either side
-(check-expect (update-invaders (cons (make-invader (/ WIDTH 2) 100 0) empty))
-                               (cons (make-invader (/ WIDTH 2) 100 0) empty))
-;; going right scenarios
-(check-expect (update-invaders (cons (make-invader (/ WIDTH 2)           100 12) empty))
-                               (cons (make-invader (+ (/ WIDTH 2) 12) (+ 100 12) 12) empty))  ;middle
 
-(check-expect (update-invaders (cons (make-invader (+ WIDTH 2)      100  8) empty))           ;end of screen
-                               (cons (make-invader       WIDTH (+ 100 8) 8) empty))     
+(check-expect (update-invaders (cons (make-invader (/ WIDTH 2) 100 0) empty))
+              (cons (make-invader (/ WIDTH 2) 100 0) empty))
+;; going right scenarios
+(check-expect (update-invaders (cons (make-invader (/ WIDTH 2) 100 12) empty))
+              (cons (make-invader (+ (/ WIDTH 2) 12) (+ 100 12) 12) empty))        ;middle
+
+(check-expect (update-invaders (cons (make-invader (+ WIDTH 2) 100 8) empty))      ;end of screen
+              (cons (make-invader (- WIDTH (image-width INVADER)) (+ 100 8) -8) empty))     
    
 ;; going left scenarios
-(check-expect (update-invaders (cons (make-invader         (/ WIDTH 2)        100 -12) empty))
-                               (cons (make-invader (+ (/ WIDTH 2) -12) (+ 100 12) -12) empty))  ;middle
+(check-expect (update-invaders (cons (make-invader (/ WIDTH 2) 100 -12) empty))
+              (cons (make-invader (+ (/ WIDTH 2) -12) (+ 100 12) -12) empty))      ;middle
 
 
+(check-expect (update-invaders (cons (make-invader 2 100 -18) empty))               ;end of screen
+              (cons (make-invader (image-width INVADER) (+ 100 18) 18) empty))     
 
 
 #;(define (update-invaders loi) "false") ;stub
 
 (define (update-invaders loi)
-  (cond [(empty? loi) empty]                  
-        [else (if (out-of-screen? (first loi))
-              (cons (make-invader (+ (invader-x (first loi)) INVADER-X-SPEED)
-                                  (+ (invader-y (first loi)) INVADER-Y-SPEED)
-                                  (- (invader-dx (first loi))))
-                    (update-invaders (rest loi)))
-              (cons (make-invader (+ (invader-x (first loi)) INVADER-X-SPEED)
-                                  (+ (invader-y (first loi)) INVADER-Y-SPEED)
+  (cond [(empty? loi) empty]
+        [(out-of-screen? (invader-x (first loi)) (invader-dx (first loi)) INVADER)
+         (cond [(>= (+ (invader-x (first loi)) (invader-dx (first loi))) (- WIDTH (image-width INVADER)))
+                (cons (make-invader (- WIDTH (image-width INVADER))
+                                    (+ (invader-y (first loi)) (abs (invader-dx (first loi))))
+                                    (- (invader-dx (first loi))))
+                      (update-invaders (rest loi)))]
+               [(<= (+ (invader-x (first loi)) (invader-dx (first loi))) (image-width INVADER))
+                (cons (make-invader (image-width INVADER)
+                                    (+ (invader-y (first loi)) (abs (invader-dx (first loi))))
+                                    (abs (invader-dx (first loi))))
+                      (update-invaders (rest loi)))])]                     
+        [else (cons (make-invader (+ (invader-x (first loi)) (invader-dx (first loi)))
+                                  (+ (invader-y (first loi)) (abs (invader-dx (first loi))))
                                   (invader-dx (first loi)))
-                    (update-invaders (rest loi))))]))
-
-
-
-;; relevant info
-;; (define-struct game ((list-of-invaders) (list-of-missiles) tank))
-;; (define-struct invader (x y dx))
-;; (define-struct missile (x y))
-;; (define-struct tank (x dir))
+                    (update-invaders (rest loi)))]))
 
 
 ;; List -> List
@@ -218,29 +202,119 @@
                     (update-missiles (rest lom)))]))
 
 
+;; Tank -> Tank
+;; update the x position of the tank according to its dir
+;; examples/tests
+(check-expect (update-tank (make-tank (/ WIDTH 2) -1)) 
+              (make-tank (+ (/ WIDTH 2) (* -1 TANK-SPEED)) -1))   ;center going left
+(check-expect (update-tank (make-tank (/ WIDTH 2) 1)) 
+              (make-tank (+ (/ WIDTH 2) (* 1 TANK-SPEED)) 1))     ;center going right             
+(check-expect (update-tank (make-tank (- WIDTH (image-width TANK)) 1)) 
+              (make-tank (- WIDTH (image-width TANK)) -1))        ;collides to right
+(check-expect (update-tank (make-tank (image-width TANK) -1)) 
+              (make-tank (image-width TANK) 1))                   ;collides to left
+
+#;
+(define (update-tank t) "false") ;stub
+
+(define (update-tank t)
+  (cond [(out-of-screen? (tank-x t) (tank-dir t) TANK)
+         (if (< (tank-dir t) 0)
+             (make-tank (image-width TANK) (abs (tank-dir t)))
+             (make-tank (- WIDTH (image-width TANK)) (- (tank-dir t))))]
+        [else (make-tank (+ (tank-x t) (* (tank-dir t) TANK-SPEED)) (tank-dir t))]))
+
+;; ListOfMissiles Image -> ListOfMissiles
+;; filters the given list of missiles by deleting missiles that has y-position <= image height
+;; examples/tests
+(check-expect (filter-missiles empty MISSILE) empty)
+(check-expect (filter-missiles (list (make-missile 150 300) (make-missile 150 300)) MISSILE)
+              (list (make-missile 150 300) (make-missile 150 300)))
+(check-expect (filter-missiles (list (make-missile 150 -60) (make-missile 150 300)) MISSILE)
+              (list (make-missile 150 300)))
+
+#;
+(define (filter-missiles lom img) "false") ;stub
+
+(define (filter-missiles lom img)
+  (cond [(empty? lom) empty]
+        [(< (missile-y (first lom)) (image-height img))
+          (rest lom)]
+        [else (cons (first lom) (rest lom))]))
+
+
+;; ListOfInvaders -> ListOfInvaders
+;; add an invader with location at (x, 0), x will be choosen at random
+;; examples/tests
+
+(check-random (spawn-invader empty) 
+              (cond [(> INVADE-RATE (random 5000)) 
+                     (cons (make-invader (random WIDTH) 10 INVADER-X-SPEED) empty)]
+                    [else empty]))
+(check-random (spawn-invader (cons (make-invader 10 10 INVADER-X-SPEED) empty)) 
+              (cond [(> INVADE-RATE (random 5000)) 
+                     (cons (make-invader (random WIDTH) 10 INVADER-X-SPEED) 
+                           (cons (make-invader 10 10 INVADER-X-SPEED) empty))]
+                    [else (cons (make-invader 10 10 INVADER-X-SPEED) empty)]))
+
+
+(define (spawn-invader loi)
+  (cond [(> INVADE-RATE (random 5000)) (cons (make-invader (random WIDTH) 10 INVADER-X-SPEED) loi)]
+        [else loi]))
+
+
+;; Invader ListOfMissiles -> Boolean
+;; produces true if invader occupies the same space with at least one missile
+;; examples/tests
+(check-expect (invader-hit? I1 (list M1 M2)) true)
+
+;; TODO - Complete helper (within-hitrange?)
+#;
+(define (invader-hit? i lom) "false")  ;stub
+
+(define (invader-hit? i lom)
+    (cond [(empty? lom) false]
+          [(= (+ (invader-y i) (image-height INVADER)) (- (missile-y (first lom)) (image-height MISSILE)))
+                            (if (within-hitrange? i (first lom))
+                                true
+                                (invader-hit? i (rest lom)))]))
+                                
+
+;; ListOfInvaders ListOfMissiles -> ListOfInvaders
+;; remove the invaders that have the same position with at least 1 missile
+;; examples/tests
+(check-expect (destroy-invaders empty empty) empty)
+(check-expect (destroy-invaders (list I1 I2) (list M1 M2)) 
+              (list I2))
+;; TODO - Complete helper (invader-hit?)
+#;
+(define (destroy-invaders loi lom) "false")  ;stub
+
+(define (destroy-invaders loi lom)
+    (cond [(or (empty? loi)) loi]
+          [(invader-hit? (first loi) lom) (cons (destroy-invaders (rest loi) lom))]
+          [else (cons (first loi) (destroy-invaders (rest loi) lom))]))
+
 
 ;; Game -> Game
 ;; update the missiles and invaders position
 ;; examples/tests
-
-
-(check-expect (update-miss-inv G0) (make-game empty empty T0))
-
-(check-expect (update-miss-inv G2)
-              (make-game (update-invaders (list I1))    (update-missiles (list M1)) T1))
-
-(check-expect (update-miss-inv G3)
-              (make-game (update-invaders (list I1 I2)) (update-missiles (list M1 M2)) T1))
+#;
+(check-expect (update-game-state G0) (make-game empty empty (update-tank T0)))
+#;
+(check-expect (update-game-state G2)
+              (make-game (update-invaders (list I1)) (update-missiles (list M1)) (update-tank T1)))
+#;
+(check-expect (update-game-state G3)
+              (make-game (update-invaders (list I1 I2)) (update-missiles (list M1 M2)) (update-tank T1)))
 
 #;
-(define (update-miss-inv g) "false") ;stub
+(define (update-game-state g) "false") ;stub
 
-(define (update-miss-inv g)
-  (make-game (update-invaders (game-invaders g))
-             (update-missiles (game-missiles g))
-             (game-tank g)))
-
-
+(define (update-game-state g)
+  (make-game (update-invaders (spawn-invader (destroy-invaders (game-invaders g) (game-missiles g))))
+             (update-missiles (filter-missiles (game-missiles g) MISSILE))
+             (update-tank (game-tank g))))
 
 
 ;; List Image -> Image
@@ -258,12 +332,11 @@
 
 
 (define (render-missiles lom img)
-  (cond [(empty? lom) BACKGROUND]                  
+  (cond [(empty? lom) img]                  
         [else (place-image MISSILE
                            (missile-x (first lom))
                            (missile-y (first lom))
                            (render-missiles (rest lom) img))]))
-
 
 
 ;; List Image -> Image
@@ -281,7 +354,7 @@
 
 
 (define (render-invaders loi img)
-  (cond [(empty? loi) BACKGROUND]                  
+  (cond [(empty? loi) img]                  
         [else (place-image INVADER
                            (invader-x (first loi))
                            (invader-y (first loi))
@@ -308,12 +381,12 @@
 (check-expect (render-game G0)
               (render-invaders (game-invaders G0)
                                (render-missiles (game-missiles G0)
-                                                (place-image TANK (tank-x (game-tank G0)) TANK-Y BACKGROUND))))
+                                                (render-tank (game-tank G0)))))
 
 (check-expect (render-game G2)
               (render-invaders (game-invaders G2)
                                (render-missiles (game-missiles G2)
-                                                (place-image TANK (tank-x (game-tank G2)) TANK-Y BACKGROUND))))
+                                                (render-tank (game-tank G2)))))
 #;
 (define (render-game g) "false")  ;stub
 
@@ -321,8 +394,6 @@
   (render-invaders (game-invaders g)
                    (render-missiles (game-missiles g)
                                     (render-tank (game-tank g)))))
-
-
 
 
 
@@ -368,7 +439,17 @@
          (make-game (game-invaders ws)
                     (game-missiles ws)
                     (change-dir (game-tank ws) "right"))]
+        [(and (key=? ke " ") (< (length (game-missiles ws)) MAX-MISSILES))
+         (make-game (game-invaders ws)
+                    (cons (make-missile (tank-x (game-tank ws)) 
+                                        (- HEIGHT (image-height TANK))) (game-missiles ws))
+                    (game-tank ws))]
         [else ws]))
 
 
 
+;; relevant info
+;; (define-struct game ((list-of-invaders) (list-of-missiles) tank))
+;; (define-struct invader (x y dx))
+;; (define-struct missile (x y))
+;; (define-struct tank (x dir))
