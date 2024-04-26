@@ -116,7 +116,35 @@
   (big-bang ws                      ; Game
     (on-tick   update-game-state)   ; Game -> Game
     (to-draw   render-game)         ; Game -> Image
-    (on-key    key-handler)))       ; Game KeyEvent -> WS
+    (on-key    key-handler)         ; Game KeyEvent -> WS
+    (stop-when lose?)))             ; Game -> Boolean
+
+
+;; ListOfInvaders -> Boolean
+;; produces true if at least one invader has a y-position >= (HEIGHT - (height of INVADER))
+;; examples/tests
+(check-expect (invaded? empty) false)
+(check-expect (invaded? (list I1 I2 (make-invader 20 HEIGHT -2))) true)
+
+#;
+(define (invaded? loi) "...") ;stub
+
+(define (invaded? loi)
+  (cond [(empty? loi) false]
+        [(> (invader-y (first loi)) (- HEIGHT (image-height INVADER)) ) true]
+        [else (invaded? (rest loi))]))
+
+;; Game -> Boolean
+;; produces true an invader reaches the bottom of the screen
+;; examples/tests
+(check-expect (lose? G0) false)
+(check-expect (lose? (make-game (list I1 I2 (make-invader 20 HEIGHT -2)) (list M1 M2) T0)) true)
+      
+#;      
+(define (lose? g) "....")  ;stub
+
+(define (lose? g)
+  (invaded? (game-invaders g)))
 
 
 ;; Natural Natural Image -> Boolean
@@ -279,22 +307,21 @@
 ;; produces true if invader occupies the same space with at least one missile
 ;; examples/tests
 (check-expect (invader-hit? (make-invader 10 10 -1) (list (make-missile 10 10) M2)) true)
-#;
+(check-expect (invader-hit? (make-invader 10 10 -1) (list (make-missile 0 10) (make-missile 10 10) M2)) true)
 (check-expect (invader-hit? I1 (list M1 M2)) true)
 
 
-;; TODO - Complete helper (within-hitrange?)
 #;
 (define (invader-hit? i lom) "false")  ;stub
 
 (define (invader-hit? i lom)
     (cond [(empty? lom) false]
-          [(and (between (+ (image-height MISSILE) (missile-y (first lom))) 
-                    (- (invader-y i) (image-height INVADER))
-                    (+ (invader-y i) (image-height INVADER)))
+          [(and (between (- (missile-y (first lom)) (/ (image-height MISSILE) 2)) 
+                    (- (invader-y i) (/ (image-height INVADER) 2))
+                    (+ (invader-y i) (/ (image-height INVADER) 2)))
                 (between (missile-x (first lom))
-                    (- (invader-x i) (image-width INVADER))
-                    (+ (invader-x i) (image-width INVADER))))
+                    (- (invader-x i) (/ (image-width INVADER) 2))
+                    (+ (invader-x i) (/ (image-width INVADER) 2))))
             true]
           [else (invader-hit? i (rest lom))]))
                                 
@@ -306,7 +333,7 @@
 #;
 (check-expect (destroy-invaders (list I1 I2) (list M1 M2)) 
               (list I2))
-;; TODO - Complete helper (invader-hit?)
+
 #;
 (define (destroy-invaders loi lom) "false")  ;stub
 
@@ -321,12 +348,11 @@
 ;; examples/tests
 #;
 (check-expect (update-game-state G0) (make-game empty empty (update-tank T0)))
-#;
+
 (check-expect (update-game-state G2)
-              (make-game (update-invaders (list I1)) (update-missiles (list M1)) (update-tank T1)))
-#;
-(check-expect (update-game-state G3)
-              (make-game (update-invaders (list I1 I2)) (update-missiles (list M1 M2)) (update-tank T1)))
+              (make-game (update-invaders (spawn-invader (destroy-invaders (list I1) (list M1)))) 
+                         (update-missiles (filter-missiles (list M1) MISSILE))
+                         (update-tank (game-tank G2))))
 
 #;
 (define (update-game-state g) "false") ;stub
@@ -466,10 +492,3 @@
                     (game-tank ws))]
         [else ws]))
 
-
-
-;; relevant info
-;; (define-struct game ((list-of-invaders) (list-of-missiles) tank))
-;; (define-struct invader (x y dx))
-;; (define-struct missile (x y))
-;; (define-struct tank (x dir))
