@@ -111,8 +111,8 @@
 ; 
 
 
-;; String Element -> String or False
-;; String ListOfElement -> String or False
+;; String Element -> Integer or False
+;; String ListOfElement -> Integer or False
 ;; looks for the data element with given name; if it finds that element produce data otherwise produce false
 ;; examples/tests
 (check-expect (find-data--element "D6" D6) 0)
