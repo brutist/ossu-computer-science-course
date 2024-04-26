@@ -491,4 +491,3 @@
                                         (- HEIGHT (image-height TANK))) (game-missiles ws))
                     (game-tank ws))]
         [else ws]))
-
