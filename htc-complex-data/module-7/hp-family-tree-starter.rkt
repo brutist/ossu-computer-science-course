@@ -213,7 +213,8 @@
   (cond [(empty? lop) empty]
         [(have-wand material (person-wand (first lop)))
          (append (same-wand--person (first lop) material) (same-wand--lop (rest lop) material))]
-        [else (append (same-wand--lop (person-children lop)) (same-wand--lop (rest lop) material))]))
+        [else (append (same-wand--lop (person-children (first lop)) material) 
+                      (same-wand--lop (rest lop) material))]))
 
 
 
