@@ -11,6 +11,10 @@
             (cond
               [(empty? lon) empty]
               [else (insert (first lon) (sort-lon (rest lon)))]))
+          
+          ;; Number ListOfNumber -> ListOfNumber
+          ;; insert n in proper position in lon
+          ;; ASSUME: lon is sorted in increasing order
           (define (insert n lon)
             (cond
               [(empty? lon) (cons n empty)]
