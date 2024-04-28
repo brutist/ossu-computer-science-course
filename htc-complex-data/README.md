@@ -4,4 +4,4 @@ All the information available about the course: [UBCx-HtC1x-Simple-Data](https:/
 
 The code in this folder is written in DrRacket editor. In order to run the codes properly, you must pick the right language first.
 
-    Module 7 - Beginning Student Language with Abbreviations
+    Module 7 - Intermediate Student
