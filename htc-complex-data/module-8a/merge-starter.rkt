@@ -27,6 +27,7 @@
 (check-expect (merge-lon (list 1 2 4) (list 6 9)) (list 1 2 4 6 9))
 (check-expect (merge-lon (list 1 2 4) (list 2 4 5)) (list 1 2 2 4 4 5))
 (check-expect (merge-lon (list 1 6 8) (list 2 4 9)) (list 1 2 4 6 8 9))
+(check-expect (merge-lon (list 0 2 4) (list 1 3)) (list 0 1 2 3 4))
 
 ;(define (merge-lon lon1 lon2) "false") ;stub
 
@@ -34,5 +35,6 @@
   (cond
     [(empty? lon1) lon2]
     [(empty? lon2) lon1]
-    [else (sort (append (list (first lon1) (first lon2)) 
-                        (merge-lon (rest lon1) (rest lon2))) <)]))
+    [else (if (<= (first lon1) (first lon2))
+              (append (list (first lon1)) (merge-lon (rest lon1) lon2))
+              (append (list (first lon2)) (merge-lon lon1 (rest lon2))))]))
