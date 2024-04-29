@@ -75,6 +75,20 @@
 ;; Roster Roster -> Boolean
 ;; produces true if all players on both teams will play if the teams play each other,
 ;;          produce true if both rosters are empty
+
+;   ┌───────────────────────────────────────────────────┐
+;   │                                                   │
+;   │    ros1           empty              cons         │
+;   │                                                   │
+;   │ ros2                                              │
+;   │                   (1)                 (2)         │
+;   │               ┌──────────┐       ┌──────────┐     │
+;   │ empty         │   true   │       │   false  │     │
+;   │               │          │       │          │     │
+;   │               │          │       │          │     │
+;   │ cons          │   false  │       │   true   │     │
+;   └───────────────┴──────────┴───────┴──────────┴─────┘
+
 ;; examples/tests
 (check-expect (roster-coincide? empty empty) true)
 (check-expect (roster-coincide? empty (list "June Kim")) false)
@@ -85,8 +99,8 @@
 
 
 (define (roster-coincide? ros1 ros2)
-  (cond [(empty? ros1) (empty? ros2)]
-        [else (and (not (empty? ros2)) 
+  (cond [(empty? ros1) (empty? ros2)]  ;(1)
+        [else (and (not (empty? ros2)) ;(2)
                    (roster-coincide? (rest ros1) (rest ros2)))]))
 
 
@@ -104,6 +118,20 @@
 ;; produce a list of tennis matches that will be played; r1 nth vs r2 nth element
 ;; Assumes the two rosters have equal number of players
 
+;   ┌─────────────────────────────────────────┐
+;   │   ros1                                  │
+;   │              empty           cons       │
+;   │ ros2                                    │
+;   │                (1)                      │
+;   │            ┌────────┐                   │
+;   │ empty      │ empty  │         xx        │
+;   │            └────────┘   ┌─────────────┐ │
+;   │                         │ make-match; │ │
+;   │ cons          xx        │  recursion  │ │
+;   │                         ├────┐(2)┌────┤ │
+;   └─────────────────────────┴────┴───┴────┴─┘
+
+;; examples/tests
 (check-expect (create-game empty empty) empty)
 (check-expect (create-game (list "Maria") (list "June")) 
               (list (make-match "Maria" "June")))
