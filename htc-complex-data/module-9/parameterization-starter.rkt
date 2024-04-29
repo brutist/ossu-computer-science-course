@@ -1,20 +1,20 @@
-;; The first three lines of this file were inserted by DrRacket. They record metadata
-;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-intermediate-reader.ss" "lang")((modname parameterization-starter) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 ;; parameterization-starter.rkt
 
-(* pi (sqr 4)) ;area of circle radius 4
-(* pi (sqr 6)) ;area of circle radius 6
+(define (area r)
+      (* pi (sqr r)))
+
+(area 4)    ;(* pi (sqr 4)) ;area of circle radius 4
+(area 6)    ;(* pi (sqr 6)) ;area of circle radius 6
 
 
 ;; ====================
 
 ;; ListOfString -> Boolean
 ;; produce true if los includes "UBC"
-(check-expect (contains-ubc? empty) false)
-(check-expect (contains-ubc? (cons "McGill" empty)) false)
-(check-expect (contains-ubc? (cons "UBC" empty)) true)
-(check-expect (contains-ubc? (cons "McGill" (cons "UBC" empty))) true)
+(check-expect (contains-team-nm? empty "UBC") false)
+(check-expect (contains-team-nm? (cons "McGill" empty) "UBC") false)
+(check-expect (contains-team-nm? (cons "UBC" empty) "UBC") true)
+(check-expect (contains-team-nm? (cons "McGill" (cons "UBC" empty)) "UBC") true)
 
 ;(define (contains-ubc? los) false) ;stub
 
@@ -29,10 +29,10 @@
 
 ;; ListOfString -> Boolean
 ;; produce true if los includes "McGill"
-(check-expect (contains-mcgill? empty) false)
-(check-expect (contains-mcgill? (cons "UBC" empty)) false)
-(check-expect (contains-mcgill? (cons "McGill" empty)) true)
-(check-expect (contains-mcgill? (cons "UBC" (cons "McGill" empty))) true)
+(check-expect (contains-team-nm? empty "McGill") false)
+(check-expect (contains-team-nm? (cons "UBC" empty) "McGill") false)
+(check-expect (contains-team-nm? (cons "McGill" empty) "McGill") true)
+(check-expect (contains-team-nm? (cons "UBC" (cons "McGill" empty)) "McGill") true)
 
 ;(define (contains-mcgill? los) false) ;stub
 
@@ -46,6 +46,14 @@
              (contains-mcgill? (rest los)))]))
 
 
+(define (contains-team-nm? los team-nm)
+  (cond [(empty? los) false]
+        [else
+         (if (string=? (first los) team-nm)
+             true
+             (contains-team-nm? (rest los) team-nm))]))
+
+
 ;; ====================
 
 ;; ListOfNumber -> ListOfNumber
@@ -57,11 +65,7 @@
 
 ;<template from ListOfNumber>
 
-(define (squares lon)
-  (cond [(empty? lon) empty]
-        [else
-         (cons (sqr (first lon))
-               (squares (rest lon)))]))
+(define (squares lon) (map2 sqr lon))
 
 ;; ListOfNumber -> ListOfNumber
 ;; produce list of sqrt of every number in lon
@@ -72,11 +76,13 @@
 
 ;<template from ListOfNumber>
 
-(define (square-roots lon)
+(define (square-roots lon) (map2 sqrt lon))
+
+(define (map2 fn lon)
   (cond [(empty? lon) empty]
         [else
-         (cons (sqrt (first lon))
-               (square-roots (rest lon)))]))
+         (cons (fn (first lon))
+               (map2 fn (rest lon)))]))
 
 
 ;; ====================
@@ -90,13 +96,7 @@
 
 ;<template from ListOfNumber>
 
-(define (positive-only lon)
-  (cond [(empty? lon) empty]
-        [else
-         (if (positive? (first lon))
-             (cons (first lon)
-                   (positive-only (rest lon)))
-             (positive-only (rest lon)))]))
+(define (positive-only lon) (filter2 positive? lon))
 
 
 ;; ListOfNumber -> ListOfNumber
@@ -108,10 +108,12 @@
 
 ;<template from ListOfNumber>
 
-(define (negative-only lon)
+(define (negative-only lon) (filter2 negative? lon))
+
+(define (filter2 expr lon)
   (cond [(empty? lon) empty]
         [else
-         (if (negative? (first lon))
+         (if (expr (first lon))
              (cons (first lon)
-                   (negative-only (rest lon)))
-             (negative-only (rest lon)))]))
+                   (filter2 expr (rest lon)))
+             (filter2 expr (rest lon)))]))
