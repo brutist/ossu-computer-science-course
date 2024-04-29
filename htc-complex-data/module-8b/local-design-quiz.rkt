@@ -141,5 +141,5 @@
 (define (create-game ros1 ros2)
   (cond [(empty? ros1) empty]
         [else 
-         (append (list (make-match (first ros1) (first ros2)))
+         (cons (make-match (first ros1) (first ros2))
                  (create-game (rest ros1) (rest ros2)))]))
