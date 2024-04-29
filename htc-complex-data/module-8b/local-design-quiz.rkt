@@ -72,6 +72,22 @@
               (fn-for-lom (rest lom)))]))
 
 
+;; Roster Roster -> Boolean
+;; produces true if all players on both teams will play if the teams play each other,
+;;          produce true if both rosters are empty
+;; examples/tests
+(check-expect (roster-coincide? empty empty) true)
+(check-expect (roster-coincide? empty (list "June Kim")) false)
+(check-expect (roster-coincide? (list "June Kim") empty) false)
+(check-expect (roster-coincide? (list "Maria" "Jim") (list "June")) false)
+(check-expect (roster-coincide? (list "June") (list "Maria" "Jim")) false)
+(check-expect (roster-coincide? (list "Maria" "Jim") (list "June" "Kim")) true)
+
+
+(define (roster-coincide? ros1 ros2)
+  (cond [(empty? ros1) (empty? ros2)]
+        [else (and (not (empty? ros2)) 
+                   (roster-coincide? (rest ros1) (rest ros2)))]))
 
 
 ; Problem 2:
@@ -84,5 +100,18 @@
 ; of players. 
 ; 
 
+;; Roster Roster -> ListOfMatch
+;; produce a list of tennis matches that will be played; r1 nth vs r2 nth element
+;; Assumes the two rosters have equal number of players
 
+(check-expect (create-game empty empty) empty)
+(check-expect (create-game (list "Maria") (list "June")) 
+              (list (make-match "Maria" "June")))
+(check-expect (create-game (list "Maria" "Jim") (list "June" "Kim")) 
+              (list (make-match "Maria" "June") (make-match "Jim" "Kim")))
 
+(define (create-game ros1 ros2)
+  (cond [(empty? ros1) empty]
+        [else 
+         (append (list (make-match (first ros1) (first ros2)))
+                 (create-game (rest ros1) (rest ros2)))]))
