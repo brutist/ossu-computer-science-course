@@ -45,6 +45,8 @@
 (define D4 (make-dir "D4" empty (list I1 I2)))
 (define D5 (make-dir "D5" empty (list I3)))
 (define D6 (make-dir "D6" (list D4 D5) empty))
+(define D7 (make-dir "D7" empty empty))
+(define D8 (make-dir "D8" (list D4 D5) (list D7)))
 (define BLANK (square 0 "solid" "white"))
 
 ;; =================
@@ -55,7 +57,7 @@
 
 ;; examples/tests
 (check-expect (local [(define (list-names n ld li) (append (list n) ld))]
-                     (fold-dir list-names append beside empty BLANK D6))
+                     (fold-dir list-names append above empty BLANK D6))
               (list "D6" "D4" "D5"))
 
 
@@ -74,22 +76,32 @@
                   [else (c2 (first loi) (fn-for-loi (rest loi)))]))]
              (fn-for-loi (dir-images dir))))) ;-> Y
 
-;
-; PROBLEM B:
 
+; PROBLEM B:
 ; Design a function that consumes a Dir and produces the number of
 ; images in the directory and its sub-directories.
 ; Use the fold-dir abstract function.
 
+;; Dir -> Natural
+;; produces the total number of images in the directory and its subs
+;; examples/tests
+(check-expect (count-images D6) 3)
+(check-expect (count-images D4) 2)
+(check-expect (count-images D5) 1)
+(check-expect (count-images D7) 0)
+(check-expect (count-images D8) 3)
 
-;
+(define (count-images dir) (local [(define (fn n ld li) (+ li ld))
+                                   (define (c1 d lod) (+ ))
+                                   (define (c2 i loi) (+ 1 loi))]
+                                  (fold-dir fn c1 c2 empty 0 dir))) 
+
 ; PROBLEM C:
-;
 ; Design a function that consumes a Dir and a String. The function looks in
 ; dir and all its sub-directories for a directory with the given name. If it
 ; finds such a directory it should produce true, if not it should produce false.
 ; Use the fold-dir abstract function.
-;
+
 
 ;
 ; PROBLEM D:
