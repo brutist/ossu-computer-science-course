@@ -41,11 +41,10 @@
               (fn-for-act (node-r act)))]))
 
 
-; PROBLEM 1:
-; 
+; PROBLEM 1: 
 ; Design an abstract function (including signature, purpose, and tests) 
 ; to simplify the remove-debtors and remove-profs functions defined below.
-; 
+
 ; Now re-define the original remove-debtors and remove-profs functions 
 ; to use your abstract function. Remember, the signature and tests should 
 ; not change from the original functions.
@@ -152,23 +151,20 @@
                     (node-r act2))]))
 
 
-; PROBLEM 2:
-; 
+; PROBLEM 2: 
 ; Using your new abstract function, design a function that removes from a given
 ; BST any account where the name of the account holder has an odd number of
 ; characters.  Call it remove-odd-characters.
 
 
 ; Problem 3:
-; 
 ; Design an abstract fold function for Accounts called fold-act. 
-; 
+
 ; Use fold-act to design a function called charge-fee that decrements
 ; the balance of every account in a given collection by the monthly fee of 3 CAD.
 
 
 ; PROBLEM 4:
-; 
 ; Suppose you needed to design a function to look up an account based on its ID.
 ; Would it be better to design the function using fold-act, or to design the
 ; function using the fn-for-acts template?  Briefly justify your answer.
