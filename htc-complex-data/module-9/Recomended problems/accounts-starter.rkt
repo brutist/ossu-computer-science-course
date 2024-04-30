@@ -72,18 +72,8 @@
               (make-node 7 "Mr. Natural" 13 false false))
 
 
-(define (remove-debtors act)
-  (cond [(false? act) false]
-        [else
-         (if (negative? (node-bal act))
-             (join (remove-debtors (node-l act))
-                   (remove-debtors (node-r act)))
-             (make-node (node-id act)
-                        (node-name act)
-                        (node-bal act)
-                        (remove-debtors (node-l act))
-                        (remove-debtors (node-r act))))]))
-
+(define (remove-debtors act) (local [(define (debtors? a) (negative? (node-bal a)))]
+                                     (remove-acc debtors? act)))
 
 ;; Accounts -> Accounts
 ;; Remove all professors' accounts.  
@@ -101,18 +91,8 @@
               (make-node 112 "Ms. Magazine" 467 false false))
 
 
-(define (remove-profs act)
-  (cond [(false? act) false]
-        [else
-         (if (has-prefix? "Prof." (node-name act))
-             (join (remove-profs (node-l act))
-                   (remove-profs (node-r act)))
-             (make-node (node-id act)
-                        (node-name act)
-                        (node-bal act)
-                        (remove-profs (node-l act))
-                        (remove-profs (node-r act))))]))
-
+(define (remove-profs act) (local [(define (profs? a) (has-prefix? "Prof." (node-name a)))]
+                                     (remove-acc profs? act)))
 
 
 ;; String String -> Boolean
@@ -152,24 +132,122 @@
                     (node-r act2))]))
 
 
+
+;; (Account -> Boolean) Accounts -> Accounts
+;; abstract function for removing accounts that satifies p
+;; examples/tests
+(check-expect (local [(define (debtors? a) (negative? (node-bal a)))
+                      (define act (make-node 4 "Mrs. Doubtfire" -3 false 
+                                                      (make-node 7 "Mr. Natural" 13 false false)))]
+                     (remove-acc debtors? act))
+              (make-node 7 "Mr. Natural" 13 false false))
+
+(check-expect (local [(define (profs? a) (has-prefix? "Prof." (node-name a)))
+                      (define act (make-node 97 "Prof. X" 7 false 
+                                                (make-node 112 "Ms. Magazine" 467 false false)))]
+                     (remove-acc profs? act))
+              (make-node 112 "Ms. Magazine" 467 false false))
+
+(check-expect (local [(define (magazine? a) (string=? "Ms. Magazine" (node-name a)))
+                      (define act (make-node 97 "Prof. X" 7 false 
+                                                (make-node 112 "Ms. Magazine" 467 false false)))]
+                     (remove-acc magazine? act))
+              (make-node 97 "Prof. X" 7 false false))
+
+
+(define (remove-acc p act)
+  (cond [(false? act) false]
+        [else
+         (if (p act)                   
+             (join (remove-acc p (node-l act))
+                   (remove-acc p (node-r act)))
+             (make-node (node-id act)
+                        (node-name act)
+                        (node-bal act)
+                        (remove-acc p (node-l act))
+                        (remove-acc p (node-r act))))]))
+
+
+
 ; PROBLEM 2:
-; 
 ; Using your new abstract function, design a function that removes from a given
 ; BST any account where the name of the account holder has an odd number of
 ; characters.  Call it remove-odd-characters.
 
+;; Accounts -> Accounts
+;; removes account holders' names that has an odd number of characters
+;; examples/tests
+(check-expect (remove-odd-characters (make-node 97 "Prof. X" 7 false 
+                                                (make-node 112 "Ms. Magazine" 467 false false)))
+              (make-node 112 "Ms. Magazine" 467 false false))
+
+(check-expect (remove-odd-characters (make-node 97 "Prof. X" 7 false 
+                                                (make-node 112 "Ms. Zin" 467 false false)))
+              false)
+
+
+(define (remove-odd-characters act)
+  (local [(define (odd-char? a) (odd? (string-length (node-name a))))]
+    (remove-acc odd-char? act)))
+
+
 
 ; Problem 3:
-; 
 ; Design an abstract fold function for Accounts called fold-act. 
-; 
+
+
+;; (Integer Natural -> Integer) Natural -> Accounts
+;; abstract fold function for Accounts
+;; examples/tests
+(check-expect (fold-act + 10 (make-node 97 "Prof. X" -7 false 
+                                     (make-node 112 "Ms. Magazine" 467 false false)))
+              (make-node 97 "Prof. X" 3 false 
+                                     (make-node 112 "Ms. Magazine" 477 false false)))
+
+(check-expect (fold-act * 10 (make-node 97 "Prof. X" -7 false 
+                                     (make-node 112 "Ms. Magazine" 467 false false)))
+              (make-node 97 "Prof. X" (* -7 10) false 
+                                     (make-node 112 "Ms. Magazine" (* 467 10) false false)))
+
+(define (fold-act fn op act)
+  (cond [(false? act) false]
+        [else
+         (make-node (node-id act)
+                    (node-name act)
+                    (fn (node-bal act) op)
+                    (fold-act fn op (node-l act))
+                    (fold-act fn op (node-r act)))]))
+
+
+
 ; Use fold-act to design a function called charge-fee that decrements
 ; the balance of every account in a given collection by the monthly fee of 3 CAD.
 
+ ;; Integer Accounts -> Accounts
+ ;; decrement the balances of all accounts by the fee
+;; examples/tests 
+(check-expect (charge-fee 3 (make-node 97 "Prof. X" -7 false 
+                                     (make-node 112 "Ms. Magazine" 467 false false)))
+              (make-node 97 "Prof. X" -10 false 
+                         (make-node 112 "Ms. Magazine" 464 false false)))
+(check-expect (charge-fee 3 (make-node 97 "Prof. X" 7 false 
+                                     (make-node 112 "Ms. Zin" 115 false false)))
+              (make-node 97 "Prof. X" 4 false 
+                         (make-node 112 "Ms. Zin" 112 false false)))
+(check-expect (charge-fee 3 (make-node 97 "Prof. X" -47 false 
+                                     (make-node 112 "Ms. Zin" -115 false false)))
+              (make-node 97 "Prof. X" -50 false 
+                         (make-node 112 "Ms. Zin" -118 false false)))
+
+(define (charge-fee fee act) (fold-act - fee act))
+
 
 ; PROBLEM 4:
-; 
 ; Suppose you needed to design a function to look up an account based on its ID.
 ; Would it be better to design the function using fold-act, or to design the
 ; function using the fn-for-acts template?  Briefly justify your answer.
 
+;; If all you need is a function that looks up for accounts based on ID, it would
+;;    be a lot easier to just design using fn-for-acts. However, if additional search
+;;    parameters are also needed (i.e. search by balance, search by name) then 
+;;    using fold-act will be more compact.
