@@ -180,7 +180,7 @@
 (define P2 (make-person "N2" 25 (list P1)))
 (define P3 (make-person "N3" 15 empty))
 (define P4 (make-person "N4" 45 (list P3 P2)))
-
+#;#;#;#;#;#;#;
 (check-expect (search-person-age P1 "N1") 5)
 (check-expect (search-person-age P1 "N2") false)
 (check-expect (search-person-age P2 "N1") 5)
@@ -192,7 +192,8 @@
 
 ;; search-person-age using fold-element
 ;(String Integer Y -> X) (X Y -> Y) Y Element -> X
-(define (search-person-age person name) "false")  ;stub
+(define (search-person-age person name) (local [(define (c1 n d los) (cons (string-append n ":" (number->string d)) los))]
+                                               (fold-element c1 append empty e)))  
 
 #;
 (define (search-person-age p name)
@@ -210,3 +211,17 @@
                         (person-age (first lop))
                         (fn-for-lop (rest lop) name))]))]
     (fn-for-person p name)))
+
+#;
+(define (fold-element c1 c2 b e)
+  (local [(define (fn-for-element e)  ;->X
+            (c1 (elt-name e)    ;String
+                (elt-data e)    ;Integer
+                (fn-for-loe (elt-subs e))))
+
+          (define (fn-for-loe loe)    ;->Y
+            (cond [(empty? loe) b]
+                  [else
+                   (c2 (fn-for-element (first loe))
+                       (fn-for-loe (rest loe)))]))]
+    (fn-for-element e)))
