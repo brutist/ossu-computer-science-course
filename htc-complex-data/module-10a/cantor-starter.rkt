@@ -67,24 +67,29 @@
 ; PROBLEM B:
 ; Add a second parameter to your function that controls the percentage 
 ; of the recursive call that is white each time. Calling your new function
-; with a second argument of 1/RATIO would produce the same images as the old 
+; with a second argument of 1/3 would produce the same images as the old 
 ; function.
 
-(check-expect (cantor-set-frac CUTOFF) CUTOFF-IMAGE)
-(check-expect (cantor-set-frac (* CUTOFF RATIO)) 
-              (local [(define top-rect (rectangle (* CUTOFF RATIO) HEIGHT MODE COLOR))
-                      (define vspace (add-ws (image-width top-rect) (/ HEIGHT RATIO)))
-                      (define hspace (add-ws (image-width CUTOFF-IMAGE) (image-height CUTOFF-IMAGE)))]
-              (above top-rect
-                     vspace 
-                     (beside CUTOFF-IMAGE hspace CUTOFF-IMAGE))))
+
+;; Natural Number -> Image
+;; produces a cantor set with initial with w, suceeding sizes of the set is determined by fr
+;; examples/tests
+(check-expect (cantor-set-frac CUTOFF (/ 1 3)) CUTOFF-IMAGE)
+(check-expect (cantor-set-frac (/ CUTOFF (/ 1 3)) (/ 1 3)) 
+              (local [(define top-rect (rectangle (/ CUTOFF (/ 1 3)) HEIGHT MODE COLOR))
+                      (define vspace (add-ws (image-width top-rect) (* HEIGHT (/ 1 3))))
+                      (define hspace (add-ws (- (image-width vspace) (* (image-width CUTOFF-IMAGE) 2)) (image-height CUTOFF-IMAGE)))]
+                (above top-rect
+                       vspace 
+                       (beside CUTOFF-IMAGE hspace CUTOFF-IMAGE))))
 
 (define (cantor-set-frac w fr)
    (cond [(<= w CUTOFF) (rectangle w HEIGHT MODE COLOR)]
          [else (local [(define top-rect (rectangle w HEIGHT MODE COLOR))
-                       (define bottom-rect (cantor-set (/ w RATIO)))
-                       (define vspace (add-ws (image-width top-rect) (/ HEIGHT RATIO)))
-                       (define hspace (add-ws (image-width bottom-rect) (image-height bottom-rect)))]
+                       (define bottom-rect (cantor-set (* w fr)))
+                       (define vspace (add-ws (image-width top-rect) (* HEIGHT fr)))
+                       (define hspace (add-ws (- (image-width vspace) (* (image-width bottom-rect) 2))
+                                              (image-height bottom-rect)))]
                         (above top-rect
                                vspace 
                                (beside bottom-rect hspace bottom-rect)))]))
