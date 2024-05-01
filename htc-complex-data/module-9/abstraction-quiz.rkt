@@ -57,9 +57,7 @@
 
 
 ;  PROBLEM 2:
-;
 ;  Finish the design of the following functions, using built-in abstract functions.
-;
 
 ;; Function 1
 ;; ==========
@@ -69,8 +67,7 @@
 (check-expect (lengths empty) empty)
 (check-expect (lengths (list "apple" "banana" "pear")) (list 5 6 4))
 
-(define (lengths lst)
-  empty)
+(define (lengths lst) (map string-length lst))
 
 ;; Function 2
 ;; ==========
@@ -80,8 +77,7 @@
 (check-expect (odd-only empty) empty)
 (check-expect (odd-only (list 1 2 3 4 5)) (list 1 3 5))
 
-(define (odd-only lon)
-  empty)
+(define (odd-only lon) (filter odd? lon))
 
 ;; Function 3
 ;; ==========
@@ -92,8 +88,7 @@
 (check-expect (all-odd? (list 1 2 3 4 5)) false)
 (check-expect (all-odd? (list 5 5 79 13)) true)
 
-(define (all-odd? lon)
-  empty)
+(define (all-odd? lon) (andmap odd? lon))
 
 ;; Function 4
 ;; ==========
@@ -104,8 +99,8 @@
 (check-expect (minus-n (list 4 5 6) 1) (list 3 4 5))
 (check-expect (minus-n (list 10 5 7) 4) (list 6 1 3))
 
-(define (minus-n lon n)
-  empty)
+(define (minus-n lon n) (local [(define (decr-n val) (- val n))]
+                                (map decr-n lon)))
 
 ;  PROBLEM 3
 ;
@@ -155,3 +150,69 @@
                 [(empty? lor) (...)]
                 [else (... (fn-for-region (first lor)) (fn-for-lor (rest lor)))]))]
            (fn-for-region r)))
+
+;;         c1             c2     b1   b2   b3   b4   b5   b6
+;; (String Y Z -> X) (X Z -> Z)  Y    Y    Y    Y    Y    Z  -> X
+;; abstract fold function for Region
+;; examples/tests
+(check-expect (local [(define (all-names n t lr) (cons n lr))
+                      (define b1 "Continent")
+                      (define b2 "Country")
+                      (define b3 "Province")
+                      (define b4 "State")
+                      (define b5 "City")
+                      (define b6 empty)]
+                     (fold-region all-names append b1 b2 b3 b4 b5 b6 CANADA))
+              (list "Canada" "British Columbia" "Vancouver" "Victoria" "Alberta" "Calgary" "Edmonton"))
+
+(check-expect (local [(define (all-types n t lr) (cons t lr))
+                      (define b1 "Continent")
+                      (define b2 "Country")
+                      (define b3 "Province")
+                      (define b4 "State")
+                      (define b5 "City")
+                      (define b6 empty)]
+                     (fold-region all-types append b1 b2 b3 b4 b5 b6 CANADA))
+              (list "Country" "Province" "City" "City" "Province" "City" "City"))
+
+(define (fold-region c1 c2 b1 b2 b3 b4 b5 b6 r)
+  (local [(define (fn-for-region r)         ;-> X
+            (c1 (region-name r) (fn-for-type (region-type r)) (fn-for-lor (region-subregions r))))
+          (define (fn-for-type t)           ;-> Y
+            (cond
+              [(string=? t "Continent") b1]
+              [(string=? t "Country") b2]
+              [(string=? t "Province") b3]
+              [(string=? t "State") b4]
+              [(string=? t "City") b5]))
+          (define (fn-for-lor lor)          ;-> Z
+            (cond
+              [(empty? lor) b6]
+              [else (c2 (fn-for-region (first lor)) (fn-for-lor (rest lor)))]))]
+    (fn-for-region r)))
+
+
+
+;; Region -> (listOf String)
+;; produces a list of region's names in the given region
+;; exmaples/tests
+(check-expect (all-names CANADA) 
+              (list "Canada" "British Columbia" "Vancouver" "Victoria" "Alberta" "Calgary" "Edmonton"))
+(check-expect (all-names VANCOUVER) 
+              (list "Vancouver"))
+(check-expect (all-names ALBERTA) 
+              (list "Alberta" "Calgary" "Edmonton"))
+
+(check-expect (all-names BC) 
+              (list "British Columbia" "Vancouver" "Victoria"))
+
+
+(define (all-names r) (local [(define (all-names n t lr) (cons n lr))
+                      (define b1 "Continent")
+                      (define b2 "Country")
+                      (define b3 "Province")
+                      (define b4 "State")
+                      (define b5 "City")
+                      (define b6 empty)]
+                     (fold-region all-names append b1 b2 b3 b4 b5 b6 r)))
+             
