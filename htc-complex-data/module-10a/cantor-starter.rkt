@@ -142,8 +142,7 @@
 
 
 ;; Natural -> Natural
-;; start the world with (main 500)
-
+;; start the world with (main 0)
 
 (define (main w)
   (big-bang w                           ; Natural

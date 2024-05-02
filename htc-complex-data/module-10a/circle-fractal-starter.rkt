@@ -60,6 +60,18 @@
                        bottom-leaf))]))
 
 
+;; Problem
+;; Construct a three-part terminationargument for scarp.
+
+;; Base case:      (<= r TRIVIAL-SIZE)
+
+;; Reduction step: (* r STEP)
+
+;; Argument that repeated application of reduction step will eventually
+;;  reach the base case:
+
+;; As long as 0 < STEP < 1 and 0 < TRIVIAL-SIZE, repeated (* r STEP)
+;; will eventually reach the base case (<= r TRIVIAL-SIZE).
 
 
 ;; Natural -> Image
