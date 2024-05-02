@@ -227,7 +227,7 @@
            (define (fn-for-lobd lobd)
             (cond [(empty? lobd) false]
                   [else 
-                     (local [(define try (fn-for-bd (first lod)))]
+                     (local [(define try (fn-for-bd (first lobd)))]
                      (if  (not (false? try))
                           try
                           (fn-for-lobd (rest lobd))))]))]
@@ -236,44 +236,76 @@
 
 ;; Board -> Boolean
 ;; produce true if a board is fully solved
-;; solved means an no unit contains a duplicate number and the board don't contain false
+;; solved means the board don't contain false
+;; Assume: board is valid, so it is solved if no false
 ;; examples/tests
-(check-expect (solved? BD5s) true)
-(check-expect (solved? BD5) false)
+(check-expect (solved? BD1) false)
 (check-expect (solved? BD4) false)
+(check-expect (solved? BD4s) true)
 (check-expect (solved? BD4s) true)
 
 (define (solved? bd)
-   (and (full-board? bd) (valid-board? bd)))
-
-
-;; Board -> Boolean
-;; produce true if all units contains no duplicate number, false if otherwise
-;; Assume: bd don't contain false
-;; examples/test
-(check-expect (valid-board? BD5s) true)
-(check-expect (valid-board? BD8) false)
-
-(define (valid-board? bd)
-   (cond [(empty? bd) true]
-         [else
-            (and (no-duplicate? (first bd) bd)
-                 (valid-board? (rest bd)))]))
-
-;; Natural Board -> Boolean
-;; produces true if the the given natural
-
-
-;; Board -> Boolean 
-;; produce true if a board don't contain false
-;; examples/tests
-(check-expect (full-board? BD1) false)
-(check-expect (full-board? BD4) false)
-(check-expect (full-board? BD4s) true)
-(check-expect (full-board? BD5s) true)
-
-(define (full-board? bd) 
    (andmap (lambda (e) (not (false? e))) bd))
+
+
+;; Board -> (listof Board)
+;; produces valid next (listof Board) from the given bd
+;; finds first empty square, fills it with [1,9] and keeps
+;; only the valid boards
+;; TODOs (filter-valid ) (fill-empty ) (find-empty )
+(check-expect (next-boards (cons 1 (rest BD1)))
+              (list (list 1 2 (drop BD1 2))
+                    (list 1 3 (drop BD1 2))
+                    (list 1 4 (drop BD1 2))
+                    (list 1 5 (drop BD1 2))
+                    (list 1 6 (drop BD1 2))
+                    (list 1 7 (drop BD1 2))
+                    (list 1 8 (drop BD1 2))
+                    (list 1 9 (drop BD1 2))))
+
+(define (next-boards bd)
+   (filter-valid (fill-empty (find-empty bd) bd)))
+
+
+;; Board -> Position
+;; produce a position of the first blank square
+;; Assume: board has at least one blank square
+;; examples/tests
+(check-expect (find-empty BD1) 0)
+(check-expect (find-empty BD7) 8)
+(check-expect (find-empty BD5) 1)
+
+(define (find-empty bd) (index-of bd false))
+
+;; Pos Board -> (listof Board)
+;; produces a (listof Board) with position p filled with [1,9]
+;; examples/tests
+(check-expect (fill-empty 0 BD1)
+              (list (fill-square BD1 0 1)
+                    (fill-square BD1 0 2)
+                    (fill-square BD1 0 3)
+                    (fill-square BD1 0 4)
+                    (fill-square BD1 0 5)
+                    (fill-square BD1 0 6)
+                    (fill-square BD1 0 7)
+                    (fill-square BD1 0 8)
+                    (fill-square BD1 0 9)))
+
+(check-expect (fill-empty 8 BD7)
+              (list (fill-square BD7 8 1)
+                    (fill-square BD7 8 2)
+                    (fill-square BD7 8 3)
+                    (fill-square BD7 8 4)
+                    (fill-square BD7 8 5)
+                    (fill-square BD7 8 6)
+                    (fill-square BD7 8 7)
+                    (fill-square BD7 8 8)
+                    (fill-square BD7 8 9)))
+
+(define (fill-empty p bd)
+   )
+
+
 
 
 ;; Board Pos -> Val or false
