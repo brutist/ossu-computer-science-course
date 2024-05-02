@@ -7,3 +7,6 @@ The code in this folder is written in DrRacket editor. In order to run the codes
     Module 7  - Beginning Student with List Abbrev
     Module 8a - Beginning Student with List Abbrev
     Module 8a - Intermediate Student
+    Module 9  - Intermediate Student
+    Module 10a- Intermediate Student
+    Module 10b- Intermediate Student with Lambda
