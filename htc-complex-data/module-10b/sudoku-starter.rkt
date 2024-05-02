@@ -217,7 +217,7 @@
 
 #;
 (define (sudoku-solver bd) false) ;stub
-#;
+
 (define (sudoku-solver bd)
    (local [(define (fn-for-bd bd)
             (if (solved? bd)
@@ -252,17 +252,17 @@
 ;; produces valid next (listof Board) from the given bd
 ;; finds first empty square, fills it with [1,9] and keeps
 ;; only the valid boards
-;; TODOs (filter-valid )
+
 (check-expect (next-boards (cons 1 (rest BD1)))
-              (list (list 1 2 (drop BD1 2))
-                    (list 1 3 (drop BD1 2))
-                    (list 1 4 (drop BD1 2))
-                    (list 1 5 (drop BD1 2))
-                    (list 1 6 (drop BD1 2))
-                    (list 1 7 (drop BD1 2))
-                    (list 1 8 (drop BD1 2))
-                    (list 1 9 (drop BD1 2))))
-#;
+              (list (cons 1 (cons 2 (rest (rest BD1))))  
+                    (cons 1 (cons 3 (rest (rest BD1)))) 
+                    (cons 1 (cons 4 (rest (rest BD1)))) 
+                    (cons 1 (cons 5 (rest (rest BD1)))) 
+                    (cons 1 (cons 6 (rest (rest BD1)))) 
+                    (cons 1 (cons 7 (rest (rest BD1)))) 
+                    (cons 1 (cons 8 (rest (rest BD1)))) 
+                    (cons 1 (cons 9 (rest (rest BD1))))))
+
 (define (next-boards bd)
    (filter-valid (fill-empty (find-empty bd) bd)))
 
@@ -301,19 +301,10 @@
                     (fill-square BD7 8 7)
                     (fill-square BD7 8 8)
                     (fill-square BD7 8 9)))
-#;
-(define (fill-empty p bd)
-   (local [(define (fn-for-lov ALL-VALS)
-                    (cond [(empty? ALL-VALS) empty]
-                          [else (cons (fill-square bd p (first ALL-VALS))
-                                      (fn-for-lov (rest ALL-VALS)))]))]
-      (fn-for-lov ALL-VALS)))  
 
 (define (fill-empty p bd)
-   (local [(define (insert-nv v) (fill-square bd p v))
-           (define (fn-for-lov ALL-VALS)
-              (map insert-nv ALL-VALS))]
-      (fn-for-lov ALL-VALS)))                            
+    (map (lambda (v) (fill-square bd p v)) ALL-VALS))
+                           
 
 
 ;; (listof Board) -> (listof Board)
@@ -324,13 +315,7 @@
 (check-expect (filter-valid (list BD4s BD4 BD8)) (list BD4s BD4)) 
 (check-expect (filter-valid (list BD8)) empty) 
 
-(define (filter-valid lobd)
-  (cond [(empty? lobd) empty]
-        [else (if (valid-board? (first lobd))
-                  (cons (first lobd) (filter-valid (rest lobd)))
-                  (filter-valid (rest lobd)))]))
 
-#;
 (define (filter-valid lobd)
   (filter valid-board? lobd))
 
@@ -345,12 +330,22 @@
 (check-expect (valid-board? BD8) false)
 (check-expect (valid-board? BD4s) true)
 (check-expect (valid-board? BD5) true)
-(check-expect (valid-board? (cons 2 (rest BD2)) false))
-(check-expect (valid-board? (cons 1 (rest BD4)) false))
-(check-expect (valid-board? (cons 8 (rest BD4s)) false))
+(check-expect (valid-board? (cons 2 (rest BD2))) false)
+(check-expect (valid-board? (cons 1 (rest BD4))) false)
+(check-expect (valid-board? (cons 8 (rest BD4s))) false)
 
-(define (valid-board? bd) )
 
+(define (valid-board? bd) 
+  (local [(define (valid-units? lou) (andmap valid-unit? lou))                    ;(listof units)     -> Boolean
+          (define (valid-unit? u) (no-duplicates? (keep-values (read-unit u))))   ;(listOf Val|false) -> Boolean                            
+          (define (read-unit u) (map (lambda (p) (read-square bd p)) u))          ; Unit -> (listof Val|false) 
+          (define (keep-values lov) (filter (lambda (v) (not (false? v))) lov))
+          (define (no-duplicates? lov) (cond [(empty? lov) true]
+                                             [else (if (member (first lov) (rest lov))
+                                                       false
+                                                       (no-duplicates? (rest lov)))]))]          
+  
+  (valid-units? UNITS)))
 
 
 
