@@ -217,7 +217,7 @@
 
 #;
 (define (sudoku-solver bd) false) ;stub
-
+#;
 (define (sudoku-solver bd)
    (local [(define (fn-for-bd bd)
             (if (solved? bd)
@@ -252,7 +252,7 @@
 ;; produces valid next (listof Board) from the given bd
 ;; finds first empty square, fills it with [1,9] and keeps
 ;; only the valid boards
-;; TODOs (filter-valid ) (fill-empty ) (find-empty )
+;; TODOs (filter-valid )
 (check-expect (next-boards (cons 1 (rest BD1)))
               (list (list 1 2 (drop BD1 2))
                     (list 1 3 (drop BD1 2))
@@ -262,7 +262,7 @@
                     (list 1 7 (drop BD1 2))
                     (list 1 8 (drop BD1 2))
                     (list 1 9 (drop BD1 2))))
-
+#;
 (define (next-boards bd)
    (filter-valid (fill-empty (find-empty bd) bd)))
 
@@ -301,9 +301,56 @@
                     (fill-square BD7 8 7)
                     (fill-square BD7 8 8)
                     (fill-square BD7 8 9)))
+#;
+(define (fill-empty p bd)
+   (local [(define (fn-for-lov ALL-VALS)
+                    (cond [(empty? ALL-VALS) empty]
+                          [else (cons (fill-square bd p (first ALL-VALS))
+                                      (fn-for-lov (rest ALL-VALS)))]))]
+      (fn-for-lov ALL-VALS)))  
 
 (define (fill-empty p bd)
-   )
+   (local [(define (insert-nv v) (fill-square bd p v))
+           (define (fn-for-lov ALL-VALS)
+              (map insert-nv ALL-VALS))]
+      (fn-for-lov ALL-VALS)))                            
+
+
+;; (listof Board) -> (listof Board)
+;; produce a list of valid board
+;;    - valid means no duplicates in all of the units
+(check-expect (filter-valid empty) empty) 
+(check-expect (filter-valid (list BD4s BD8)) (list BD4s)) 
+(check-expect (filter-valid (list BD4s BD4 BD8)) (list BD4s BD4)) 
+(check-expect (filter-valid (list BD8)) empty) 
+
+(define (filter-valid lobd)
+  (cond [(empty? lobd) empty]
+        [else (if (valid-board? (first lobd))
+                  (cons (first lobd) (filter-valid (rest lobd)))
+                  (filter-valid (rest lobd)))]))
+
+#;
+(define (filter-valid lobd)
+  (filter valid-board? lobd))
+
+
+;; Board -> Boolean
+;; produces true if no unit on board has the same value twice
+;;   - check one unit at a time, pick a first occurence of Val in that unit in bd
+;;           then check for a duplicate. If a duplicate is found return false, 
+;;           otherwise true
+;; examples/tests
+(check-expect (valid-board? BD5s) true)
+(check-expect (valid-board? BD8) false)
+(check-expect (valid-board? BD4s) true)
+(check-expect (valid-board? BD5) true)
+(check-expect (valid-board? (cons 2 (rest BD2)) false))
+(check-expect (valid-board? (cons 1 (rest BD4)) false))
+(check-expect (valid-board? (cons 8 (rest BD4s)) false))
+
+(define (valid-board? bd) )
+
 
 
 
