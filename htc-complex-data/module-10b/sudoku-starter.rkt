@@ -153,7 +153,16 @@
         B B B B B B B B 8
         B B B B B B B B 9))
 
-
+(define BD8                ;has duplicate in the unit
+  (list 5 3 9 1 6 4 8 7 2
+        8 1 2 7 5 3 6 9 4
+        6 7 4 9 2 8 3 1 5
+        2 7 6 4 1 7 5 8 3  ;7 is a duplicate in the row and column
+        1 8 7 2 3 5 9 4 6
+        3 4 5 8 9 6 1 2 7
+        9 2 3 5 4 1 7 6 8
+        7 6 1 3 8 2 4 5 9
+        4 5 8 6 7 9 2 3 1))
 
 
 ;; Positions of all the rows, columns and boxes:
@@ -199,7 +208,72 @@
 ;; =================
 ;; Functions:
 
+;; Board -> Board or false
+;; produce a solved board; or false if the board is unsolvable
+;; Assume: bd is valid
+(check-expect (sudoku-solver BD4) BD4s)
+(check-expect (sudoku-solver BD5) BD5s)
+(check-expect (sudoku-solver BD7) false)
 
+#;
+(define (sudoku-solver bd) false) ;stub
+
+(define (sudoku-solver bd)
+   (local [(define (fn-for-bd bd)
+            (if (solved? bd)
+                bd
+                (fn-for-lobd (next-boards bd))))
+           
+           (define (fn-for-lobd lobd)
+            (cond [(empty? lobd) false]
+                  [else 
+                     (local [(define try (fn-for-bd (first lod)))]
+                     (if  (not (false? try))
+                          try
+                          (fn-for-lobd (rest lobd))))]))]
+   (fn-for-bd bd)))
+
+
+;; Board -> Boolean
+;; produce true if a board is fully solved
+;; solved means an no unit contains a duplicate number and the board don't contain false
+;; examples/tests
+(check-expect (solved? BD5s) true)
+(check-expect (solved? BD5) false)
+(check-expect (solved? BD4) false)
+(check-expect (solved? BD4s) true)
+
+(define (solved? bd)
+   (and (full-board? bd) (valid-board? bd)))
+
+
+;; Board -> Boolean
+;; produce true if all units contains no duplicate number, false if otherwise
+;; Assume: bd don't contain false
+;; examples/test
+(check-expect (valid-board? BD5s) true)
+(check-expect (valid-board? BD8) false)
+
+(define (valid-board? bd)
+   (cond [(empty? bd) true]
+         [else
+            (and (no-duplicate? (first bd) bd)
+                 (valid-board? (rest bd)))]))
+
+;; Natural Board -> Boolean
+;; produces true if the the given natural
+
+
+;; Board -> Boolean 
+;; produce true if a board don't contain false
+;; examples/tests
+(check-expect (full-board? BD1) false)
+(check-expect (full-board? BD4) false)
+(check-expect (full-board? BD4s) true)
+(check-expect (full-board? BD5s) true)
+
+(define (full-board? bd) 
+   (andmap (lambda (e) (not (false? e))) bd))
 
 
 ;; Board Pos -> Val or false
