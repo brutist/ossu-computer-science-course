@@ -207,10 +207,7 @@
                                              "X" "X" "O")
                                        (list "X" "O" "X"      
                                              "O" "O" "O"
-                                             "X" "X" "X")
-                                       (list "X" "O" "X"     
-                                             "O" "O" "O"
-                                             "X" "X" "O")))
+                                             "X" "X" "X")))
 
 
 (define (valid-full-bd b) (local [(define final-boards (possible-full-bd b))
@@ -245,6 +242,5 @@
                                       [else (if (string=? (first lov) v)
                                             (+ 1 (count (rest lov) v))
                                             (count (rest lov) v)) ]))]
-  (cond [(= (count b "X") 4) true]
-        [(= (count b "X") 5) true]
+  (cond [(= (count b "X") 5) true]
         [else false])))
