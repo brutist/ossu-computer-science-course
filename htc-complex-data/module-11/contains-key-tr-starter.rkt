@@ -48,9 +48,9 @@
   ;; (fn-for-node (node 7g) 4 empty            true)
   (local [(define (no-falses x1 x2 l)
             (filter (lambda (x) (not (false? x))) (append (list x1 x2) l)))
-            
+
           (define (fn-for-node t todo rst)  ;->Boolean
-            (cond [(false? t) (fn-for-lond todo rst)]
+            (cond [(false? t) rst]
                   [else (if (= key (node-k t))
                             (fn-for-lond empty true)
                             (fn-for-lond (no-falses (node-l t) (node-r t) todo) rst))]))
