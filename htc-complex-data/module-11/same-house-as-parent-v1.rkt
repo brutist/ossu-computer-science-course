@@ -73,7 +73,7 @@
     (fn-for-wizard w)))
 
 
-; PROBLEM:
+; PROBLEM A:
  
 ; Design a function that consumes a wizard and produces the names of every 
 ; wizard in the tree that was placed in the same house as their immediate
@@ -108,16 +108,46 @@
 
 
 
-; PROBLEM:
+; PROBLEM B:
  
 ; Design a function that consumes a wizard and produces the number of wizards 
 ; in that tree (including the root). Your function should be tail recursive.
  
+;; Wizard -> Natural
+;; produce the number of wizards in the tree, includes the root wizard
+;; examples/tests
+(check-expect (count-wizards Wag) 1)
+(check-expect (count-wizards Weg1) 2)
+(check-expect (count-wizards Wig3) 7)
+(check-expect (count-wizards Wjh3) 11)
+(check-expect (count-wizards Wgr1) 2)
+(check-expect (count-wizards Wbh) 1)
+
+(define (count-wizards w)
+   ;; acc: Natural; number of previously seen wizards
+   ;; (fn-for-wizard Wig3) 0)
+
+   ;; (fn-for-wizard Wig3) 1)
+   ;; (fn-for-wizard Weg1) 2)
+   ;; (fn-for-wizard Wag)  3)
+   ;; (fn-for-wizard Wfh1) 4)
+   ;; (fn-for-wizard Wbh)  5)
+   ;; (fn-for-wizard Wgr1) 6)
+   ;; (fn-for-wizard Wds)  7)
+   (local [(define (fn-for-wizard w acc)      
+               (fn-for-low (wizard-kids w) (add1 acc)))
+
+            (define (fn-for-low low acc)       
+               (cond [(empty? low) acc]
+                     [else (fn-for-low (rest low) 
+                                       (fn-for-wizard (first low) acc))]))]
+
+    (fn-for-wizard w 0)))
 
 
 
  
-; PROBLEM:
+; PROBLEM C:
  
 ; Design a new function definition for same-house-as-parent that is tail 
 ; recursive. You will need a worklist accumulator. 
