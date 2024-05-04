@@ -145,10 +145,36 @@
     (fn-for-wizard w 0)))
 
 
-
  
 ; PROBLEM C:
  
 ; Design a new function definition for same-house-as-parent that is tail 
 ; recursive. You will need a worklist accumulator. 
 
+(check-expect (same-house-with-parent-tr Wag) empty)
+(check-expect (same-house-with-parent-tr Weg1) (list "A"))
+(check-expect (same-house-with-parent-tr Wgr1) empty)
+(check-expect (same-house-with-parent-tr Wjh3) (list  "B" "A" "E"))
+
+;; since the function is a tail-recursive, the result would start at the bottom
+;;    of the tree to the top. There is a way to have the same result as the 
+;;    non-recursive one and that is, in pseudocode, (cons last-find first-find).
+
+(define (same-house-with-parent-tr w)
+   ;; acc: String - name of the house the intermediate parent belongs
+   ;;      (listof String)  - list of all the names of wizards that has the same house
+   ;;                               with their intermediate parent
+   ;; (fn-for-wizard (make-wizard "E" "G" (list Wag)) "none" empty)
+   ;; (fn-for-wizard (make-wizard "E" "G" (list Wag))    "G" empty)
+   ;; (fn-for-wizard (make-wizard "A" "G" empty)         "G" (list Wag))
+ 
+   (local [(define (fn-for-wizard w hacc wacc)  ;->list
+               (if  (string=? hacc (wizard-house w))
+                    (fn-for-low (wizard-kids w) (wizard-house w) (cons (wizard-name w) wacc))
+                    (fn-for-low (wizard-kids w) (wizard-house w) wacc)))
+
+            (define (fn-for-low low hacc wacc)  ;->list
+               (cond [(empty? low) wacc]
+                     [else (fn-for-low (rest low) hacc (fn-for-wizard (first low) hacc wacc))]))]
+
+    (fn-for-wizard w "none" empty)))
