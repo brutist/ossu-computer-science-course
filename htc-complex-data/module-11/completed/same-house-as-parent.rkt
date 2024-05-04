@@ -122,7 +122,7 @@
 (check-expect (count-wizards Wjh3) 11)
 (check-expect (count-wizards Wgr1) 2)
 (check-expect (count-wizards Wbh) 1)
-
+#;
 (define (count-wizards w)
    ;; acc: Natural; number of previously seen wizards
    ;; (fn-for-wizard Wig3) 0)
@@ -143,6 +143,29 @@
                                        (fn-for-wizard (first low) acc))]))]
 
     (fn-for-wizard w 0)))
+
+;; solution from lecture using worklist accumulator
+(define (count-wizards w)
+   ;; acc: Natural; number of previously seen wizards
+   ;; (fn-for-wizard Wig3) 0)
+
+   ;; (fn-for-wizard Wig3) 1)
+   ;; (fn-for-wizard Weg1) 2)
+   ;; (fn-for-wizard Wag)  3)
+   ;; (fn-for-wizard Wfh1) 4)
+   ;; (fn-for-wizard Wbh)  5)
+   ;; (fn-for-wizard Wgr1) 6)
+   ;; (fn-for-wizard Wds)  7)
+   (local [(define (fn-for-wizard w todo rsf)      
+               (fn-for-low (append (wizard-kids w) todo) (add1 rsf)))
+
+            (define (fn-for-low todo rsf)       
+               (cond [(empty? todo) rsf]
+                     [else (fn-for-wizard (first todo) (rest todo) rsf)]))]
+
+    (fn-for-wizard w empty 0)))
+
+
 
 
  
