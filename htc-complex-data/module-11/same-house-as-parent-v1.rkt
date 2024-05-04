@@ -154,7 +154,7 @@
 (check-expect (same-house-with-parent-tr Wag) empty)
 (check-expect (same-house-with-parent-tr Weg1) (list "A"))
 (check-expect (same-house-with-parent-tr Wgr1) empty)
-(check-expect (same-house-with-parent-tr Wjh3) (list  "B" "A" "E"))
+(check-expect (same-house-with-parent-tr Wjh3) (list  "E" "A" "B"))
 
 ;; since the function is a tail-recursive, the result would start at the bottom
 ;;    of the tree to the top. There is a way to have the same result as the 
@@ -170,7 +170,7 @@
  
    (local [(define (fn-for-wizard w phouse rsf)  ;->list
                (if  (string=? phouse (wizard-house w))
-                    (fn-for-low (wizard-kids w) (wizard-house w) (cons (wizard-name w) rsf))
+                    (fn-for-low (wizard-kids w) (wizard-house w) (append rsf (list (wizard-name w))))
                     (fn-for-low (wizard-kids w) (wizard-house w) rsf)))
 
             (define (fn-for-low low phouse rsf)  ;->list
