@@ -122,50 +122,27 @@
 (check-expect (count-wizards Wjh3) 11)
 (check-expect (count-wizards Wgr1) 2)
 (check-expect (count-wizards Wbh) 1)
-#;
+
 (define (count-wizards w)
-   ;; acc: Natural; number of previously seen wizards
-   ;; (fn-for-wizard Wig3) 0)
+  ;; acc: Natural; number of previously seen wizards
+  ;;      (listof Wizards); list of wizards to be counted
+  ;; (fn-for-wizard Wig3) empty 0)
 
-   ;; (fn-for-wizard Wig3) 1)
-   ;; (fn-for-wizard Weg1) 2)
-   ;; (fn-for-wizard Wag)  3)
-   ;; (fn-for-wizard Wfh1) 4)
-   ;; (fn-for-wizard Wbh)  5)
-   ;; (fn-for-wizard Wgr1) 6)
-   ;; (fn-for-wizard Wds)  7)
-   (local [(define (fn-for-wizard w acc)      
-               (fn-for-low (wizard-kids w) (add1 acc)))
+  ;; (fn-for-wizard Wig3) 1 (list Weg1 Wfh1 Wgr1))
+  ;; (fn-for-wizard Weg1) 2 (list Wag Wfh1 Wgr1))
+  ;; (fn-for-wizard Wag)  3 (list Wfh1 Wgr1))
+  ;; (fn-for-wizard Wfh1) 4 (list Wbh Wgr1))
+  ;; (fn-for-wizard Wbh)  5 (list Wgr1))
+  ;; (fn-for-wizard Wgr1) 6 (list Wds))
+  ;; (fn-for-wizard Wds)  7 empty)
+  (local [(define (fn-for-wizard w todo rsf)
+            (fn-for-low (append (wizard-kids w) todo) (add1 rsf)))
 
-            (define (fn-for-low low acc)       
-               (cond [(empty? low) acc]
-                     [else (fn-for-low (rest low) 
-                                       (fn-for-wizard (first low) acc))]))]
-
-    (fn-for-wizard w 0)))
-
-;; solution from lecture using worklist accumulator
-(define (count-wizards w)
-   ;; acc: Natural; number of previously seen wizards
-   ;; (fn-for-wizard Wig3) 0)
-
-   ;; (fn-for-wizard Wig3) 1)
-   ;; (fn-for-wizard Weg1) 2)
-   ;; (fn-for-wizard Wag)  3)
-   ;; (fn-for-wizard Wfh1) 4)
-   ;; (fn-for-wizard Wbh)  5)
-   ;; (fn-for-wizard Wgr1) 6)
-   ;; (fn-for-wizard Wds)  7)
-   (local [(define (fn-for-wizard w todo rsf)      
-               (fn-for-low (append (wizard-kids w) todo) (add1 rsf)))
-
-            (define (fn-for-low todo rsf)       
-               (cond [(empty? todo) rsf]
-                     [else (fn-for-wizard (first todo) (rest todo) rsf)]))]
+          (define (fn-for-low todo rsf)
+            (cond [(empty? todo) rsf]
+                  [else (fn-for-wizard (first todo) (rest todo) rsf)]))]
 
     (fn-for-wizard w empty 0)))
-
-
 
 
  
@@ -178,26 +155,41 @@
 (check-expect (same-house-with-parent-tr Weg1) (list "A"))
 (check-expect (same-house-with-parent-tr Wgr1) empty)
 (check-expect (same-house-with-parent-tr Wjh3) (list  "E" "A" "B"))
+(check-expect (same-house-with-parent-tr Wig3) (list  "E" "A" "B"))
+(check-expect (same-house-with-parent-tr Wfh1) (list "B"))
 
-;; since the function is a tail-recursive, the result would start at the bottom
-;;    of the tree to the top. There is a way to have the same result as the 
-;;    non-recursive one and that is, in pseudocode, (cons last-find first-find).
 
 (define (same-house-with-parent-tr w)
-   ;; acc: String - name of the house the intermediate parent belongs
-   ;;      (listof String)  - list of all the names of wizards that has the same house
-   ;;                               with their intermediate parent
-   ;; (fn-for-wizard (make-wizard "E" "G" (list Wag)) "none" empty)
-   ;; (fn-for-wizard (make-wizard "E" "G" (list Wag))    "G" empty)
-   ;; (fn-for-wizard (make-wizard "A" "G" empty)         "G" (list Wag))
- 
-   (local [(define (fn-for-wizard w phouse rsf)  ;->list
-               (if  (string=? phouse (wizard-house w))
-                    (fn-for-low (wizard-kids w) (wizard-house w) (append rsf (list (wizard-name w))))
-                    (fn-for-low (wizard-kids w) (wizard-house w) rsf)))
+  ;; acc: String - name of the house the intermediate parent belongs
+  ;;      (listof Pairs)  - list of Pairs to be checked
+  ;;      (listof String) - list of all the names of wizards that has the same house
+  ;;                               with their intermediate parent
+  ;;       String         - wizard parent's house
+  ;; (same-house-with-parent-tr Whs1)
 
-            (define (fn-for-low low phouse rsf)  ;->list
-               (cond [(empty? low) rsf]
-                     [else (fn-for-low (rest low) phouse (fn-for-wizard (first low) phouse rsf))]))]
+  ;; (fn-for-wizard Whs1 "" (list Wig3 Whs1 Wds) empty)
 
-    (fn-for-wizard w "none" empty)))
+  (local [(define-struct pair (wiz h))
+          ;; Pair is (make-pair Wizard String)
+          ;; interp. a wizard with parent's house h
+          (define (kids-pairs low h)
+            (map (lambda (w) (make-pair w h)) low))
+
+          (define (fn-for-wizard w todo rsf house)
+            (if (string=? house (wizard-house w))
+                (fn-for-low (append (kids-pairs (wizard-kids w) (wizard-house w)) todo)
+                            (append rsf (list (wizard-name w))) 
+                            house)
+                (fn-for-low (append (kids-pairs (wizard-kids w) (wizard-house w)) todo)
+                            rsf 
+                            house)))
+
+          (define (fn-for-low todo rsf house)
+            (cond [(empty? todo) rsf]
+                  [else (fn-for-wizard (pair-wiz (first todo)) 
+                                       (rest todo) 
+                                       rsf 
+                                       (pair-h (first todo)))]))]
+
+    (fn-for-wizard w empty empty "?")))
+
