@@ -168,13 +168,13 @@
    ;; (fn-for-wizard (make-wizard "E" "G" (list Wag))    "G" empty)
    ;; (fn-for-wizard (make-wizard "A" "G" empty)         "G" (list Wag))
  
-   (local [(define (fn-for-wizard w hacc wacc)  ;->list
-               (if  (string=? hacc (wizard-house w))
-                    (fn-for-low (wizard-kids w) (wizard-house w) (cons (wizard-name w) wacc))
-                    (fn-for-low (wizard-kids w) (wizard-house w) wacc)))
+   (local [(define (fn-for-wizard w phouse rsf)  ;->list
+               (if  (string=? phouse (wizard-house w))
+                    (fn-for-low (wizard-kids w) (wizard-house w) (cons (wizard-name w) rsf))
+                    (fn-for-low (wizard-kids w) (wizard-house w) rsf)))
 
-            (define (fn-for-low low hacc wacc)  ;->list
-               (cond [(empty? low) wacc]
-                     [else (fn-for-low (rest low) hacc (fn-for-wizard (first low) hacc wacc))]))]
+            (define (fn-for-low low phouse rsf)  ;->list
+               (cond [(empty? low) rsf]
+                     [else (fn-for-low (rest low) phouse (fn-for-wizard (first low) phouse rsf))]))]
 
     (fn-for-wizard w "none" empty)))
