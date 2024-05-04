@@ -46,17 +46,30 @@
   ;; (fn-for-node (node 6f) 4 (list (node 4d)) false)
   ;; (fn-for-node (node 4d) 4 (list (node 7g)) true)
   ;; (fn-for-node (node 7g) 4 empty            true)
-  (local [(define (fn-for-node t todo rst)  ;->Boolean
+  (local [(define (no-falses x1 x2 l)
+            (filter (lambda (x) (not (false? x))) (append (list x1 x2) l)))
+            
+          (define (fn-for-node t todo rst)  ;->Boolean
             (cond [(false? t) (fn-for-lond todo rst)]
                   [else (if (= key (node-k t))
                             (fn-for-lond empty true)
-                            (fn-for-lond (cons (node-l t) (cons (node-r t) todo)) rst))]))
+                            (fn-for-lond (no-falses (node-l t) (node-r t) todo) rst))]))
             
           (define (fn-for-lond todo rst)    ;->Boolean
             (cond [(empty? todo) rst]
                   [else (fn-for-node (first todo) (rest todo) rst)]))]
 
     (fn-for-node t0 empty false)))
+
+
+
+
+
+
+
+
+
+
 
 
 
