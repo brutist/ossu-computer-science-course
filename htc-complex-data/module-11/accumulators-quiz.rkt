@@ -45,27 +45,22 @@
 (check-expect (fibonacci? (list 4 4 9 14 23)) false)
 (check-expect (fibonacci? (list 0 1 1 2 3 5 8 13 21 34 55)) true)
 
+
 (define (fibonacci? lon0)
    ;; acc: n-1 - Number; the number immediately before the (first lon) in lon0
-   ;;      n-2 - Number; the number two places away from (first lon) in lon0
-   ;;      p   - Natural; 1-based index of (first lon) in lon0
-   (local [(define (fibonacci? lon n-1 n-2 p)
+   ;;      n-2 - Number; the number immediately before (n-1) in lon0
+   (local [(define lon (rest (rest lon0)))
+            (define (fibonacci? lon n-1 n-2)
               (cond [(empty? lon) true]
-                    [(< p 3) (if (< p 2)
-                                 (fibonacci? (rest lon) n-1 (first lon) (add1 p))
-                                 (fibonacci? (rest lon) (first lon) n-2 (add1 p)))]
                     [else (if (= (+ n-1 n-2) (first lon))
-                              (fibonacci? (rest lon) (first lon) n-1 (add1 p))
+                              (fibonacci? (rest lon) (first lon) n-1)
                               false)]))]
                   
-   (fibonacci? lon0 0 0 1)))
-
-
+   (fibonacci? lon (second lon0) (first lon0))))
 
 ;  PROBLEM 3:
   
 ;  Refactor the function below to make it tail recursive.  
-  
 
 
 ;; Natural -> Natural
@@ -74,12 +69,19 @@
 (check-expect (fact 3) 6)
 (check-expect (fact 5) 120)
 
-
+#;
 (define (fact n)
   (cond [(zero? n) 1]
         [else 
          (* n (fact (sub1 n)))]))
 
+(define (fact n0)
+  (local [(define (fact n rsf)
+            (cond [(zero? n) rsf]
+                  [else 
+                   (fact (sub1 n) (* n rsf))]))]
+                  
+    (fact n0 1)))
 
 
 ;  PROBLEM 4:
@@ -131,3 +133,24 @@
                    (... (fn-for-region (first lor))
                         (fn-for-lor (rest lor)))]))]
     (fn-for-region r)))
+
+
+;; Region -> Natural
+;; produce the number of regions including and within the given region
+;; examples/tests
+(check-expect (count-region VANCOUVER) 1)
+(check-expect (count-region BC) 3)
+(check-expect (count-region CANADA) 7)
+(check-expect (count-region EDMONTON) 1)
+(check-expect (count-region ALBERTA) 3)
+
+
+(define (count-region r)
+  (local [(define (fn-for-region r todo rsf)
+            (fn-for-lor (append (region-subregions r) todo) (add1 rsf)))
+   
+          (define (fn-for-lor todo rsf)
+            (cond [(empty? todo) rsf]
+                  [else (fn-for-region (first todo) (rest todo) rsf)]))]
+
+    (fn-for-region r empty 0)))
