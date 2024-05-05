@@ -111,35 +111,50 @@
 ;; Assume: room-names are unique
 ;; examples/tests
 (check-expect (most-reachable H0) H0)
-(check-expect (most-reachable H4) H4E)
+(check-expect (most-reachable H4) H4)
 (check-expect (most-reachable H4E) H4E)
-(check-expect (most-reachable H3) H3B)
+(check-expect (most-reachable H3) H3)
+(check-expect (most-reachable H4F) H4)
+
+
+(check-expect (most-reachable H1) (first (room-exits H1)))
+(check-expect (most-reachable H2) (shared ((-A- (make-room "A" (list -B-)))
+                                         (-B- (make-room "B" (list -A-))))
+                                  -B-))
+
+(check-expect (most-reachable H4) 
+              (shared ((-A- (make-room "A" (list -B- -D-)))
+                       (-B- (make-room "B" (list -C- -E-)))
+                       (-C- (make-room "C" (list -B-)))
+                       (-D- (make-room "D" (list -E-)))
+                       (-E- (make-room "E" (list -F- -A-)))
+                       (-F- (make-room "F" (list))))
+                -E-))
+
+
 
 (define (most-reachable r0)
-  ;; todo is (listof Rop); to be visited room-origin pairs
-  ;; visited is (listof Rop); list of visited room-origin pairs
+  ;; todo is (listof Room); list of to be visited rooms
+  ;; visited is (listof String); list of visited room names
   ;; rfs is (listof Rrp); the current reachability (no. of exits to it) of each rooms found so far
-  (local [(define-struct rop (room orig))                 ;;room-origin pair
-            ;; Rop is (make-rop Room String)
-            ;; interp. a pair of Room and its origin room name
 
-          (define-struct rrp (room n))                    ;;room-reachability pair
+  (local [(define-struct rrp (room n))             ;;room-reachability pair
             ;; Rrp is (make-rrp Room Natural)
             ;; interp. the room and the number of other rooms that has exits to it
           
           ;; Room (listof Rrp) -> (listof Rrp)
-          ;; produces a list increases that room's room-n by 1; if room is not in lorrp, it appends it
+          ;; increases the room's room-n by 1; if room is not in lorrp, it appends it
           (define (add-rrp r0 lorrp0)
-            (local [(define (add-rrp r lorrp prevrrp)
-                      (cond [(empty? lorrp) (cons (make-rrp r 1) empty)]
-                            [else (if (string=? (room-name (rrp-room (first lorrp))) (room-name r))
-                                      (append prevrrp (list (make-rrp r (add1 (rrp-n (first lorrp))))) (rest lorrp))
-                                      (add-rrp r (rest lorrp) (append (list (first lorrp)) prevrrp) ))]))]
+            (local [(define (fn-for-rrp r todo)
+                      (cond [(empty? todo) (list (make-rrp r 1))]
+                            [(string=? (room-name r) (room-name (rrp-room (first todo))))
+                              (cons (make-rrp r (add1 (rrp-n (first todo)))) (rest todo))]
+                            [else  (cons (first todo) (fn-for-rrp r (rest todo)))]))]
 
-            (add-rrp r0 lorrp0 empty)))
-          
+            (fn-for-rrp r0 lorrp0)))
+
           ;; (listof Rrp) -> Room
-          ;; produces the room that has the largest room-n (reachability)
+          ;; produces the room that has the largest no of exits leading to it (reachability)
           ;; Assume: lorrp has at least one element
           (define (max-reachability lorrp0)
             (local [(define (max-reachability lorrp max-reach rsf)
@@ -150,22 +165,15 @@
 
             (max-reachability lorrp0 0 empty)))
 
-          (define (rops lor str)
-            (map (lambda (r) (make-rop r str)) lor))
-
-          (define (fn-for-room r origin todo visited rfs) 
-            (if (member (make-rop r origin) visited)
-                (fn-for-lor origin todo visited rfs)
-                (fn-for-lor origin (append (rops (room-exits r) (room-name r)) todo) 
-                                   (cons (make-rop r origin) visited) 
+          (define (fn-for-room r todo visited rfs) 
+            (if (member (room-name r) visited)
+                (fn-for-lor todo visited rfs)
+                (fn-for-lor (append (room-exits r) todo) 
+                                   (cons (room-name r) visited) 
                                    (add-rrp r rfs)))) 
 
-          (define (fn-for-lor origin todo visited rfs)
-            (cond [(empty? todo) (max-reachability rfs)]
-                  [else (fn-for-room (rop-room (first todo)) 
-                                     (rop-orig (first todo)) 
-                                     (rest todo) 
-                                     visited 
-                                     rfs)]))]
+          (define (fn-for-lor todo visited rfs)
+            (cond [(empty? todo) rfs]
+                  [else (fn-for-room (first todo) (rest todo) visited rfs)]))]
 
-    (fn-for-room r0 "" empty empty empty))) 
+    (fn-for-room r0 empty empty empty))) 
