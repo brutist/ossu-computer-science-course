@@ -11,7 +11,7 @@
 ; 
 ; Here are some examples of such a house:
 
-;  == ./graph-example.png
+;  == ./graph-example.png  ==
 
 ; In computer science, we refer to such an information structure as a directed
 ; graph. Like trees, in directed graphs the arrows have direction. But in a
@@ -49,7 +49,17 @@
 
    -A-))
 
+(define H4F
+   (shared ((-A- (make-room "A" (list -B- -D-)))
+            (-B- (make-room "B" (list -C- -E-)))
+            (-C- (make-room "C" (list -B-)))
+            (-D- (make-room "D" (list -E-)))
+            (-E- (make-room "E" (list -F- -A-)))
+            (-F- (make-room "F" (list))))
 
+   -F-))
+
+#;
 (define (fn-for-house r)
    ;; todo is (listof Room); a worklist accumulator
    ;; visited is (listof String); a list of room-names that is already visited
@@ -63,3 +73,48 @@
                   [else (fn-for-room (first todo) visited (rest todo))]))] ;(... (first todo))
       
     (fn-for-room r empty empty)))
+
+
+   
+; PROBLEM:
+
+; Design a function that consumes a Room and a room name, and produces true
+; if it is possible to reach a room with the given name starting at the given
+; room. For example:
+
+;   (reachable? H1 "A") produces true
+;   (reachable? H1 "B") produces true
+;   (reachable? H1 "C") produces false
+;   (reachable? H4 "F") produces true
+  
+; But note that if you defined H4F to be the room named F in the H4 house then 
+; (reachable? H4F "A") would produce false because it is not possible to get
+; to A from F in that house.
+
+
+;; Room String -> Boolean
+;; produce true if string name is reachable from the given room
+;; examples/tests
+(check-expect (reachable? H1 "A") true)
+(check-expect (reachable? H1 "B") true)
+(check-expect (reachable? H1 "C") false)
+(check-expect (reachable? H4 "F") true)
+(check-expect (reachable? H4F "A") false)
+(check-expect (reachable? (first (room-exits H1)) "A") false)
+
+
+(define (reachable? r0 name)
+   ;; todo is (listof Room); list of to be visited rooms
+   ;; visited is (listof String); a list of room-names that is already visited
+  (local [(define (fn-for-room r visited todo)
+            (cond [(string=? (room-name r) name) true]
+                  [(member (room-name r) visited) (fn-for-lor visited todo)]
+                  [else (fn-for-lor (cons (room-name r) visited) (append (room-exits r) todo))]))
+
+          (define (fn-for-lor visited todo)
+            (cond [(empty? todo) false]
+                  [else (fn-for-room (first todo) visited (rest todo))]))] 
+      
+    (fn-for-room r0 empty empty)))
+
+
