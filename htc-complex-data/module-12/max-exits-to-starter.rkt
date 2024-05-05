@@ -118,24 +118,54 @@
 (define (most-reachable r0)
   ;; todo is (listof Rop); to be visited room-origin pairs
   ;; visited is (listof Rop); list of visited room-origin pairs
-  ;; rfs is Room; the current most reachable room
-  (local [(define-struct rop (room orig)) ;;room-origin pair
+  ;; rfs is (listof Rrp); the current reachability (no. of exits to it) of each rooms found so far
+  (local [(define-struct rop (room orig))                 ;;room-origin pair
             ;; Rop is (make-rop Room String)
             ;; interp. a pair of Room and its origin room name
+
+          (define-struct rrp (room n))                    ;;room-reachability pair
+            ;; Rrp is (make-rrp Room Natural)
+            ;; interp. the room and the number of other rooms that has exits to it
+          
+          ;; Room (listof Rrp) -> (listof Rrp)
+          ;; produces a list increases that room's room-n by 1; if room is not in lorrp, it appends it
+          (define (add-rrp r0 lorrp0)
+            (local [(define (add-rrp r lorrp prevrrp)
+                      (cond [(empty? lorrp) (cons (make-rrp r 1) empty)]
+                            [else (if (string=? (room-name (rrp-room (first lorrp))) (room-name r))
+                                      (append prevrrp (list (make-rrp r (add1 (rrp-n (first lorrp))))) (rest lorrp))
+                                      (add-rrp r (rest lorrp) (append (list (first lorrp)) prevrrp) ))]))]
+
+            (add-rrp r0 lorrp0 empty)))
+          
+          ;; (listof Rrp) -> Room
+          ;; produces the room that has the largest room-n (reachability)
+          ;; Assume: lorrp has at least one element
+          (define (max-reachability lorrp0)
+            (local [(define (max-reachability lorrp max-reach rsf)
+                      (cond [(empty? lorrp) rsf]
+                            [else (if (> (rrp-n (first lorrp)) max-reach)
+                                  (max-reachability (rest lorrp) (rrp-n (first lorrp)) (rrp-room (first lorrp)))
+                                  (max-reachability (rest lorrp) max-reach rsf))]))]
+
+            (max-reachability lorrp0 0 empty)))
+
           (define (rops lor str)
             (map (lambda (r) (make-rop r str)) lor))
 
           (define (fn-for-room r origin todo visited rfs) 
             (if (member (make-rop r origin) visited)
                 (fn-for-lor origin todo visited rfs)
-                (fn-for-lor origin (append (rops (room-exits r) (room-name r)) todo) (cons (make-rop r origin) visited) (... rfs)))) 
+                (fn-for-lor origin (append (rops (room-exits r) (room-name r)) todo) 
+                                   (cons (make-rop r origin) visited) 
+                                   (add-rrp r rfs)))) 
 
           (define (fn-for-lor origin todo visited rfs)
-            (cond [(empty? todo) rfs]
-                  [else (fn-for-room (rop-room (first todo)) (rop-orig (first todo)) (rest todo) visited rfs)]))]
+            (cond [(empty? todo) (max-reachability rfs)]
+                  [else (fn-for-room (rop-room (first todo)) 
+                                     (rop-orig (first todo)) 
+                                     (rest todo) 
+                                     visited 
+                                     rfs)]))]
 
-    (fn-for-room r0 "" empty empty r0))) 
-
-;; The problem
-;;       - i don't have a counter for how many rooms are reaching the given room
-;;       - i am not changing rfs, hence (... rfs)
+    (fn-for-room r0 "" empty empty empty))) 
