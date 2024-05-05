@@ -111,7 +111,7 @@
 ;; Assume: room-names are unique
 ;; examples/tests
 (check-expect (most-reachable H0) H0)
-(check-expect (most-reachable H4) H4)
+(check-expect (most-reachable H4) H4E)
 (check-expect (most-reachable H4E) H4E)
 (check-expect (most-reachable H3) H3B)
 
