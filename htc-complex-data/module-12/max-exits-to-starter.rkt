@@ -115,13 +115,10 @@
 (check-expect (most-reachable H4E) H4B)
 (check-expect (most-reachable H3) H3B)
 (check-expect (most-reachable H4F) (list))
-
-
 (check-expect (most-reachable H1) (first (room-exits H1)))
 (check-expect (most-reachable H2) (shared ((-A- (make-room "A" (list -B-)))
                                          (-B- (make-room "B" (list -A-))))
                                   -B-))
-
 (check-expect (most-reachable H4) H4B)
 
 
