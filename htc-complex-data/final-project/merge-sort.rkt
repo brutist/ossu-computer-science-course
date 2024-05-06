@@ -65,11 +65,11 @@
 (check-expect (take (list 1 2 3) 2) (list 1 2))
 (check-expect (take (list 1 2 3 8 9 2) 3) (list 1 2 3))
 
-(define (take lox0 p0)
-   (local [(define (take lox p acc rsf)
+(define (take lox0 p)
+   (local [(define (take lox acc rsf)
             (cond [(= acc p) rsf]
-                  [else (take (rest lox) p (add1 acc) (append rsf (list (first lox))))]))]
-   (take lox0 p0 0 empty)))
+                  [else (take (rest lox) (add1 acc) (append rsf (list (first lox))))]))]
+   (take lox0 0 empty)))
 
 
 ;; (listof X) Natural -> (listof X)
@@ -80,10 +80,10 @@
 (check-expect (drop (list 1 2 3 4) 2) (list 3 4))
 (check-expect (drop (list 1 2 3 8 9 2) 3) (list 8 9 2))
 
-(define (drop lox0 p0)
-   (local [(define (drop lox p acc rsf)
+(define (drop lox0 p)
+   (local [(define (drop lox acc rsf)
             (cond [(= acc p) rsf]
-                  [else (drop (rest lox) p (add1 acc) (rest lox))]))]
-   (drop lox0 p0 0 empty)))
+                  [else (drop (rest lox) (add1 acc) (rest lox))]))]
+   (drop lox0 0 empty)))
 
 
