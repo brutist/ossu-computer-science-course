@@ -145,18 +145,18 @@
           ;; Room (listof Rrp) -> (listof Rrp)
           ;; increases the room's room-n by 1; if room is not in lorrp, it appends it
           (define (add-rrp r0 lorrp0)
-            (local [(define (fn-for-rrp r todo)
-                      (cond [(empty? todo) (list (make-rrp r 1))]
+            (local [(define (fn-for-rrp r todo prevrrp)
+                      (cond [(empty? todo) (append prevrrp (list (make-rrp r 1)))]
                             [(string=? (room-name r) (room-name (rrp-room (first todo))))
-                              (cons (make-rrp r (add1 (rrp-n (first todo)))) (rest todo))]
-                            [else  (cons (first todo) (fn-for-rrp r (rest todo)))]))]
+                              (append prevrrp (list (make-rrp r (add1 (rrp-n (first todo))))) (rest todo))]
+                            [else (fn-for-rrp r (rest todo) (append prevrrp (list (first todo))))]))]
 
-            (fn-for-rrp r0 lorrp0)))
+            (fn-for-rrp r0 lorrp0 empty)))
 
           ;; (listof Rrp) -> Room
           ;; produces the room that has the largest no of exits leading to it (reachability)
           ;; Assume: lorrp has at least one element
-          (define (max-reachability lorrp0)
+          (define (max-reachability lorrp0) 
             (local [(define (max-reachability lorrp max-reach rsf)
                       (cond [(empty? lorrp) rsf]
                             [else (if (> (rrp-n (first lorrp)) max-reach)
