@@ -43,6 +43,52 @@
 ;; ============================= FUNCTIONS
 
 
+;; Schedule (listof TA) (listof Slot) -> (listof Schedule)
+;; produces valid next (listof Schedule) from the given Schedule (listof TA) (listof Slot)
+;; finds first empty assignment, fills it with all of the TAs in the list and keeps
+;; only the valid assignment to be appended into the schedule
+;; examples/tests
+(check-expect (next-schedule empty (list SOBA) (list 2)) (list empty))
+(check-expect (next-schedule empty (list SOBA) (list 1)) (list (list (make-assignment SOBA 1))))
+(check-expect (next-schedule empty NOODLE-TAs (list 1 3)) 
+              (list (list (make-assignment SOBA 3))
+                    (list (make-assignment UDON 3))))
+(check-expect (next-schedule empty NOODLE-TAs (list 5 6 7)) 
+              (list empty))
+
+
+(define (next-schedule sched0 tas0 slots0)
+    (local [;; Schedule -> Boolean
+            ;; produces true if the schedule is valid
+            ;; Schedule is valid if no ta in the sched is working more than their maximum shifts
+            (define (valid-sched? sched)
+                (...))
+
+            ;; (listof Schedule) -> (listof Schedule)
+            ;; filters the given schedules by keeping only the valid shedules
+            ;; Schedule is valid if no ta in the sched is working more than their maximum shifts
+            (define (keep-valid losched)
+                (filter valid-sched? losched))
+
+            ;; Natural -> (listof Schedule)
+            ;; produces a list of schedule in which every element of the list is the sched0
+            ;;     appended with a ta in tas0 assigned to slot0
+            
+
+            ;; Schedule -> Natural
+            ;; produces the first slot in slots0 that is not in the sched
+
+
+            (define (next-schedule sched)
+                (keep-valid (fill-with-tas (find-empty sched))))]
+    
+    (next-schedule sched0)))
+
+
+
+
+
+
 ;; (listof TA) (listof Slot) -> Schedule or false
 ;; produce valid schedule given TAs and Slots; false if impossible
 
@@ -65,6 +111,24 @@
 (check-expect (schedule-tas NOODLE-TAs (list 1 2 3 4 5)) false)
 
 
-(define (schedule-tas tas slots) empty) ;stub
+(define (schedule-tas tas slots)
+  (local [;; Schedule (listof Slot) -> Boolean 
+          ;; produce true if the given schedule has an assignment for each slots in the list
+          ;; Assume: given schedule is valid, so it is full if (length schedule) = (length slots)
+          (define (full? sched slots) (= (length sched) (length slots)))
 
+          (define (fn-for-schedule sched)
+            (if (full? sched slots)
+                sched
+                (fn-for-losched (next-schedule sched tas slots))))
+            
+          (define (fn-for-losched losched)
+            (cond [(empty? losched) false]
+                  [else 
+                   (local [(define try (fn-for-schedule (first losched)))]
+                     (if (not (false? try))
+                         try
+                         (fn-for-losched (rest losched))))]))]
+
+    (fn-for-schedule empty)))
 
