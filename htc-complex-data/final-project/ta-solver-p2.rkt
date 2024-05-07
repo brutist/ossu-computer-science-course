@@ -57,30 +57,55 @@
               (list empty))
 
 
-(define (next-schedule sched0 tas0 slots0)
-    (local [;; Schedule -> Boolean
-            ;; produces true if the schedule is valid
-            ;; Schedule is valid if no ta in the sched is working more than their maximum shifts
-            (define (valid-sched? sched)
-                (...))
+(define (next-schedule sched0 tas slots)
+  (local [;; Tsp is (make-tsp TA Natural)
+          ;; interp. TA with n assigned shifts
+          (define-struct tsp (ta shift))
 
-            ;; (listof Schedule) -> (listof Schedule)
-            ;; filters the given schedules by keeping only the valid shedules
-            ;; Schedule is valid if no ta in the sched is working more than their maximum shifts
-            (define (keep-valid losched)
-                (filter valid-sched? losched))
+          ;; Assignment (listof Tsp) -> (listof Tsp)
+          ;; increases the assignment-ta shift in (listof Tsp), if assignment-ta is not a ta 
+          ;; in the (listof Tsp) it inserts assignment-ta and instantiate its shift with 1
+          (define (add-tsp a lotsp0)
+            (local 
+              [(define (add-tsp lotsp prevtsp)
+                 (cond [(empty? lotsp) (append prevtsp (list (make-tsp (assignment-ta a) 1)))]
+                       [(string=? (ta-name (assignment-ta a)) (ta-name (tsp-ta (first lotsp))))
+                        (append prevtsp (make-tsp (assignment-ta a) (add1 (tsp-shift (first lotsp)))) (rest lotsp))]
+                       [else (add-tsp (rest lotsp) (append prevtsp (first lotsp)))]))]
 
-            ;; Natural -> (listof Schedule)
-            ;; produces a list of schedule in which every element of the list is the sched0
-            ;;     appended with a ta in tas0 assigned to slot0
+              (add-tsp lotsp0 empty)))
+
+          ;; Schedule -> Boolean
+          ;; produces true if the schedule is valid
+          ;; Schedule is valid if no ta in the sched is working more than their maximum shifts
+          (define (valid-sched? sched0)
+            (local
+              ;; rfs is (listof Tsp); result so far accumulator         
+              [(define (valid-sched? sched rfs)
+                 (cond [(empty? sched) (... rfs)]
+                       [else (valid-sched? (rest sched) (add-tsp (first sched) rfs))]))]
             
-
-            ;; Schedule -> Natural
-            ;; produces the first slot in slots0 that is not in the sched
+              (valid-sched? sched0 empty)))
 
 
-            (define (next-schedule sched)
-                (keep-valid (fill-with-tas (find-empty sched))))]
+          ;; (listof Schedule) -> (listof Schedule)
+          ;; filters the given schedules by keeping only the valid shedules
+          ;; Schedule is valid if no ta in the sched is working more than their maximum shifts
+          (define (keep-valid losched)
+            (filter valid-sched? losched))
+
+          ;; Natural -> (listof Schedule)
+          ;; produces a list of schedule in which every element of the list is the sched0
+          ;;     appended with a ta in tas assigned to slot
+          (define (find-empty sched)
+            (...))
+
+          ;; Schedule -> Natural
+          ;; produces the first slot in slots that is not in the sched
+
+
+          (define (next-schedule sched)
+            (keep-valid (fill-with-tas (find-empty sched))))]
     
     (next-schedule sched0)))
 
