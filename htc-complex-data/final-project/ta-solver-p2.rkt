@@ -37,3 +37,34 @@
 ;; interp. the TA is assigned to work the slot
 
 ;; Schedule is (listof Assignment)
+
+
+
+;; ============================= FUNCTIONS
+
+
+;; (listof TA) (listof Slot) -> Schedule or false
+;; produce valid schedule given TAs and Slots; false if impossible
+
+(check-expect (schedule-tas empty empty) empty)
+(check-expect (schedule-tas empty (list 1 2)) false)
+(check-expect (schedule-tas (list SOBA) empty) empty)
+
+(check-expect (schedule-tas (list SOBA) (list 1)) (list (make-assignment SOBA 1)))
+(check-expect (schedule-tas (list SOBA) (list 2)) false)
+(check-expect (schedule-tas (list SOBA) (list 1 3)) (list (make-assignment SOBA 3)
+                                                          (make-assignment SOBA 1)))
+
+(check-expect (schedule-tas NOODLE-TAs (list 1 2 3 4)) 
+              (list
+               (make-assignment UDON 4)
+               (make-assignment SOBA 3)
+               (make-assignment RAMEN 2)
+               (make-assignment SOBA 1)))
+
+(check-expect (schedule-tas NOODLE-TAs (list 1 2 3 4 5)) false)
+
+
+(define (schedule-tas tas slots) empty) ;stub
+
+
