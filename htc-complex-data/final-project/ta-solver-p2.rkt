@@ -31,6 +31,16 @@
 (define NOODLE-TAs (list SOBA UDON RAMEN))
 
 
+(define CHA (make-ta "Charity" 2 (list 1 2 4)))
+(define HON (make-ta "Honesty" 1 (list 1 7)))
+(define HUM (make-ta "Humility" 3 (list 5 6 9)))
+(define INT (make-ta "Integrity" 2 (list 1 2 2)))
+(define PIE (make-ta "Piety" 1 (list 3 2 8)))
+(define PUR (make-ta "Purity" 4 (list 4 6 8 7)))
+
+(define SECTION-TAs (list CHA HON HUM INT PIE PUR))
+
+
 (define (same-ta? ta1 ta2)
   (and (string=? (ta-name ta1) (ta-name ta2))
        (= (ta-max ta1) (ta-max ta2))
@@ -42,6 +52,13 @@
 ;; Assignment is (make-assignment TA Slot)
 ;; interp. the TA is assigned to work the slot
 
+;; Assignment -> Boolean
+;; produce true if the assigned slot is in ta-avail
+(define (valid-assignment? a)
+  (member (assignment-slot a) (ta-avail (assignment-ta a))))
+
+
+
 ;; Schedule is (listof Assignment)
 
 ;; Schedule Natural -> Boolean
@@ -52,7 +69,7 @@
         [else (slot-in-sched? (rest sched) slot)]))
 
 ;; Schedule Assignment -> Schedule
-;; appends the given assignement to the schedule
+;; appends the given assignment to the schedule
 (define (append-schedule sched assignment)
   (append sched (list assignment)))
 
@@ -64,13 +81,13 @@
 ;; finds first empty assignment, fills it with all of the TAs in the list and keeps
 ;; only the valid assignment to be appended into the schedule
 ;; examples/tests
-(check-expect (next-schedule empty (list SOBA) (list 2)) (list empty))
+(check-expect (next-schedule empty (list SOBA) (list 2)) empty)
 (check-expect (next-schedule empty (list SOBA) (list 1)) (list (list (make-assignment SOBA 1))))
 (check-expect (next-schedule empty NOODLE-TAs (list 1 3)) 
               (list (list (make-assignment SOBA 3))
                     (list (make-assignment UDON 3))))
 (check-expect (next-schedule empty NOODLE-TAs (list 5 6 7)) 
-              (list empty))
+              empty)
 
 
 (define (next-schedule sched0 tas slots)
@@ -108,21 +125,34 @@
           ;; Schedule -> Boolean
           ;; produces true if the schedule is valid
           ;; Schedule is valid if no ta in the sched is working more than their maximum shifts
+          (define (no-overworked? sched0)
+            (local
+              ;; rfs is (listof Tsp); result so far accumulator         
+              [(define (no-overworked? sched rfs)
+                 (cond [(empty? sched) (overworked-lotsp? rfs)]
+                       [else (no-overworked? (rest sched) (add-tsp (first sched) rfs))]))]
+            
+              (no-overworked? sched0 empty)))
+
+          ;; Schedule -> Boolean
+          ;; produces true if all assignments in the schedule are valid
+          ;; Assignments are valid if the the ta is available in the given shift
           (define (valid-sched? sched0)
             (local
               ;; rfs is (listof Tsp); result so far accumulator         
               [(define (valid-sched? sched rfs)
-                 (cond [(empty? sched) (overworked-lotsp? rfs)]
-                       [else (valid-sched? (rest sched) (add-tsp (first sched) rfs))]))]
+                 (cond [(empty? sched) rfs]
+                       [(valid-assignment? (first sched)) (valid-sched? (rest sched) rfs)]
+                       [else false]))]
             
-              (valid-sched? sched0 empty)))
+              (valid-sched? sched0 true)))
 
 
           ;; (listof Schedule) -> (listof Schedule)
           ;; filters the given schedules by keeping only the valid shedules
           ;; Schedule is valid if no ta in the sched is working more than their maximum shifts
           (define (keep-valid losched)
-            (filter valid-sched? losched))
+            (filter (lambda (s) (and (valid-sched? s) (no-overworked? s))) losched))
 
           ;; (listof TA) Natural -> (listof Schedule)
           ;; produces a list of schedule in which every element of the list is the sched0
@@ -132,18 +162,19 @@
             (local [(define (fill-with-tas tas rfs)
                       (cond [(empty? tas) rfs]
                             [else (fill-with-tas (rest tas) 
-                                                 (append (list (append-schedule sched0 (make-assignment (first tas) slot))) rfs))]))]
+                                                 (append rfs (list (append-schedule sched0 (make-assignment (first tas) slot)))))]))]
 
-             (fill-with-tas tas empty)))
+              (fill-with-tas tas empty)))
 
 
           ;; Schedule -> Natural
           ;; produces the first slot in slots that is not in the sched
           ;; Assume: given schedule is not full          
-          (define (find-empty sched slots)
-            (cond [(empty? slots) "Error in find-empty"]     ;will not happen normally
-                  [(slot-in-sched? sched (first slots)) (find-empty sched (rest slots))]
-                  [else (first slots)]))         
+          (define (find-empty sched slots0)
+            (local [(define slots (reverse (sort slots0 <)))]
+              (cond [(empty? slots) "Error in find-empty"]     ;will not happen normally
+                    [(slot-in-sched? sched (first slots)) (find-empty sched (rest slots))]
+                    [else (first slots)])))   
 
 
           (define (next-schedule sched)
@@ -156,7 +187,7 @@
 
 ;; (listof TA) (listof Slot) -> Schedule or false
 ;; produce valid schedule given TAs and Slots; false if impossible
-
+;; examples/tests
 (check-expect (schedule-tas empty empty) empty)
 (check-expect (schedule-tas empty (list 1 2)) false)
 (check-expect (schedule-tas (list SOBA) empty) empty)
@@ -166,6 +197,7 @@
 (check-expect (schedule-tas (list SOBA) (list 1 3)) (list (make-assignment SOBA 3)
                                                           (make-assignment SOBA 1)))
 
+(check-expect (schedule-tas NOODLE-TAs (list 1 2 3 4 5)) false)
 (check-expect (schedule-tas NOODLE-TAs (list 1 2 3 4)) 
               (list
                (make-assignment UDON 4)
@@ -173,8 +205,16 @@
                (make-assignment RAMEN 2)
                (make-assignment SOBA 1)))
 
-(check-expect (schedule-tas NOODLE-TAs (list 1 2 3 4 5)) false)
+(check-expect (schedule-tas SECTION-TAs (list 1 2 3 4 5 6)) 
+              (list
+               (make-assignment (make-ta "Humility" 3 (list 5 6 9)) 6)
+               (make-assignment (make-ta "Humility" 3 (list 5 6 9)) 5)
+               (make-assignment (make-ta "Charity" 2 (list 1 2 4)) 4)
+               (make-assignment (make-ta "Piety" 1 (list 3 2 8)) 3)
+               (make-assignment (make-ta "Charity" 2 (list 1 2 4)) 2)
+               (make-assignment (make-ta "Honesty" 1 (list 1 7)) 1)))
 
+(check-expect (schedule-tas SECTION-TAs (list 1 3 4 6 8 11)) false)
 
 (define (schedule-tas tas slots)
   (local [;; Schedule (listof Slot) -> Boolean 
@@ -189,16 +229,11 @@
             
           (define (fn-for-losched losched)
             (cond [(empty? losched) false]
-                  [else 
-                   (local [(define try (fn-for-schedule (first losched)))]
-                     (if (not (false? try))
-                         try
-                         (fn-for-losched (rest losched))))]))]
+                  [else (fn-for-schedule (first losched))]))]
 
     (fn-for-schedule empty)))
 
-
-;; The problem;
-;;   - not filtering for invalid assignments
-;;      i.e. ta was scheduled in their unavailable slot
-;;   - getting (listof Schedule) instead of Schedule for the output of schedule-tas
+;; It seems that no backtracking is happening. I basically generate all possible solutions
+;;    and just pick the right one. This is acceptable for this problem but if this is for
+;;    a sudoku or problems that involve tremendous possibilities, this solution would be too
+;;    slow.
