@@ -31,6 +31,12 @@
 (define NOODLE-TAs (list SOBA UDON RAMEN))
 
 
+(define (same-ta? ta1 ta2)
+  (and (string=? (ta-name ta1) (ta-name ta2))
+       (= (ta-max ta1) (ta-max ta2))
+       (equal? (ta-avail ta1) (ta-avail ta2))))
+
+
 
 (define-struct assignment (ta slot))
 ;; Assignment is (make-assignment TA Slot)
@@ -38,7 +44,17 @@
 
 ;; Schedule is (listof Assignment)
 
+;; Schedule Natural -> Boolean
+;; produces true if the given slot is already assigned in the schedule
+(define (slot-in-sched? sched slot)
+  (cond [(empty? sched) false]
+        [(= (assignment-slot (first sched)) slot) true]
+        [else (slot-in-sched? (rest sched) slot)]))
 
+;; Schedule Assignment -> Schedule
+;; appends the given assignement to the schedule
+(define (append-schedule sched assignment)
+  (append sched (list assignment)))
 
 ;; ============================= FUNCTIONS
 
@@ -62,6 +78,12 @@
           ;; interp. TA with n assigned shifts
           (define-struct tsp (ta shift))
 
+          (define (add-shift-tsp tsp)
+            (make-tsp (tsp-ta tsp) (add1 (tsp-shift tsp))))
+
+          (define (overworked-tsp? t)
+            (< (ta-max (tsp-ta t)) (tsp-shift t)))
+
           ;; Assignment (listof Tsp) -> (listof Tsp)
           ;; increases the assignment-ta shift in (listof Tsp), if assignment-ta is not a ta 
           ;; in the (listof Tsp) it inserts assignment-ta and instantiate its shift with 1
@@ -69,11 +91,19 @@
             (local 
               [(define (add-tsp lotsp prevtsp)
                  (cond [(empty? lotsp) (append prevtsp (list (make-tsp (assignment-ta a) 1)))]
-                       [(string=? (ta-name (assignment-ta a)) (ta-name (tsp-ta (first lotsp))))
-                        (append prevtsp (make-tsp (assignment-ta a) (add1 (tsp-shift (first lotsp)))) (rest lotsp))]
-                       [else (add-tsp (rest lotsp) (append prevtsp (first lotsp)))]))]
+                       [(same-ta? (assignment-ta a) (tsp-ta (first lotsp)))
+                        (append prevtsp (list (add-shift-tsp (first lotsp))) (rest lotsp))]
+                       [else (add-tsp (rest lotsp) (append prevtsp (list (first lotsp))))]))]
 
               (add-tsp lotsp0 empty)))
+
+          ;; (listof Tsp) -> Boolean
+          ;; produce true if no ta in the (listof Tsp) is assigned more than their maximum shifts
+          (define (overworked-lotsp? lotsp)
+            (cond [(empty? lotsp) true]
+                  [(overworked-tsp? (first lotsp)) false]
+                  [else (overworked-lotsp? (rest lotsp))]))
+
 
           ;; Schedule -> Boolean
           ;; produces true if the schedule is valid
@@ -82,7 +112,7 @@
             (local
               ;; rfs is (listof Tsp); result so far accumulator         
               [(define (valid-sched? sched rfs)
-                 (cond [(empty? sched) (... rfs)]
+                 (cond [(empty? sched) (overworked-lotsp? rfs)]
                        [else (valid-sched? (rest sched) (add-tsp (first sched) rfs))]))]
             
               (valid-sched? sched0 empty)))
@@ -94,22 +124,32 @@
           (define (keep-valid losched)
             (filter valid-sched? losched))
 
-          ;; Natural -> (listof Schedule)
+          ;; (listof TA) Natural -> (listof Schedule)
           ;; produces a list of schedule in which every element of the list is the sched0
           ;;     appended with a ta in tas assigned to slot
-          (define (find-empty sched)
-            (...))
+          (define (fill-with-tas tas slot)
+            ;; rfs is (listof Schedule)
+            (local [(define (fill-with-tas tas rfs)
+                      (cond [(empty? tas) rfs]
+                            [else (fill-with-tas (rest tas) 
+                                                 (append (list (append-schedule sched0 (make-assignment (first tas) slot))) rfs))]))]
+
+             (fill-with-tas tas empty)))
+
 
           ;; Schedule -> Natural
           ;; produces the first slot in slots that is not in the sched
+          ;; Assume: given schedule is not full          
+          (define (find-empty sched slots)
+            (cond [(empty? slots) "Error in find-empty"]     ;will not happen normally
+                  [(slot-in-sched? sched (first slots)) (find-empty sched (rest slots))]
+                  [else (first slots)]))         
 
 
           (define (next-schedule sched)
-            (keep-valid (fill-with-tas (find-empty sched))))]
+            (keep-valid (fill-with-tas tas (find-empty sched slots))))]
     
     (next-schedule sched0)))
-
-
 
 
 
@@ -157,3 +197,8 @@
 
     (fn-for-schedule empty)))
 
+
+;; The problem;
+;;   - not filtering for invalid assignments
+;;      i.e. ta was scheduled in their unavailable slot
+;;   - getting (listof Schedule) instead of Schedule for the output of schedule-tas
