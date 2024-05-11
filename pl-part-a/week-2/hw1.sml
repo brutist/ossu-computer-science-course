@@ -142,8 +142,8 @@ fun oldest (dates : (int * int * int) list) =
       oldest (dates, NONE)
     end
 
-(* (int * int * int) list -> (int * int * int) list *)
-(* remove the duplicates in a list of dates *)
+(*  int list ->  int list *)
+(* remove the duplicates in a list of months *)
 fun remove_duplicates (months) =
     let
       fun not_in_list (month, months) =
