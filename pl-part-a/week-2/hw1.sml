@@ -194,7 +194,7 @@ fun reasonable_date (date : (int * int * int)) =
     in
       year > 0 andalso
       month > 0 andalso month <= 12 andalso
-      day <= month_days (year, month)
+      day <= month_days (year, month) andalso day > 0
     end
 
 
