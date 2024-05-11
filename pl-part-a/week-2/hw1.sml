@@ -1,6 +1,6 @@
 (* int -> int *)
 (* produce the number of days in a given month m *)
-fun month_days (m : int) =
+fun normal_month_days (m : int) =
     if m = 1 orelse m = 3 orelse m = 5 orelse 
        m = 7 orelse m = 8 orelse m = 10 orelse 
        m = 12
@@ -16,8 +16,8 @@ fun month_days (m : int) =
     produce true if d1 is older than d2 *)
 fun is_older (d1 : int * int * int, d2 : int * int * int) =
     let        
-      val total_d1 = (#1 d1 * 365) + (#2 d1 * month_days (#2 d1)) + #3 d1
-      val total_d2 = (#1 d2 * 365) + (#2 d2 * month_days (#2 d2)) + #3 d2
+      val total_d1 = (#1 d1 * 365) + (#2 d1 * normal_month_days (#2 d1)) + #3 d1
+      val total_d2 = (#1 d2 * 365) + (#2 d2 * normal_month_days (#2 d2)) + #3 d2
     in
       total_d1 < total_d2
     end
@@ -141,4 +141,60 @@ fun oldest (dates : (int * int * int) list) =
     in
       oldest (dates, NONE)
     end
+
+(* (int * int * int) list -> (int * int * int) list *)
+(* remove the duplicates in a list of dates *)
+fun remove_duplicates (months) =
+    let
+      fun not_in_list (month, months) =
+        if months = []
+        then true
+        else if month = hd months
+        then false
+        else not_in_list (month, tl months)
+
+      fun remove_duplicates (months, rsf) =
+        if months = []
+        then rsf
+        else if not_in_list (hd months, rsf)
+        then remove_duplicates (tl months, rsf @ [hd months])
+        else remove_duplicates (tl months, rsf)
+  
+    in
+      remove_duplicates (months, [])
+    end
+
+
+(*  (int * int * int) list, int list -> int  *)
+(* produce the number of dates that contains the given months *)
+fun  number_in_months_challenge (dates: (int * int * int) list, months: int list) =
+    let
+      val months = remove_duplicates months
+    in
+      if months = []
+      then 0
+      else number_in_month (dates, hd months) +  number_in_months_challenge (dates, tl months)
+    end
+    
+
+fun reasonable_date (date : (int * int * int)) =
+    let
+      val year = #1 date
+      val month = #2 date
+      val day = #3 date
+
+      fun is_leap_year (year) =
+        year mod 400 = 0 orelse (year mod 4 = 0 andalso not (year mod 100 = 0))
+
+      fun month_days (year, month) =
+        if is_leap_year (year) andalso month = 2
+        then 29
+        else normal_month_days (month)
+
+    in
+      year > 0 andalso
+      month > 0 andalso month <= 12 andalso
+      day <= month_days (year, month)
+    end
+
 

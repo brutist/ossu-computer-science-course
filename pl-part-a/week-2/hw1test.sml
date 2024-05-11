@@ -54,3 +54,16 @@ val test10c = month_range (90,91) = [3,4]
 
 val test11 = oldest([(2012,2,28),(2011,3,31),(2011,4,28)]) = SOME (2011,3,31)
 val test11a = oldest([]) = NONE
+
+val test12 = number_in_months_challenge ([(2012,2,28),(2013,12,1),(2011,3,31),(2011,4,28)],[2,2,2,3,4]) = 3
+val test12a = number_in_months_challenge ([(2012,2,28),(2013,12,1),(2011,3,31),(2011,4,28)],[]) = 0 
+val test12b = number_in_months_challenge ([(2050,1,10),(2025,12,12),(2000,3,31),(2011,3,28)],[2,5,5,8,8]) = 0
+val test12c = number_in_months_challenge ([(2050,1,10),(2025,12,12),(2000,3,31),(2011,3,28)],[1,1,1,3,12]) = 4
+val test12d = number_in_months_challenge ([(2050,1,10),(2025,12,12),(2000,3,31),(2011,3,28)],[1,12,12]) = 2
+
+val test13 = reasonable_date (2050,~1,10) = false
+val test13a = reasonable_date (2050,1,10) = true
+val test13b = reasonable_date (2053,2,29) = false
+val test13c = reasonable_date (2060,2,29) = true
+val test13d = reasonable_date (1840,2,29) = true
+val test13e = reasonable_date (1893,2,29) = false
