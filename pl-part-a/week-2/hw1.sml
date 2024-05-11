@@ -145,6 +145,7 @@ fun what_month (day : int) =
 
 
 (* int , int -> int list *)
+(* produce a list of months each days between day1 and day2 belongs *)
 fun month_range (day1 : int , day2 : int) =
     let 
         fun countup (from : int, to : int) =
@@ -164,3 +165,19 @@ fun month_range (day1 : int , day2 : int) =
     in
         dsoy_to_months (days_of_year)
     end
+
+
+(* (int * int * int) list -> (int * int * int) option  *)
+(* produces the oldest SOME date in given list, NONE if the list has no dates *)
+fun oldest (dates : (int * int * int) list) =
+    let
+      fun oldest (dates : (int * int * int) list, rsf : (int * int * int) option) =
+        if dates = []
+        then rsf
+        else if rsf = NONE orelse is_older (hd dates, valOf rsf)
+        then oldest (tl dates, SOME (hd dates))
+        else oldest (tl dates, rsf)
+    in
+      oldest (dates, NONE)
+    end
+
