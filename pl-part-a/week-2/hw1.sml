@@ -64,12 +64,12 @@ fun dates_in_months (dates : (int * int * int) list, months : int list) =
 (* produce the string at p *)
 fun get_nth (words : string list, p : int) =
     let
-        fun get_nth_0 (words : string list, n : int) =
-            if words = [] 
-            then "error"
-            else if p = n
-            then hd words
-            else get_nth_0 (tl words, n+1)
+      fun get_nth_0 (words : string list, n : int) =
+        if words = [] 
+        then "error"
+        else if p = n
+        then hd words
+        else get_nth_0 (tl words, n+1)
     in 
         get_nth_0 (words, 1)
     end
