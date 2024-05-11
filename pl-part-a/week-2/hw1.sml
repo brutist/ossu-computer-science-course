@@ -2,43 +2,13 @@
 (* produce the number of days in a given month m *)
 fun month_days (m : int) =
     if m = 1 orelse m = 3 orelse m = 5 orelse 
-        m = 7 orelse m = 8 orelse m = 10 orelse 
-        m = 12
+       m = 7 orelse m = 8 orelse m = 10 orelse 
+       m = 12
     then 31
     else if m = 4 orelse m = 6 orelse
             m = 9 orelse m = 11
     then 30
     else 28
-
-
-(* int -> string *)
-(* produce the name of the given month *)
-fun month_name (month : int) = 
-    if month = 1
-    then "January"
-    else if month = 2
-    then "February"
-    else if month = 3
-    then "March"
-    else if month = 4
-    then "April"
-    else if month = 5
-    then "May"
-    else if month = 6
-    then "June"
-    else if month = 7
-    then "July"
-    else if month = 8
-    then "August"
-    else if month = 9
-    then "September"
-    else if month = 10
-    then "October"
-    else if month = 11
-    then "November"
-    else if month = 12
-    then "December"
-    else "not a month"
 
 
 (*  (int * int * int) list, (int * int * int) list -> bool  *)
@@ -105,6 +75,18 @@ fun get_nth (words : string list, p : int) =
     end
 
 
+(* int -> string *)
+(* produce the name of the given month *)
+fun month_name (month : int) = 
+    let 
+      val NAMES = ["January", "February", "March", "April", "May", 
+                    "June", "July", "August", "September", "October",
+                    "November", "December"]
+    in 
+      get_nth (NAMES, month)
+    end
+
+
 (* (int * int * int) -> string *)
 (* produces a string version of the date following format MonthName xx, xxxx *)
 fun date_to_string (date : (int * int * int)) =
@@ -132,39 +114,18 @@ fun number_before_reaching_sum (sum : int, numbers : int list) =
 fun what_month (day : int) =
     let
         val CONVERTER = 1 (* align the input to the definition of number_before_reaching_sum *)
-        val months = [1,2,3,4,5,6,7,8,9,10,11,12]
-        fun get_days_of_year (months : int list, rsf : int list) =
-            if months = []
-            then rsf
-            else get_days_of_year (tl months, rsf @ [month_days (hd months)])
-        val month_days_of_year = get_days_of_year (months, [])
-
+        val month_lengths = [31,28,31,30,31,30,31,31,30,31,30,31]
     in 
-        number_before_reaching_sum (day, month_days_of_year) + CONVERTER
+        number_before_reaching_sum (day, month_lengths) + CONVERTER
     end
 
 
 (* int , int -> int list *)
 (* produce a list of months each days between day1 and day2 belongs *)
 fun month_range (day1 : int , day2 : int) =
-    let 
-        fun countup (from : int, to : int) =
-            if from > to
-            then []
-            else from :: countup (from + 1, to)
-
-        val days_of_year =     
-            if day1 > day2
-            then []
-            else countup (day1, day2)
-        
-        fun dsoy_to_months (dsoy : int list) =
-            if dsoy = []
-            then []
-            else what_month (hd dsoy) :: dsoy_to_months (tl dsoy)
-    in
-        dsoy_to_months (days_of_year)
-    end
+    if day1 > day2
+    then []
+    else what_month (day1) :: month_range (day1 + 1, day2)
 
 
 (* (int * int * int) list -> (int * int * int) option  *)
