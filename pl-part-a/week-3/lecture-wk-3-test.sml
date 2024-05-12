@@ -4,3 +4,21 @@ use "lecture-wk-3.sml";
 val test1a = max_constant (Constant 1) = 1
 val test1b = max_constant (Multiply ((Add (Constant 20, Constant 10)), Constant 20)) = 20
 val test1c = max_constant (Add ((Constant 30), Multiply ((Negate (Constant 20)), Constant 10))) = 30
+
+fun add_2 (num) =  num + 2
+val test2a = map (add_2, [1,2,3,4,5]) = [3,4,5,6,7]
+
+val test3a = append ([1,2,3], [4,5]) = [1,2,3,4,5]
+val test3b = append (["a","b","c"], ["d","e"]) = ["a","b","c","d","e"]
+
+val test4a = sum_tree(Leaf 10) = 10
+val test4b = sum_tree(Node (10, Leaf 5, Leaf 2)) = 17
+val test4c = sum_tree(Node (4, Leaf 10, Node (4, Leaf 10, Leaf 2))) = 30
+
+val test5a = sum_leaves(Leaf 10) = 10
+val test5b = sum_leaves(Node (10, Leaf 5, Leaf 2)) = 7
+val test5c = sum_leaves(Node (4, Leaf 10, Node (4, Leaf 10, Leaf 2))) = 22
+
+val test6a = num_leaves(Leaf 10) = 1
+val test6b = num_leaves(Node (10, Leaf 5, Leaf 2)) = 2
+val test6c = num_leaves(Node (4, Leaf 10, Node (4, Leaf 10, Leaf 2))) = 3
