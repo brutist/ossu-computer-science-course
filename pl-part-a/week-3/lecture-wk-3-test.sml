@@ -22,3 +22,10 @@ val test5c = sum_leaves(Node (4, Leaf 10, Node (4, Leaf 10, Leaf 2))) = 22
 val test6a = num_leaves(Leaf 10) = 1
 val test6b = num_leaves(Node (10, Leaf 5, Leaf 2)) = 2
 val test6c = num_leaves(Node (4, Leaf 10, Node (4, Leaf 10, Leaf 2))) = 3
+
+val test7a = zip([1,2,3],[4,5,6],[7,8,9]) = [(1,4,7),(2,5,8),(3,6,9)]
+
+val test8a = unzip [(1,4,7),(2,5,8),(3,6,9)] = ([1,2,3],[4,5,6],[7,8,9])
+
+val test9a = nondecreasing[1,2,3,4,5] = true
+val test9b = nondecreasing[2,1,2,3,4] = false

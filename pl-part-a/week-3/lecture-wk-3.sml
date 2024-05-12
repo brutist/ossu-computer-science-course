@@ -55,3 +55,29 @@ fun full_name {first=x, middle=y, last=z} =
   x ^ " " ^ y ^ " " ^ z
 
 (* this make functions more concise and understandable *)
+
+
+exception ListLengthMismatch
+
+
+fun zip list_triple = 
+  case list_triple of
+      ([],[],[]) => []
+    | (x::xs',y::ys',z::zs') => (x,y,z)::zip(xs',ys',zs')
+    | _ => raise ListLengthMismatch
+
+fun unzip lst =
+  case lst of
+      [] => ([],[],[])
+    | (a,b,c)::tl => let val (l1,l2,l3) = unzip tl
+                     in
+                         (a::l1,b::l2,c::l3)
+                     end
+
+fun nondecreasing lst = 
+  case lst of
+      [] => true
+    | _::[] => true
+    | hd::(nck::tl) => if hd > nck
+                       then false
+                       else nondecreasing(nck::tl)
