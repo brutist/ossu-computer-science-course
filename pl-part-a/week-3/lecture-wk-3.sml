@@ -81,3 +81,48 @@ fun nondecreasing lst =
     | hd::(nck::tl) => if hd > nck
                        then false
                        else nondecreasing(nck::tl)
+
+fun factorial n =
+  let
+    fun aux (n, rsf) =
+      if n = 0
+      then rsf
+      else aux (n-1, n*rsf)
+  in
+    aux (n,1)
+  end
+
+
+fun fib n =
+  let
+    fun aux (n,n1,n2) =
+      if n = 0
+      then n1
+      else if n = 1
+      then n2
+      else aux (n-1, n2, n1 + n2)
+  in
+    aux (n,0,1)
+  end
+  
+(* sum all ints int in int list *)
+fun sum lst = 
+  let
+    fun aux (lst, rsf) =
+      case lst of
+          [] => rsf
+        | x::xs' => aux (xs', x+rsf)
+  in
+    aux (lst,0)
+  end
+
+(* reverses a list *)
+fun rev lst = 
+  let
+    fun aux (lst, rsf) =
+      case lst of 
+          [] => rsf
+        | x::xs' => aux (xs', x::rsf)
+  in
+    aux (lst, [])
+  end

@@ -29,3 +29,10 @@ val test8a = unzip [(1,4,7),(2,5,8),(3,6,9)] = ([1,2,3],[4,5,6],[7,8,9])
 
 val test9a = nondecreasing[1,2,3,4,5] = true
 val test9b = nondecreasing[2,1,2,3,4] = false
+
+val test10a = sum [1,2,3,4,5] = 15
+val test10b = sum [1,2,3,4,5,6,7] = 28
+
+val test11a = rev [1,2,3,4,5,6,7] = [7,6,5,4,3,2,1]
+val test11b = rev [1,2,3,4,5] = [5,4,3,2,1]
+val test11c = rev [] = []
