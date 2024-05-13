@@ -30,12 +30,14 @@ fun get_substitutions1 (nicknames, name) =
   let fun aux nicknames_rsf =
           case nicknames_rsf of
               ([], rsf) => rsf
-            | (x::xs'
+            | (x::xs', rsf) => if
+                               then
+                               else aux (xs', rsf @ valOf (all_except_option (name,x)))
   in  
     aux (nicknames, [])
   end
 
-
+(* TODO *)
 
 
 (* you may assume that Num is always used with values 2, 3, ..., 10
