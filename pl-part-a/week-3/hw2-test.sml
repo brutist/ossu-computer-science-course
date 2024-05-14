@@ -60,3 +60,5 @@ val test11a = officiate ([(Hearts, Num 2),(Clubs, Num 4),(Clubs, Num 2),(Clubs, 
 val test11b = officiate ([(Hearts, Num 2),(Clubs, Num 4),(Diamonds, Num 2),(Clubs, Ace)],[Draw,Discard (Hearts, Num 2),Draw,Draw], 15) = 9
 val test11c = officiate ([(Hearts, Num 2),(Clubs, Num 4)],[], 15) = 7
 val test11d = ((officiate ([(Hearts, Num 2),(Clubs, Num 4)],[Discard (Hearts, Num 2)], 15); false) handle IllegalMove => true)
+val test11e = officiate ([(Hearts, Ace),(Clubs, Num 4),(Diamonds, Num 2),(Clubs, Ace)],[Draw,Draw,Draw,Draw], 15) = 6
+val test11f = officiate ([],[Draw,Draw,Draw,Draw], 1) = 0

@@ -175,9 +175,12 @@ fun officiate (cs, mv_list, goal) =
 let
   fun player_moves (cs, mv_list, held_cards) = 
     case (cs, mv_list, held_cards) of
-        (_,[],_) => score (held_cards,goal)
+        ([],_,_) => score (held_cards,goal)
+      | (_,[],_) => score (held_cards,goal)
       | (c::cs',m::mvs',held_cards) => case m of
-                                            Draw => player_moves(cs', mvs', c::held_cards)
+                                            Draw => if sum_cards(c::held_cards) > goal 
+                                                    then score (c::held_cards,goal)
+                                                    else player_moves(cs', mvs', c::held_cards)
                                           | Discard c1 => player_moves(c::cs', mvs', remove_card (held_cards, c1, IllegalMove))
 in
   player_moves(cs,mv_list,[])
