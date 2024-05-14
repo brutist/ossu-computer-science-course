@@ -166,3 +166,19 @@ let
 in
   final_score
 end
+
+
+(* Card list, Move list, Int -> Int *)
+(* calculates the final score of the players held cards if the given 
+    Move list is implemented *)
+fun officiate (cs, mv_list, goal) =
+let
+  fun player_moves (cs, mv_list, held_cards) = 
+    case (cs, mv_list, held_cards) of
+        (_,[],_) => score (held_cards,goal)
+      | (c::cs',m::mvs',held_cards) => case m of
+                                            Draw => player_moves(cs', mvs', c::held_cards)
+                                          | Discard c1 => player_moves(c::cs', mvs', remove_card (held_cards, c1, IllegalMove))
+in
+  player_moves(cs,mv_list,[])
+end
