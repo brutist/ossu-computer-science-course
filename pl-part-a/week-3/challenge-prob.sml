@@ -119,6 +119,8 @@ end
     • A card is drawn whenever the goal is more than 10 greater than  the value of the 
         held cards. As a detail, you should (attempt to) draw, even if no cards remain 
         in the card-list.
+    • Additionally, if the player will not Draw, then the maximum value card will be 
+        discarded
     • If a score of 0 is reached, there must be no more moves.
     • If it is possible to reach a score of 0 by discarding a card followed by drawing 
         a card, then this must be done. Note careful_player will have to look ahead 
@@ -126,6 +128,7 @@ end
         that the previous requirement takes precedence: There must be no more moves 
         after a score of 0 is reached even if there is another way to get back to 0.
 *)
+
 fun careful_player (cs, goal) =
 let
   fun cheat(c,held_card) =
@@ -139,7 +142,19 @@ let
   in
     aux(held_card,[])
   end
-    
+  
+  fun max_card(cs) =
+  let
+    fun aux(cs,max_card) =
+      case cs of 
+        [] => max_card
+      | x::xs' => if card_value(max_card) < card_value(x)
+                  then aux(xs',x)
+                  else aux(xs',max_card)
+  in
+    aux(tl cs,hd cs)
+  end
+
   fun aux(cs,held_card) =
     case (cs,held_card) of 
         ([],_) => Draw::[]
@@ -147,9 +162,19 @@ let
                        then Draw::aux(cs',[c])
                        else []
       | (c::cs',held_card) => 
-
-
-      
+          case (cheat(c,held_card)) of
+              NONE => let val max = max_card(held_card)
+                      in  if goal-sum_cards(held_card) > 10 
+                          then Draw::aux(cs',held_card@[c])
+                          else Discard max::aux(cs',remove_card(held_card,max,IllegalMove)) 
+                      end
+            | SOME i => [Discard i]
 in
   aux(cs,[])
-end
+end 
+
+
+(* Iam now thinking how code really is just proof of an underlying concept.
+    When writing software, do not focus first on what or how to write, focus
+    on thinking how the software will work, the math or logic behind it. The
+    code is secondary to those *)
