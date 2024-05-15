@@ -62,3 +62,30 @@ val test11c = officiate ([(Hearts, Num 2),(Clubs, Num 4)],[], 15) = 7
 val test11d = ((officiate ([(Hearts, Num 2),(Clubs, Num 4)],[Discard (Hearts, Num 2)], 15); false) handle IllegalMove => true)
 val test11e = officiate ([(Hearts, Ace),(Clubs, Num 4),(Diamonds, Num 2),(Clubs, Ace)],[Draw,Draw,Draw,Draw], 15) = 6
 val test11f = officiate ([],[Draw,Draw,Draw,Draw], 1) = 0
+val test11g = officiate ([(Clubs,Ace),(Spades,Ace),(Clubs,Ace),(Spades,Ace)], [Draw,Draw,Draw,Draw,Draw], 42)  = 3
+val test11h = ((officiate([(Clubs,Jack),(Spades,Num(8))], [Draw,Discard(Hearts,Jack)], 42); false) handle IllegalMove => true)
+val test11i = officiate ([(Hearts, Ace),(Clubs, Num 4)],[Draw], 1) = 15
+
+val test12a = score_challenge ([(Hearts, Num 2),(Clubs, Num 4)],10) = 4
+val test12b = score_challenge ([(Hearts, Ace),(Clubs, Num 4)],10) = 5
+val test12c = score_challenge ([(Hearts, Ace),(Diamonds, Num 4)],10) = 2
+val test12d = score_challenge ([(Hearts, Num 2),(Diamonds, Num 4)],10) = 2
+
+val test13a = officiate_challenge ([(Hearts, Num 2),(Clubs, Num 4)],[Draw], 15) = 6
+val test13b = officiate_challenge ([(Hearts, Num 2),(Clubs, Num 4),(Clubs, Num 2),(Clubs, Ace)],
+                                   [Draw,Discard (Hearts, Num 2),Draw,Draw], 
+                                   15) 
+                                   = 4
+val test13c = officiate_challenge ([(Hearts, Num 2),(Clubs, Num 4),(Diamonds, Num 2),(Clubs, Ace)],
+                                   [Draw,Discard (Hearts, Num 2),Draw,Draw], 
+                                   15) 
+                                   = 9
+val test13d = officiate_challenge ([(Hearts, Ace),(Clubs, Num 4)],[Draw], 1) = 0
+val test13e = ((officiate_challenge ([(Hearts, Num 2),(Clubs, Num 4)],
+                                     [Discard (Hearts, Num 2)], 15); false) 
+                                     handle IllegalMove => true)
+
+val test14a = careful_player ([(Hearts, Num 2),(Clubs, Num 4),(Clubs, Ace)], 11) = 
+                [Draw, Discard(Hearts, Num 2),Draw, Discard (Clubs, Num 4), Draw, Discard (Clubs, Ace)]
+val test14b = careful_player ([(Hearts, Num 2),(Clubs, Num 4),(Clubs, Ace)], 16) = 
+                [Draw,Draw, Discard (Clubs, Num 4), Discard(Hearts, Num 2), Draw, Discard (Clubs, Ace)]

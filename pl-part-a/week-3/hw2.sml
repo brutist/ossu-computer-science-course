@@ -33,11 +33,10 @@ fun all_except_option (word, lst) =
 fun get_substitutions1 (substitutions, name) =
   case substitutions of
       [] => []
-    | x::xs' => let val subs = all_except_option(name,x)
-                in case subs of
-                        NONE => get_substitutions1(xs',name)
-                      | SOME i => i @ get_substitutions1(xs',name)
-                end
+    | x::xs' => case all_except_option(name,x) of
+                    NONE => get_substitutions1(xs',name)
+                  | SOME i => i @ get_substitutions1(xs',name)
+                
                
 
 (* string list list, string -> string list *)
@@ -47,11 +46,9 @@ fun get_substitutions2 (substitutions, name) =
     fun aux (substitutions, rsf) = 
       case substitutions of
           [] => rsf
-        | x::xs' => let val sub = all_except_option(name,x)
-                    in case sub of
-                            NONE => aux(xs', rsf)
-                          | SOME i => aux(xs', rsf @ i)
-                    end
+        | x::xs' => case all_except_option(name,x) of
+                        NONE => aux(xs', rsf)
+                      | SOME i => aux(xs', rsf @ i)
   in
     aux (substitutions, [])
   end
@@ -157,7 +154,7 @@ end
 fun score (cs, goal) =
 let
   val sum = sum_cards(cs)
-  val preliminary_score = if sum > goal
+  val preliminary_score = if sum >= goal
                           then 3 * (sum - goal)
                           else (goal - sum)
   val final_score = if all_same_color(cs)
@@ -177,11 +174,100 @@ let
     case (cs, mv_list, held_cards) of
         ([],_,_) => score (held_cards,goal)
       | (_,[],_) => score (held_cards,goal)
-      | (c::cs',m::mvs',held_cards) => case m of
-                                            Draw => if sum_cards(c::held_cards) > goal 
-                                                    then score (c::held_cards,goal)
-                                                    else player_moves(cs', mvs', c::held_cards)
-                                          | Discard c1 => player_moves(c::cs', mvs', remove_card (held_cards, c1, IllegalMove))
+      | (c::cs',m::mvs',held_cards) => 
+          case m of
+            Draw => if sum_cards(c::held_cards) > goal 
+                    then score (c::held_cards,goal)
+                    else player_moves(cs', mvs', c::held_cards)
+          | Discard c1 => player_moves(c::cs', mvs', remove_card (held_cards, c1, IllegalMove))
 in
   player_moves(cs,mv_list,[])
+end
+
+
+(* Card list, Int -> Int *)
+(* calculates the score of the held_cards according to the rules below,
+
+    Scoring works as follows: Let sum be the sum of the values of the 
+    held-cards. If sum is greater than goal, the preliminary score is 
+    three times (sum−goal), else the preliminary score is (goal − sum). 
+    The score is the preliminary score unless all the held-cards are 
+    the same color, in which case the score is the preliminary score 
+    divided by 2. Except each ace can have a value of 1 or 11 and 
+    score_challenge should always return the least (i.e., best)
+    possible score. (Note the game-ends-if-sum-exceeds-goal rule should 
+    apply only if there is no sum that is less than or equal to the goal.)   
+*)
+fun score_challenge (cs, goal) =
+let
+  fun calculate_score sum = 
+    if sum >= goal
+    then (3 * (sum - goal)) div (if all_same_color(cs) then 2 else 1)
+    else (goal - sum) div (if all_same_color(cs) then 2 else 1)
+
+  fun aces_1_sum cs =
+    case cs of
+      [] => 0
+    | (_,Ace)::cs' => 1 + aces_1_sum(cs')
+    | c::cs' => card_value(c) + aces_1_sum(cs')
+ 
+  val special_ace_score = calculate_score (aces_1_sum(cs))
+  val base_score = calculate_score (sum_cards cs)
+in
+  if special_ace_score < base_score 
+  then special_ace_score
+  else base_score
+end
+
+
+(* Card list, Move list, Int -> Int *)
+(* calculates the final score of the players held cards if the given 
+    Move list is implemented
+    Special rules - Aces could have value of 1 or 11 to return a score
+                    that is always the least possible score*)
+fun officiate_challenge (cs, mv_list, goal) =
+let
+  fun player_moves (cs, mv_list, held_cards) = 
+    case (cs, mv_list, held_cards) of
+        ([],_,_) => score_challenge (held_cards,goal)
+      | (_,[],_) => score_challenge (held_cards,goal)
+      | (c::cs',m::mvs',held_cards) => 
+          case m of
+            Draw => if sum_cards(c::held_cards) > goal 
+                    then score_challenge (c::held_cards,goal)
+                    else player_moves(cs', mvs', c::held_cards)
+          | Discard c1 => player_moves(c::cs', mvs', remove_card (held_cards, c1, IllegalMove))
+in
+  player_moves(cs,mv_list,[])
+end
+
+
+(* Card list, Int -> Move list *)
+(* produces a move list that calling officiate with card list will have the
+      following behaviour:
+      
+      • The value of the held cards never exceeds the goal.
+      • A card is drawn whenever the goal is more than 10 greater than the 
+        value of the held cards. As a detail, you should (attempt to) draw, 
+        even if no cards remain in the card-list.
+      • If a score of 0 is reached, there must be no more moves.
+      • If it is possible to reach a score of 0 by discarding a card followed 
+        by drawing a card, then this  must be done. Note careful_player will 
+        have to look ahead to the next card, which in many card games is 
+        considered “cheating.” Also note that the previous requirement 
+        takes precedence: There must be no more moves after a score of 0 
+        is reached even if there is another way to get back to 0. 
+*)
+fun careful_player (cs, goal) =
+let
+  fun aux (cs, held_cards) =
+  let
+    val 
+  in
+    
+  end
+  
+
+in
+
 end
