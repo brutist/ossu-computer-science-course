@@ -146,11 +146,10 @@ let
       | (c::cs',[]) => if goal > 10 
                        then Draw::aux(cs',[c])
                        else []
-      | (c::cs',held_card) => if (goal - sum_cards(held_card)) > 10
-                              then Draw::aux(cs',c::held_card)
-                              else case (cheat(c,held_card)) of
-                                       NONE => []
-                                     | SOME i => aux(cs',remove_card(held_card,i,IllegalMove))
+      | (c::cs',held_card) => 
+
+
+      
 in
   aux(cs,[])
 end
