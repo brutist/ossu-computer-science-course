@@ -258,16 +258,3 @@ end
         takes precedence: There must be no more moves after a score of 0 
         is reached even if there is another way to get back to 0. 
 *)
-fun careful_player (cs, goal) =
-let
-  fun aux (cs, held_cards) =
-  let
-    val 
-  in
-    
-  end
-  
-
-in
-
-end

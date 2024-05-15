@@ -86,6 +86,6 @@ val test13e = ((officiate_challenge ([(Hearts, Num 2),(Clubs, Num 4)],
                                      handle IllegalMove => true)
 
 val test14a = careful_player ([(Hearts, Num 2),(Clubs, Num 4),(Clubs, Ace)], 11) = 
-                [Draw, Discard(Hearts, Num 2),Draw, Discard (Clubs, Num 4), Draw, Discard (Clubs, Ace)]
+                [Draw, Discard(Hearts, Num 2),Draw, Discard (Clubs, Num 4), Draw]
 val test14b = careful_player ([(Hearts, Num 2),(Clubs, Num 4),(Clubs, Ace)], 16) = 
-                [Draw,Draw, Discard (Clubs, Num 4), Discard(Hearts, Num 2), Draw, Discard (Clubs, Ace)]
+                [Draw,Draw,Discard(Hearts, Num 2),Draw]
