@@ -91,90 +91,19 @@ in
 end
 
 
-(* Card list, Move list, Int -> Int *)
-(* calculates the final score of the players held cards if the given 
-    Move list is implemented *)
-fun officiate (cs, mv_list, goal) =
-let
-  fun player_moves (cs, mv_list, held_cards) = 
-    case (cs, mv_list, held_cards) of
-        ([],_,_) => score (held_cards,goal)
-      | (_,[],_) => score (held_cards,goal)
-      | (c::cs',m::mvs',held_cards) => case m of
-                                            Draw => if sum_cards(c::held_cards) > goal 
-                                                    then score (c::held_cards,goal)
-                                                    else player_moves(cs', mvs', c::held_cards)
-                                          | Discard c1 => player_moves(c::cs', mvs', remove_card (held_cards, c1, IllegalMove))
-in
-  player_moves(cs,mv_list,[])
-end
 
 
 
-(* Card list, Int -> Move list *)
-(* returns a move-list such that calling officiate with the card-list, the goal, and 
-    the move-list has this behavior:
-
-    • The value of the held cards never exceeds the goal.
-    • A card is drawn whenever the goal is more than 10 greater than  the value of the 
-        held cards. As a detail, you should (attempt to) draw, even if no cards remain 
-        in the card-list.
-    • Additionally, if the player will not Draw, then the maximum value card will be 
-        discarded
-    • If a score of 0 is reached, there must be no more moves.
-    • If it is possible to reach a score of 0 by discarding a card followed by drawing 
-        a card, then this must be done. Note careful_player will have to look ahead 
-        to the next card, which in many card games is considered “cheating.” Also note 
-        that the previous requirement takes precedence: There must be no more moves 
-        after a score of 0 is reached even if there is another way to get back to 0.
-*)
-
-fun careful_player (cs, goal) =
-let
-  fun cheat(c,held_card) =
+fun cheat(c,held_card) =
   let
     fun aux(held_card,other_cards) =
       case held_card of
           [] => NONE
-        | x::xs' => if score(c::xs'@other_cards,goal) = 0
+        | x::xs' => if score(c::xs'@other_cards,11) = 0
                     then SOME x
                     else aux(xs',x::other_cards)
   in
     aux(held_card,[])
   end
+
   
-  fun max_card(cs) =
-  let
-    fun aux(cs,max_card) =
-      case cs of 
-        [] => max_card
-      | x::xs' => if card_value(max_card) < card_value(x)
-                  then aux(xs',x)
-                  else aux(xs',max_card)
-  in
-    aux(tl cs,hd cs)
-  end
-
-  fun aux(cs,held_card) =
-    case (cs,held_card) of 
-        ([],_) => Draw::[]
-      | (c::cs',[]) => if goal > 10 
-                       then Draw::aux(cs',[c])
-                       else []
-      | (c::cs',held_card) => 
-          case (cheat(c,held_card)) of
-              NONE => let val max = max_card(held_card)
-                      in  if goal-sum_cards(held_card) > 10 
-                          then Draw::aux(cs',held_card@[c])
-                          else Discard max::aux(cs',remove_card(held_card,max,IllegalMove)) 
-                      end
-            | SOME i => [Discard i]
-in
-  aux(cs,[])
-end 
-
-
-(* Iam now thinking how code really is just proof of an underlying concept.
-    When writing software, do not focus first on what or how to write, focus
-    on thinking how the software will work, the math or logic behind it. The
-    code is secondary to those *)
