@@ -126,3 +126,17 @@ fun rev lst =
   in
     aux (lst, [])
   end
+
+fun fold (f,rsf,xs) =
+  case xs of 
+      [] => rsf
+    | x::xs' => fold(f,f(rsf,x),xs')
+
+fun longer_word (w1,w2) =
+  if size(w1) > size(w2)
+  then w1
+  else w2
+
+fun get_longest_word(xs) = 
+  fold(longer_word,"",xs)
+
