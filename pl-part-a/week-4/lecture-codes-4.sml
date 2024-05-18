@@ -27,3 +27,15 @@ val x3 = n_times(tl,2,[4,5,6,7])
 fun addition(n,x) = n_times(increment,n,x)
 fun double_n_times(n,x) = n_times(double,n,x)
 fun nth_tail(n,x) = n_times(tl,n,x)
+
+fun map(f,xs) =
+    case xs of 
+        [] => []
+      | x::xs' => f(x)::map(f,xs')
+
+
+fun increment_all(xs,n) =
+    map((fn x => x+n), xs)
+
+fun decrement_all(xs,n) =
+    map((fn x => x-n), xs)
