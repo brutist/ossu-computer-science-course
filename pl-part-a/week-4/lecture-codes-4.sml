@@ -39,3 +39,34 @@ fun increment_all(xs,n) =
 
 fun decrement_all(xs,n) =
     map((fn x => x-n), xs)
+
+
+(* Currying is a method circumvent the limitation of 
+    one argument only for functions by calling functions
+    after another  *)
+
+val sorted3 = fn x => fn y => fn z => z >= y andalso y >= x
+
+(* you can do a curried function with fun bindings instead 
+    of the val binding above *)
+
+(* However, you can also have a nicer style using currying 
+    by just skipping the lambda functions and separating 
+    inputs with space *)
+fun sorted3_nicer x y z = z >= y andalso y >= x
+
+fun map_c f xs =
+    case xs of
+        [] => []
+      | x::xs' => f x::map_c f xs'
+
+fun increment_all_c xs n = map_c (fn x => x+n) xs
+fun decrement_all_c xs n = map_c (fn x => x-n) xs
+
+
+fun fold_c2 f rsf xs =
+    case xs of 
+        [] => rsf
+      | x::xs' => fold_c2 f (f (rsf,x)) xs'
+
+fun sum_all xs = fold_c2 (fn (x,y) => x+y) 0 xs
