@@ -49,17 +49,37 @@ fun longest_string2 words =
 
 
 (*  (int * int -> bool) -> string list -> string  *)
-fun longest_string_helper f words word =
+fun longest_string_helper f words =
     List.foldl (fn (word,rsf) => if f(size(word),size(rsf)) then word else rsf) "" words
 
 
 (* this function exist for partial applications below *)
-fun find_longest f words = longest_string_helper f words ""
-val longest_string3 = find_longest (fn(i,j) => i>j)
-val longest_string4 = find_longest (fn(i,j) => i>=j)
+val longest_string3 = longest_string_helper (fn(i,j) => i>j)
+val longest_string4 = longest_string_helper (fn(i,j) => i>=j)
 
 
 val longest_capitalized = longest_string1 o only_capitals
 
 
 val rev_string = String.implode o List.rev o String.explode
+
+
+(* (’a -> ’b option) -> ’a list -> ’b *)
+fun first_answer f alist = 
+	let val only_somes = (List.filter (fn a => isSome(a))) o (List.map f)
+	in case only_somes alist of
+			[] => raise NoAnswer
+		  | SOME x::xs => x
+	end
+
+(* (’a -> ’b list option) -> ’a list -> ’b list option *)
+fun all_answers f alist = 
+	let val answers = List.map f alist
+		fun collate_somes alist rsf =
+			case alist of
+				[] => rsf
+			| NONE::xs => NONE
+			| SOME i::xs => collate_somes xs (SOME ((valOf rsf)@i))
+	in
+	  collate_somes answers (SOME [])
+	end
