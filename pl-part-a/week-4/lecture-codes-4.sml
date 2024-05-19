@@ -70,3 +70,22 @@ fun fold_c2 f rsf xs =
       | x::xs' => fold_c2 f (f (rsf,x)) xs'
 
 fun sum_all xs = fold_c2 (fn (x,y) => x+y) 0 xs
+
+
+(* how to curry a function and to uncurry them might become 
+    useful if you want to use partial application on
+    a function whose arguments are in the wrong order *)
+fun range(i,j) = if i > j then [] else i::range((i+1),j)
+fun curry f x y = f(x,y)
+fun range_2 i j = curry range i j
+fun uncurry f(x,y) = f x y
+fun range(i,j) = range_2 i j
+
+
+(* ref is sml's way of mutability
+    ref is t ref where t is a type
+    
+    ref e to create reference with contents e
+    e1 := e2 to update contents
+    !e to retrieve contents
+*)

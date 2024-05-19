@@ -15,3 +15,7 @@ val test5 = increment_all_c [8,2,5,6] 2 = [10,4,7,8]
 val test6 = decrement_all_c [8,2,5,6] 2 = [6,0,3,4]
 
 val test7 = sum_all [8,2,5,6] = 21
+
+val test8 = range(1,4) = [1,2,3,4]
+
+val test9 = range_2 1 4 = [1,2,3,4]
