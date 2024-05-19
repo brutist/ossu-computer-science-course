@@ -89,3 +89,23 @@ val count_wildcards = g (fn () => 1) (fn x => 0)
 val count_wild_and_variable_lengths = g (fn () => 1) (fn x => size(x)) 
 fun count_some_var (word,pattern) = g (fn () => 0) (fn x => if word = x then 1 else 0) pattern
 
+
+fun check_pat pattern = 
+	let
+	  fun variable_names pat = 
+	  	case pat of
+			Wildcard			=> []
+		  | Variable w			=> [w]
+		  | UnitP			 	=> []
+		  | ConstP _			=> []
+		  | TupleP ps			=> List.foldl (fn (p,i) => variable_names p@i) [] ps
+		  | ConstructorP (_,p)  => variable_names p
+
+	  fun no_repeats names =
+	  	case names of 
+			[] => true
+		  | x::[] => true
+		  | v::xs => List.exists (fn x => x<>v) xs andalso no_repeats xs
+	in
+	  no_repeats(variable_names pattern)
+	end

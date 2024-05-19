@@ -51,3 +51,13 @@ val test9cb = count_some_var
                 ("Data", (ConstructorP ("Hey",TupleP [Variable "Data", Wildcard, Variable "Key", UnitP]))) = 1
 val test9cc = count_some_var 
                 ("Data", (ConstructorP ("Data",TupleP [Variable "Data", Wildcard, Variable "Data", UnitP]))) = 2
+
+val test10 = check_pat (Variable("x")) = true
+val test10a = check_pat 
+                (ConstructorP ("Data",TupleP [Variable "Data", Wildcard, Variable "Data", UnitP])) = false
+val test10b = check_pat 
+                (ConstructorP ("Data",TupleP [Variable "Data", Wildcard, Variable "Hose", UnitP])) = true
+val test10c = check_pat 
+                (TupleP [Variable "Data", Wildcard, Variable "Hose", UnitP]) = true
+val test10d = check_pat 
+                (TupleP [Variable "Hose", Wildcard, Variable "Hose", UnitP]) = false
