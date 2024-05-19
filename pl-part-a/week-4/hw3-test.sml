@@ -34,3 +34,20 @@ val test7a = first_answer (fn word => if size(word) > 3 then SOME word else NONE
 val test8 = all_answers (fn x => if x = 1 then SOME [x] else NONE) [2,3,4,5,6,7] = NONE
 val test8a = all_answers (fn x => if x > 1 then SOME [x] else NONE) [2,3,4,5,6,7] = SOME [2,3,4,5,6,7]
 val test8b = all_answers (fn x => if x > 1 then SOME [x] else NONE) [2,3,1,5,6,7] = NONE
+
+val test9aa = count_wildcards Wildcard = 1
+val test9ab = count_wildcards (TupleP [Variable "Data", Wildcard, Wildcard, UnitP]) = 2
+val test9ac = count_wildcards (TupleP [Variable "Data", ConstP 1, Variable "Key", UnitP]) = 0
+
+val test9ba = count_wild_and_variable_lengths (Variable("a")) = 1
+val test9bb = count_wild_and_variable_lengths (Variable("abc")) = 3
+val test9bc = count_wild_and_variable_lengths (TupleP [Variable "Data", ConstP 1, Variable "Key", UnitP]) = 7
+val test9bd = count_wild_and_variable_lengths (TupleP [Variable "Data", Wildcard, Variable "Key", UnitP]) = 8
+val test9be = count_wild_and_variable_lengths 
+                (ConstructorP ("Hey",TupleP [Variable "Data", Wildcard, Variable "Key", UnitP])) = 8
+
+val test9ca = count_some_var ("x", Variable("x")) = 1
+val test9cb = count_some_var 
+                ("Data", (ConstructorP ("Hey",TupleP [Variable "Data", Wildcard, Variable "Key", UnitP]))) = 1
+val test9cc = count_some_var 
+                ("Data", (ConstructorP ("Data",TupleP [Variable "Data", Wildcard, Variable "Data", UnitP]))) = 2
