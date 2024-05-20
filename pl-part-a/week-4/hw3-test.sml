@@ -63,3 +63,7 @@ val test10d = check_pat
                 (TupleP [Variable "Hose", Wildcard, Variable "Hose", UnitP]) = false
 
 val test11 = match (Const(1), UnitP) = NONE
+val test11a = match (Unit, (TupleP [Variable "Data", Wildcard, Variable "Hose", UnitP])) = NONE
+val test11b = match 
+                (Tuple [Const(1),Const(1),Const(2),Unit], (TupleP [Variable "Data", Wildcard, Variable "Hose", UnitP])) 
+                = SOME [("Data",Const 1),("Hose",Const 2)]

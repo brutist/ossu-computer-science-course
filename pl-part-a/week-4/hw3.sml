@@ -113,12 +113,17 @@ fun check_pat pattern =
 
 fun match (v,pattern) =
 	case (v,pattern) of
-		(v,Wildcard)						   => []
-	  | (v,Variable s) 					       => [(s,v)]
-	  | (Unit,UnitP) 						   => []
-	  | (Const i, ConsP i) 					   => []
-	  | (Tuple vals, TupleP ps) 			   => ...
+		(v,Wildcard)						   => SOME []
+	  | (v,Variable s) 					       => SOME [(s,v)]
+	  | (Unit,UnitP) 						   => SOME []
+	  | (Const x, ConstP y) 				   => if x=y
+	  											  then SOME []
+												  else NONE
+	  | (Tuple vals, TupleP ps) 			   => if length(vals) = length(ps)
+	  											  then all_answers match (ListPair.zip(vals,ps))
+												  else NONE
 	  | (Constructor(s1,v),ConstructorP(s2,p)) => if s1 = s2
 	  											  then match (v,p)
 												  else NONE
 	  | _ 								       => NONE
+
