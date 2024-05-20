@@ -67,3 +67,13 @@ val test11a = match (Unit, (TupleP [Variable "Data", Wildcard, Variable "Hose", 
 val test11b = match 
                 (Tuple [Const(1),Const(1),Const(2),Unit], (TupleP [Variable "Data", Wildcard, Variable "Hose", UnitP])) 
                 = SOME [("Data",Const 1),("Hose",Const 2)]
+
+val test12 = first_match Unit [UnitP] = SOME []
+val test12a = first_match (Const(1)) [UnitP] = NONE
+val test12b = first_match Unit [ConstP(1),UnitP] = SOME []
+val test12c = first_match (Tuple [Const(1),Const(1),Const(2),Unit]) 
+                         [ConstP(1),(TupleP [Variable "Data", Wildcard, Variable "Hose", UnitP])]
+                          = SOME [("Data",Const 1),("Hose",Const 2)]
+val test12d = first_match (Tuple [Const(1),Const(1),Unit]) 
+                          [ConstP(1),(TupleP [Variable "Data", Wildcard, Variable "Hose", UnitP])]
+                          = NONE

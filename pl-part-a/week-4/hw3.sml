@@ -110,7 +110,7 @@ fun check_pat pattern =
 	  (no_repeats o variable_names) pattern
 	end
 
-
+(* valu * pattern -> (string * valu) list option*)
 fun match (v,pattern) =
 	case (v,pattern) of
 		(v,Wildcard)						   => SOME []
@@ -127,3 +127,8 @@ fun match (v,pattern) =
 												  else NONE
 	  | _ 								       => NONE
 
+
+fun first_match v patterns =
+	(case first_answer (fn p => match(v,p)) patterns of
+		x => SOME x)
+	handle NoAnswer => NONE
