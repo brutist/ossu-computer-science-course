@@ -107,5 +107,18 @@ fun check_pat pattern =
 		  | x::[] => true
 		  | v::xs => List.exists (fn x => x<>v) xs andalso no_repeats xs
 	in
-	  no_repeats(variable_names pattern)
+	  (no_repeats o variable_names) pattern
 	end
+
+
+fun match (v,pattern) =
+	case (v,pattern) of
+		(v,Wildcard)						   => []
+	  | (v,Variable s) 					       => [(s,v)]
+	  | (Unit,UnitP) 						   => []
+	  | (Const i, ConsP i) 					   => []
+	  | (Tuple vals, TupleP ps) 			   => ...
+	  | (Constructor(s1,v),ConstructorP(s2,p)) => if s1 = s2
+	  											  then match (v,p)
+												  else NONE
+	  | _ 								       => NONE
