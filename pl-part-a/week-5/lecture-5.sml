@@ -56,3 +56,36 @@ fun f (x,y,z) =
 
 *)
 fun compose (f,g) = fn x => f (g x)
+
+
+fun f x = 
+    let
+      val y = 3
+    in
+      x+y
+    end
+
+fun g y = 
+    let
+      val y = 3
+    in
+      y + y
+    end
+
+fun max_val xs =
+    case xs of 
+        []     => raise Empty
+      | x::[]  => x
+      | x::xs' => if x > max_val xs'
+                  then x
+                  else max_val xs'
+
+fun max_val2 xs =
+    case xs of 
+        []     => raise Empty
+      | x::[]  => x
+      | x::xs' => let val remain_max = max_val2 xs'
+                  in  if x > remain_max
+                      then x
+                      else remain_max
+                  end
