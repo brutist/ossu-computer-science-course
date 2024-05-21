@@ -58,11 +58,34 @@ fun f (x,y,z) =
 fun compose (f,g) = fn x => f (g x)
 
 
-(* Another language feature that was not discussed was 
-    mutual recursion. 
-    This is allowing g to call g and  g to call f. 
-    In the usual syntax, this is not possible because 
-    sml static environment only contains the bindings
-    before it, so functions can only use the bindings 
-    defined before the function. However, mutual recursion
-    needs to call a function after it.
+fun f x = 
+    let
+      val y = 3
+    in
+      x+y
+    end
+
+fun g y = 
+    let
+      val y = 3
+    in
+      y + y
+    end
+
+fun max_val xs =
+    case xs of 
+        []     => raise Empty
+      | x::[]  => x
+      | x::xs' => if x > max_val xs'
+                  then x
+                  else max_val xs'
+
+fun max_val2 xs =
+    case xs of 
+        []     => raise Empty
+      | x::[]  => x
+      | x::xs' => let val remain_max = max_val2 xs'
+                  in  if x > remain_max
+                      then x
+                      else remain_max
+                  end
