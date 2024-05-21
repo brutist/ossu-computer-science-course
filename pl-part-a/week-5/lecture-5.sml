@@ -56,3 +56,13 @@ fun f (x,y,z) =
 
 *)
 fun compose (f,g) = fn x => f (g x)
+
+
+(* Another language feature that was not discussed was 
+    mutual recursion. 
+    This is allowing g to call g and  g to call f. 
+    In the usual syntax, this is not possible because 
+    sml static environment only contains the bindings
+    before it, so functions can only use the bindings 
+    defined before the function. However, mutual recursion
+    needs to call a function after it.
