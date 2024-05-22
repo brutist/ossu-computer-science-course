@@ -49,7 +49,8 @@
     1
     (* n (fact (- n 1)))))
 
-;; apparently, using () on a number (1) works now??
+;; (1) is a function call with 0 arguments
+;;  but since 1 is not a function, this call returns an error
 (define (fact1 n) 
     (if (= n 0) 
         (1) 
