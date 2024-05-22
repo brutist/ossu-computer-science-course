@@ -15,3 +15,11 @@
     (cond [(= n 0) 0]
           [(= n 1) 1]
           [else (+ (fib-slow (- n 1)) (fib-slow (- n 2)))]))
+
+
+(define (mults x y-thunk)
+    (cond [(= x 0) 0]
+          [(= x 1) (y-thunk)]
+          [else (+ (y-thunk) (mults (- x 1) y-thunk))]))
+
+(define promise (delay (lambda () (fib-slow 39))))
