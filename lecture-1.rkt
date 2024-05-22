@@ -136,7 +136,6 @@
     (max-of-list1_0 xs 0)))
 
 
-
 ;; other ways of creating local bindings could be
 ;;  - let
 ;;  - let*
