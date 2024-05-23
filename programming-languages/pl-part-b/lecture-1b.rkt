@@ -106,11 +106,16 @@
 ;;  to recalculate. We can just look at the memo and directly get the 
 ;;  answer.
 
+
+;; this alternative solution is different than the lecture's. Instead of using
+;;   a mutable cons pair, I implemented it using immutable cons pair To keep track,
+;;   of the updated memo, we can pass it as a variable to the next function call.
 (define (fib-memo n)
     (local [(define (val-in-memo k m) (cdr (assoc k m)))
             (define (add-memo-vals n1 n2 memo) (+ (val-in-memo n1 memo) (val-in-memo n2 memo)))
             (define (aux c memo)
                 (cond [(> c n) (val-in-memo n memo)]
+                      [(= c 0) (aux (+ c 1) (cons (cons c 0) memo))]
                       [(or (= c 1) (= c 2)) (aux (+ c 1) (cons (cons c 1) memo))]
                       [else (aux (+ c 1) (cons (cons c (add-memo-vals (- c 1) (- c 2) memo)) memo))]))]
     (aux 0 null)))
