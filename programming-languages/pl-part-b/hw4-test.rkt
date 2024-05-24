@@ -1,7 +1,8 @@
 #lang racket
 ;; Programming Languages Homework4 Simple Test
 ;; Save this file to the same directory as your homework file
-;; These are basic tests. Passing these tests does not guarantee that your code will pass the actual homework grader
+;; These are basic tests. Passing these tests does not guarantee that your code will pass the actual 
+;;  homework grader
 
 ;; Be sure to put your homework file in the same folder as this test file.
 ;; Uncomment the line below and change HOMEWORK_FILE to the name of your homework file.
@@ -44,13 +45,39 @@
    ; stream-for-n-steps test
    (check-equal? (stream-for-n-steps ones 2) (list 1 1) "stream-for-n-steps test a")
    (check-equal? (stream-for-n-steps powers-of-two 3) (list 2 4 8) "stream-for-n-steps test b")
-   (check-equal? (stream-for-n-steps powers-of-two 6) (list 2 4 8 16 32 64) "stream-for-n-steps test b")
+   (check-equal? (stream-for-n-steps powers-of-two 6) (list 2 4 8 16 32 64) 
+                 "stream-for-n-steps test b")
 
    ; funny-number-stream test
-   (check-equal? (stream-for-n-steps funny-number-stream 16) (list 1 2 3 4 -5 6 7 8 9 -10 11 12 13 14 -15 16) "funny-number-stream test a")
+   (check-equal? (stream-for-n-steps funny-number-stream 16) 
+                 (list 1 2 3 4 -5 6 7 8 9 -10 11 12 13 14 -15 16) "funny-number-stream test a")
    (check-equal? (stream-for-n-steps funny-number-stream 20)
-                (list 1 2 3 4 -5 6 7 8 9 -10 11 12 13 14 -15 16 17 18 19 -20)  "funny-number-stream test a")
+                 (list 1 2 3 4 -5 6 7 8 9 -10 11 12 13 14 -15 16 17 18 19 -20)  
+                 "funny-number-stream test a")
 
+   ; dan-then-dog test
+   (check-equal? (stream-for-n-steps dan-then-dog 1) (list "dan.jpg") "dan-then-dog test a")
+   (check-equal? (stream-for-n-steps dan-then-dog 5) 
+                 (list "dan.jpg" "dog.jpg" "dan.jpg" "dog.jpg" "dan.jpg") "dan-then-dog test b")
+
+   ; stream-add-zero test
+   (check-equal? (stream-for-n-steps (stream-add-zero ones) 3) 
+                 (list (cons 0 1) (cons 0 1) (cons 0 1)) "stream-add-zero test a")
+   (check-equal? (stream-for-n-steps (stream-add-zero powers-of-two) 3) 
+                 (list (cons 0 2) (cons 0 4) (cons 0 8)) "stream-add-zero test a")
+   (check-equal? (stream-for-n-steps (stream-add-zero dan-then-dog) 2) 
+                 (list (cons 0 "dan.jpg") (cons 0 "dog.jpg")) "dan-then-dog test c")
+
+   ; cycle-lists test
+   (check-equal? (stream-for-n-steps (cycle-lists (list 1 2 3) (list "a" "b")) 3) 
+                 (list (cons 1 "a") (cons 2 "b") (cons 3 "a")) 
+                 "cycle-lists test a")
+   (check-equal? (stream-for-n-steps (cycle-lists (list "a") (list "a" "b")) 3) 
+                 (list (cons "a" "a") (cons "a" "b") (cons "a" "a")) 
+                 "cycle-lists test b")
+
+   ; vector-assoc test
+   (check-equal? (vector-assoc 4 (vector (cons 2 1) (cons 3 1) (cons 4 1) (cons 5 1))) (cons 4 1) "vector-assoc test")
 
    ))
 

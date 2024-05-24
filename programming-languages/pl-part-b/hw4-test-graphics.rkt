@@ -11,7 +11,7 @@
 ;; A simple library for displaying a 2x3 grid of pictures: used
 ;; for fun in the tests below (look for "Tests Start Here").  No need to understand
 ;; the graphics code, though it is not sophisticated.
-
+(require "hw4.rkt")
 (require (lib "graphics.rkt" "graphics"))
 
 (open-graphics)
@@ -46,7 +46,7 @@
   (when (> n 0)
     (let* ([next (stream)]
            [filename (cdar next)]
-           [grid-posn (caar next)]
+           [grid-posn (car next)]
            [stream (cdr next)])
       (place-picture window filename grid-posn)
       (sleep pause)
@@ -63,10 +63,11 @@
 (define files (string-append-map 
                (list "dan" "dog" "curry" "dog2") 
                ".jpg"))
-
+#;
 ; a zero-argument function: call (one-visual-test) to open the graphics window, etc.
 (define (one-visual-test)
   (place-repeatedly (open-window) 0.5 (cycle-lists nums files) 27))
+
 
 ; similar to previous but uses only two files and one position on the grid
 (define (visual-zero-only)

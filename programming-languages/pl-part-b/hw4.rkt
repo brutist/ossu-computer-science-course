@@ -31,7 +31,11 @@
           [else (car (list-tail xs i))])))
 
 
-;; stream is represented as (cons x . next-stream)
+;; Data-type Stream
+;; stream a thunk than when called will produce a pair with the value in car position
+;; and the next stream in the cdr position (cons x . next-stream)
+
+
 ;; Stream Int -> (listof x)
 ;; produces the first nth elements in the stream
 (define (stream-for-n-steps stream n)
@@ -51,3 +55,38 @@
 
 
 ;; a stream of alternating strings of "dan.jpg" and "dog.jpg"
+(define dan-then-dog
+    (local [(define dan-stream (lambda () (cons "dan.jpg" dog-stream)))
+            (define dog-stream (lambda () (cons "dog.jpg" dan-stream)))]
+        dan-stream))
+
+
+;; Stream -> Stream
+;; produces a new stream with elements (0 . v) for every v in input stream's ith element
+(define (stream-add-zero s)
+    (local [(define pr (s))]
+    (lambda () (cons (cons 0 (car pr)) (stream-add-zero (cdr pr))))))
+
+
+;; (listof x) (listof y) -> Stream
+;; produce a stream of (cons x y), cycling thru the list infinitely.
+;; In case the two list has different lengths, return to the first position of the 
+;; shorter list and continue making pairs
+(define (cycle-lists xs ys)
+    (local [(define (aux n)
+                (cons (cons (list-nth-mod xs n) (list-nth-mod ys n)) 
+                      (lambda () (aux (+ n 1)))))]
+    (lambda () (aux 0))))
+
+
+;; x Vector -> Pair or false
+;; produces the first pair from the vector which car position matches the given x
+(define (vector-assoc v vec)
+    (local [(define (v-in-pair? v pr) (equal? v (car pr)))
+            (define first-pr (vector-ref vec 0))]
+    (cond [(= (vector-length vec) 0) #f]
+          [(not (pair? (vector-ref vec 0))) (vector-assoc v (vector-drop vec 1))]
+          [else (if (v-in-pair? v first-pr)
+                    first-pr
+                    (vector-assoc v (vector-drop vec 1)))])))
+
