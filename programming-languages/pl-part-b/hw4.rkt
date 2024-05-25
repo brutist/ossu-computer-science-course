@@ -8,11 +8,9 @@
 ;; produces a list of int starting from low, suceeding elements
 ;;   will then be the incremented with stride until high
 (define (sequence low high stride)
-    (local [(define (aux n rsf)
-                (if (> n high)
-                    rsf
-                    (aux (+ n stride) (append rsf (list n)))))]
-        (aux low null)))
+    (if (> low high)
+        null
+        (cons low (sequence (+ low stride) high stride))))
 
 
 ;; (listof String) String -> (listof String)
@@ -108,5 +106,4 @@
                           [else #f])))))
 
 ;; for testing
-#;
 (define cached-test (cached-assoc (list (cons 1 2) (cons 3 4)) 3))

@@ -27,7 +27,8 @@
    (check-equal? (sequence 3 11 2) (list 3 5 7 9 11) "Sequence test b")
    (check-equal? (sequence 3 8 3) (list 3 6) "Sequence test c")
    (check-equal? (sequence 3 2 1) (list) "Sequence test d")
-
+   (check-equal? (sequence 1 200 1) (build-list 200 (lambda (x) (+ x 1))))
+   
    ; string-append-map test
    (check-equal? (string-append-map 
                   (list "dan" "dog" "curry" "dog2") 
