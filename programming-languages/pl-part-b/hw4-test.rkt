@@ -87,6 +87,7 @@
    (check-equal? ((cached-assoc (list (cons 1 2) (cons 3 4)) 3) 3) (cons 3 4) "cached-assoc test a")
    (check-equal? ((cached-assoc (list (cons 1 2) (cons 3 4)) 3) 1) (cons 1 2) "cached-assoc test b")
    (check-equal? ((cached-assoc (list (cons 1 2) (cons 3 4)) 3) 0) #f "cached-assoc test c")
+   ;;uncomment in hw4.rkt cached-test function
    (check-equal? (cached-test 1) (cons 1 2))
    (check-equal? (cached-test 1) (cons 1 2))
 
