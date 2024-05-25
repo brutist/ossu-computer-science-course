@@ -65,7 +65,7 @@
 ;; produces a new stream with elements (0 . v) for every v in input stream's ith element
 (define (stream-add-zero s)
     (local [(define pr (s))]
-    (lambda () (cons (cons 0 (car pr)) (stream-add-zero (cdr pr))))))
+        (lambda () (cons (cons 0 (car pr)) (stream-add-zero (cdr pr))))))
 
 
 ;; (listof x) (listof y) -> Stream
@@ -74,19 +74,35 @@
 ;; shorter list and continue making pairs
 (define (cycle-lists xs ys)
     (local [(define (aux n)
-                (cons (cons (list-nth-mod xs n) (list-nth-mod ys n)) 
-                      (lambda () (aux (+ n 1)))))]
-    (lambda () (aux 0))))
+                (cons (cons (list-nth-mod xs n) (list-nth-mod ys n)) (lambda () (aux (+ n 1)))))]
+        (lambda () (aux 0))))
 
 
 ;; x Vector -> Pair or false
 ;; produces the first pair from the vector which car position matches the given x
 (define (vector-assoc v vec)
     (local [(define (v-in-pair? v pr) (equal? v (car pr)))
-            (define first-pr (vector-ref vec 0))]
+            (define first-pr (if (> (vector-length vec) 0) (vector-ref vec 0) #f))]
     (cond [(= (vector-length vec) 0) #f]
           [(not (pair? (vector-ref vec 0))) (vector-assoc v (vector-drop vec 1))]
           [else (if (v-in-pair? v first-pr)
                     first-pr
                     (vector-assoc v (vector-drop vec 1)))])))
 
+
+;; (listof x) Int -> (Y -> Pair or false)
+;; takes a list xs and a number n and returns a function that takes
+;;  one argument v and returns the same thing that (assoc v xs) would return
+(define (cached-assoc xs n)
+    (local [(define cache (make-vector n))
+            (define i 0)
+            (define (update-cache pr)
+                (begin (vector-set! cache (modulo i n) pr)
+                       (set! i (add1 i))))]
+
+        (lambda (v) (let ([lookup-cache (vector-assoc v cache)]
+                          [lookup-list (assoc v xs)])
+                    (cond [lookup-cache lookup-cache]
+                          [lookup-list (begin (update-cache lookup-list)
+                                              lookup-list)]
+                          [else #f])))))
