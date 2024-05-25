@@ -82,11 +82,13 @@
    (check-equal? (vector-assoc 4 (vector (cons 2 1) (cons 3 1) (cons 2 1) (cons 5 1))) #f "vector-assoc test c")
    (check-equal? (vector-assoc 4 (vector 4 (cons 3 1) (cons 2 1) (cons 5 1))) #f "vector-assoc test d")
 
+   
    ; cached-assoc tests
    (check-equal? ((cached-assoc (list (cons 1 2) (cons 3 4)) 3) 3) (cons 3 4) "cached-assoc test a")
-   (define cached-test (cached-assoc (list (cons 1 2) (cons 3 4)) 3))
-   (check-equal? (cached-test 1) (cons 1 2) "cached-assoc test b")
-   (check-equal? (cached-test 1) (cons 1 2) "cached-assoc test b")
+   (check-equal? ((cached-assoc (list (cons 1 2) (cons 3 4)) 3) 1) (cons 1 2) "cached-assoc test b")
+   (check-equal? ((cached-assoc (list (cons 1 2) (cons 3 4)) 3) 0) #f "cached-assoc test c")
+   (check-equal? (cached-test 1) (cons 1 2))
+   (check-equal? (cached-test 1) (cons 1 2))
 
    ))
 

@@ -100,9 +100,13 @@
                 (begin (vector-set! cache (modulo i n) pr)
                        (set! i (add1 i))))]
 
-        (lambda (v) (let ([lookup-cache (vector-assoc v cache)]
-                          [lookup-list (assoc v xs)])
+        (lambda (v) (let* ([lookup-cache (vector-assoc v cache)]
+                           [lookup-list (if lookup-cache #f (assoc v xs))])
                     (cond [lookup-cache lookup-cache]
                           [lookup-list (begin (update-cache lookup-list)
                                               lookup-list)]
                           [else #f])))))
+
+;; for testing
+#;
+(define cached-test (cached-assoc (list (cons 1 2) (cons 3 4)) 3))
