@@ -90,27 +90,25 @@
           (let ([clsr (eval-under-env (call-funexp e) env)]
                 [actual (eval-under-env (call-actual e) env)])
           (cond [(closure? clsr) 
-                (let ([clsr-fn-name (fun-nameopt (closure-fun clsr))]
-                      [clsr-arg-name (fun-formal (closure-fun clsr))])
+                 (let ([clsr-fn-name (fun-nameopt (closure-fun clsr))]
+                       [clsr-arg-name (fun-formal (closure-fun clsr))])
                   (if clsr-fn-name
                       (eval-under-env (fun-body (closure-fun clsr)) 
                                       (cons (cons clsr-fn-name clsr) 
-                                            (cons (cons clsr-arg-name actual) 
-                                                  (closure-env clsr))))
+                                            (cons (cons clsr-arg-name actual) (closure-env clsr))))
                       (eval-under-env (fun-body (closure-fun clsr)) 
-                                      (cons (cons clsr-arg-name actual) 
-                                            (closure-env clsr)))))]   
+                                      (cons (cons clsr-arg-name actual) (closure-env clsr)))))]   
                 [else (error "first expression must be a closure")]))]
         [(apair? e) (apair (eval-under-env (apair-e1 e) env) (eval-under-env (apair-e2 e) env))]
-        [(fst? e) (let ([apr (eval-under-env e env)])
+        [(fst? e) (let ([apr (eval-under-env (fst-e e) env)])
                     (if (apair? apr)
                         (apair-e1 apr)
                         (error "fst must be given apair")))]
-        [(snd? e) (let ([apr (eval-under-env e env)])
+        [(snd? e) (let ([apr (eval-under-env (snd-e e) env)])
                     (if (apair? apr)
                         (apair-e2 apr)
                         (error "snd must be given apair")))]
-        [(isaunit? e) (if (aunit? (eval-under-env e env)) (int 1) (int 0))]
+        [(isaunit? e) (if (aunit? (eval-under-env (isaunit-e e) env)) (int 1) (int 0))]
         ;; CHANGE add more cases here
         [#t (error (format "bad MUPL expression: ~v" e))]))
 
