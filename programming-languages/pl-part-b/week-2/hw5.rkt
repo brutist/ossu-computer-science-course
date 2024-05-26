@@ -118,11 +118,16 @@
         
 ;; Problem 3
 
-(define (ifaunit e1 e2 e3) "CHANGE")
+(define (ifaunit e1 e2 e3) (if (aunit? e1) e2 e3))
 
-(define (mlet* lstlst e2) "CHANGE")
-
-(define (ifeq e1 e2 e3 e4) "CHANGE")
+(define (mlet* lstlst e2)
+  "CHANGE")
+  
+  
+(define (ifeq e1 e2 e3 e4) 
+   (if (or (ifgreater e2 e1 #f #t) (ifgreater e1 e2 #f #t))
+       e3
+       e4))
 
 ;; Problem 4
 

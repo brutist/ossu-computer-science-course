@@ -62,6 +62,17 @@
    ;; isaunit test 
    (check-equal? (eval-exp (isaunit (apair (int 1) (int 2)))) (int 0) "isaunit test")
    (check-equal? (eval-exp (isaunit (aunit))) (int 1) "isaunit test")
+   
+   ;; ifaunit test
+   (check-equal? (eval-exp (ifaunit (int 1) (int 2) (int 3))) (int 3) "ifaunit test a")
+   (check-equal? (eval-exp (ifaunit (aunit) (int 2) (int 3))) (int 2) "ifaunit test")
+
+   ;; mlet* test
+   (check-equal? (eval-exp (mlet* (list (cons "x" (int 10))) (var "x"))) (int 10) "mlet* test")
+
+   ;; ifeq test
+   (check-equal? (eval-exp (ifeq (int 1) (int 2) (int 3) (int 4))) (int 4) "ifeq test")
+   (check-equal? (eval-exp (ifeq (int 2) (int 2) (int 3) (int 4))) (int 3) "ifeq test")
    ))
 
 (require rackunit/text-ui)
