@@ -34,8 +34,8 @@
 ;; Mupllist-> Racketlist
 ;; produce an analogous racket list from the given MUPL list
 (define (mupllist->racketlist xs)
-  (cond [(null? xs) null]
-        [else (cons (car xs) (mupllist->racketlist (cdr xs)))]))
+  (cond [(aunit? xs) null]
+        [else (cons (apair-e1 xs) (mupllist->racketlist (apair-e2 xs)))]))
 
 
 
@@ -63,8 +63,15 @@
                (int (+ (int-num v1) 
                        (int-num v2)))
                (error "MUPL addition applied to non-number")))]
-        [(fun? e) (...)]
-
+        [(int? e) e]
+        [(closure? e) e]
+        [(aunit? e) e]
+        [(fun? e)
+          (let ([fn-name (fun-nameopt e)] [fn-arg-name (fun-formal e)])
+            (cond [(and (or (string? fn-name) (false? fn-name)) (string? fn-arg-name)) 
+                    (closure env e)]
+                  [(string? fn-arg-name) (error "first argument must be a string or #f")]
+                  [else (error "second argument must be a string")]))]
         [(ifgreater? e)
          (let* ([v1 (eval-under-env (ifgreater-e1 e) env)]
                 [v2 (eval-under-env (ifgreater-e2 e) env)]
@@ -76,30 +83,32 @@
                   [else (error "first expression must be an int")]))]
         [(mlet? e)
          (cond [(string? (mlet-var e)) 
-                (let ([var-val (eval-under-env (mlet-e e) env)])
-                     (eval-under-env (mlet-body e) (cons (cons (mlet-var e) var-val) env)))]
+                  (let ([var-val (eval-under-env (mlet-e e) env)])
+                    (eval-under-env (mlet-body e) (cons (cons (mlet-var e) var-val) env)))]
                [else (error "variable name should be a string")])]
         [(call? e)
           (let ([clsr (eval-under-env (call-funexp e) env)]
                 [actual (eval-under-env (call-actual e) env)])
           (cond [(closure? clsr) 
-                (let ([clsr-fn-name (fun-nameopt (closure-fun clsr))])
+                (let ([clsr-fn-name (fun-nameopt (closure-fun clsr))]
+                      [clsr-arg-name (fun-formal (closure-fun clsr))])
                   (if clsr-fn-name
                       (eval-under-env (fun-body (closure-fun clsr)) 
                                       (cons (cons clsr-fn-name clsr) 
-                                            (cons (fun-nameopt (call-funexp e)) actual) 
-                                            env))
+                                            (cons (cons clsr-arg-name actual) 
+                                                  (closure-env clsr))))
                       (eval-under-env (fun-body (closure-fun clsr)) 
-                                      (cons (cons (fun-nameopt (call-funexp e)) actual) env))))]   
+                                      (cons (cons clsr-arg-name actual) 
+                                            (closure-env clsr)))))]   
                 [else (error "first expression must be a closure")]))]
         [(apair? e) (apair (eval-under-env (apair-e1 e) env) (eval-under-env (apair-e2 e) env))]
-        [(fst? e) (let ([pr (eval-under-env e env)])
-                    (if (apair? pr)
-                        (car pr)
+        [(fst? e) (let ([apr (eval-under-env e env)])
+                    (if (apair? apr)
+                        (apair-e1 apr)
                         (error "fst must be given apair")))]
-        [(snd? e) (let ([pr (eval-under-env e env)])
-                    (if (apair? pr)
-                        (cdr pr)
+        [(snd? e) (let ([apr (eval-under-env e env)])
+                    (if (apair? apr)
+                        (apair-e2 apr)
                         (error "snd must be given apair")))]
         [(isaunit? e) (if (aunit? (eval-under-env e env)) (int 1) (int 0))]
         ;; CHANGE add more cases here
