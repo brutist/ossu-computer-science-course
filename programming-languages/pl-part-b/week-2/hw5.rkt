@@ -21,8 +21,23 @@
 (struct closure (env fun) #:transparent) 
 
 ;; Problem 1
-
 ;; CHANGE (put your solutions here)
+
+
+;; Racketlist -> Mupllist
+;; produce an analogous MUPL list from the given racket list
+(define (racketlist->mupllist xs)
+  (cond [(null? xs) (aunit)]
+        [else (apair (car xs) (racketlist->mupllist (cdr xs)))]))
+
+
+;; Mupllist-> Racketlist
+;; produce an analogous racket list from the given MUPL list
+(define (mupllist->racketlist xs)
+  (cond [(null? xs) null]
+        [else (cons (car xs) (mupllist->racketlist (cdr xs)))]))
+
+
 
 ;; Problem 2
 
@@ -48,6 +63,45 @@
                (int (+ (int-num v1) 
                        (int-num v2)))
                (error "MUPL addition applied to non-number")))]
+        [(fun? e) (...)]
+
+        [(ifgreater? e)
+         (let* ([v1 (eval-under-env (ifgreater-e1 e) env)]
+                [v2 (eval-under-env (ifgreater-e2 e) env)]
+                [conform (and (int? v1) (int? v2))])
+            (cond [conform (if (> (int-num v1) (int-num v2)) 
+                               (eval-under-env (ifgreater-e3 e) env)
+                               (eval-under-env (ifgreater-e4 e) env))]
+                  [(int? v1) (error "second expression must be an int")]
+                  [else (error "first expression must be an int")]))]
+        [(mlet? e)
+         (cond [(string? (mlet-var e)) 
+                (let ([var-val (eval-under-env (mlet-e e) env)])
+                     (eval-under-env (mlet-body e) (cons (cons (mlet-var e) var-val) env)))]
+               [else (error "variable name should be a string")])]
+        [(call? e)
+          (let ([clsr (eval-under-env (call-funexp e) env)]
+                [actual (eval-under-env (call-actual e) env)])
+          (cond [(closure? clsr) 
+                (let ([clsr-fn-name (fun-nameopt (closure-fun clsr))])
+                  (if clsr-fn-name
+                      (eval-under-env (fun-body (closure-fun clsr)) 
+                                      (cons (cons clsr-fn-name clsr) 
+                                            (cons (fun-nameopt (call-funexp e)) actual) 
+                                            env))
+                      (eval-under-env (fun-body (closure-fun clsr)) 
+                                      (cons (cons (fun-nameopt (call-funexp e)) actual) env))))]   
+                [else (error "first expression must be a closure")]))]
+        [(apair? e) (apair (eval-under-env (apair-e1 e) env) (eval-under-env (apair-e2 e) env))]
+        [(fst? e) (let ([pr (eval-under-env e env)])
+                    (if (apair? pr)
+                        (car pr)
+                        (error "fst must be given apair")))]
+        [(snd? e) (let ([pr (eval-under-env e env)])
+                    (if (apair? pr)
+                        (cdr pr)
+                        (error "snd must be given apair")))]
+        [(isaunit? e) (if (aunit? (eval-under-env e env)) (int 1) (int 0))]
         ;; CHANGE add more cases here
         [#t (error (format "bad MUPL expression: ~v" e))]))
 
