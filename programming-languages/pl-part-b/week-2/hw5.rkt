@@ -118,24 +118,36 @@
         
 ;; Problem 3
 
-(define (ifaunit e1 e2 e3) (if (aunit? e1) e2 e3))
+(define (ifaunit e1 e2 e3) (ifgreater (isaunit e1) (int 0) e2 e3))
 
-(define (mlet* lstlst e2)
-  "CHANGE")
+
+(define (mlet* lst e2)
+  (if (null? lst)
+      e2
+      (mlet (caar lst) (cdar lst) (mlet* (cdr lst) e2))))
   
-  
+
 (define (ifeq e1 e2 e3 e4) 
-   (if (or (ifgreater e2 e1 #f #t) (ifgreater e1 e2 #f #t))
-       e3
-       e4))
+  (mlet* (list (cons "v1" e1) (cons "v2" e2))
+    (ifgreater (var "v1") (var "v2") e4
+                  (ifgreater (var "v2") (var "v1") e4 e3))))
+
 
 ;; Problem 4
 
-(define mupl-map "CHANGE")
+(define mupl-map 
+  (fun #f "fn"
+    (fun "fn2" "mes"
+      (ifaunit (var "mes")
+               (aunit)
+               (apair (call (var "fn") (fst (var "mes"))) (call (var "fn2") (snd (var "mes"))))))))
+
 
 (define mupl-mapAddN 
   (mlet "map" mupl-map
-        "CHANGE (notice map is now in MUPL scope)"))
+        (fun #f "i" 
+          (fun #f "mis"
+            (call (call (var "map") (fun #f "int" (add (var "i") (var "int")))) (var "mis"))))))
 
 ;; Challenge Problem
 
