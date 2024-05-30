@@ -24,3 +24,17 @@ class Tri
         end
     end
 end
+
+
+# blocks are hard
+
+# hashes are like arrays but
+# -keys can be anything
+
+h1 = {} #empty hash, can build with Hash.new 
+h1["a"] = "Found a"
+# can do 
+h1.keys
+h1.values
+
+
