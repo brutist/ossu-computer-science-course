@@ -61,7 +61,7 @@ class MyPiece < Piece
     end
 
     def next_piece
-      if @cheating and (@score > 100)
+      if @cheating and (@score >= 100)
         @score -= 100
         @cheating = false
         @current_block = MyPiece.new([[[0,0]]], self)
