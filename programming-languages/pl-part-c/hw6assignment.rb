@@ -2,7 +2,7 @@
 
 # This is the only file you turn in, so do not modify the other files as
 # part of your solution.
-require_relative "./hw6provided"
+
 
 class MyPiece < Piece
     # The constant All_My_Pieces should be declared here
