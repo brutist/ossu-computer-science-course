@@ -28,6 +28,12 @@
 class GeometryExpression  
 	# do *not* change this class definition
 	Epsilon = 0.00001
+	def preprocess_prog
+		self
+	end
+	def eval_prog env
+		self
+	end
   end
   
   class GeometryValue 
@@ -67,6 +73,12 @@ class GeometryExpression
 	def intersectLineSegment seg
 	  line_result = intersect(two_points_to_line(seg.x1,seg.y1,seg.x2,seg.y2))
 	  line_result.intersectWithSegmentAsLineResult seg
+	end
+	def preprocess_prog
+		self
+	end
+	def eval_prog env
+		self
 	end
   end
   
@@ -152,6 +164,25 @@ class GeometryExpression
 	  @x2 = x2
 	  @y2 = y2
 	end
+
+	def wrong_order
+		if @x1 > @x2 || self.real_close(@x1,@x3)
+			v2 > v4
+		else 
+			false
+		end
+	end
+
+	def preprocess_prog
+		just_point = self.real_close_point(@x1,@y1,@x2,@y2)
+		if just_point
+			Point.new(@x1,@y1)
+		elsif wrong_order
+			LineSegment.new(@x2,@y2,@x1,@y1)
+		else
+			self
+		end
+	end
   end
   
   # Note: there is no need for getter methods for the non-value classes
@@ -173,6 +204,10 @@ class GeometryExpression
 	  @s = s
 	  @e1 = e1
 	  @e2 = e2
+	end
+	def eval_prog env
+		new_env = [[@s,@e1.eval_prog(env)]] + env
+		@e2.eval_prog(new_env)
 	end
   end
   
@@ -196,5 +231,8 @@ class GeometryExpression
 	  @dx = dx
 	  @dy = dy
 	  @e = e
+	end
+	def preprocess_prog
+		Shift.new(@dx,@dy,@e.preprocess_prog)
 	end
   end
