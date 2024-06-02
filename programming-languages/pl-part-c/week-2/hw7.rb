@@ -1,200 +1,200 @@
-(* University of Washington, Programming Languages, Homework 7, hw7.sml 
-   (See also Ruby code.)
-*)
+# University of Washington, Programming Languages, Homework 7, hw7.rb 
+# (See also ML code)
 
-(* Do not make changes to this code except where you see comments containing
-   the word CHANGE. *)
+# a little language for 2D geometry objects
 
-(* expressions in a little language for 2D geometry objects
-   values: points, lines, vertical lines, line segments
-   other expressions: intersection of two expressions, lets, variables, 
-                      (shifts added by you)
-*)
-datatype geom_exp = 
-           NoPoints
-	 | Point of real * real (* represents point (x,y) *)
-	 | Line of real * real (* represents line (slope, intercept) *)
-	 | VerticalLine of real (* x value *)
-	 | LineSegment of real * real * real * real (* x1,y1 to x2,y2 *)
-	 | Intersect of geom_exp * geom_exp (* intersection expression *)
-	 | Let of string * geom_exp * geom_exp (* let s = e1 in e2 *)
-	 | Var of string
-(* CHANGE add shifts for expressions of the form Shift(deltaX, deltaY, exp *)
+# each subclass of GeometryExpression, including subclasses of GeometryValue,
+#  needs to respond to messages preprocess_prog and eval_prog
+#
+# each subclass of GeometryValue additionally needs:
+#   * shift
+#   * intersect, which uses the double-dispatch pattern
+#   * intersectPoint, intersectLine, and intersectVerticalLine for 
+#       for being called by intersect of appropriate clases and doing
+#       the correct intersection calculuation
+#   * (We would need intersectNoPoints and intersectLineSegment, but these
+#      are provided by GeometryValue and should not be overridden.)
+#   *  intersectWithSegmentAsLineResult, which is used by 
+#      intersectLineSegment as described in the assignment
+#
+# you can define other helper methods, but will not find much need to
 
-exception BadProgram of string
-exception Impossible of string
+# Note: geometry objects should be immutable: assign to fields only during
+#       object construction
 
-(* helper functions for comparing real numbers since rounding means
-   we should never compare for equality *)
+# Note: For eval_prog, represent environments as arrays of 2-element arrays
+# as described in the assignment
 
-val epsilon = 0.00001
-
-fun real_close (r1,r2) = 
-    (Real.abs (r1 - r2)) < epsilon
-
-(* notice curried *)
-fun real_close_point (x1,y1) (x2,y2) = 
-    real_close(x1,x2) andalso real_close(y1,y2)
-
-(* helper function to return the Line or VerticalLine containing 
-   points (x1,y1) and (x2,y2). Actually used only when intersecting 
-   line segments, but might be generally useful *)
-fun two_points_to_line (x1,y1,x2,y2) = 
-    if real_close(x1,x2)
-    then VerticalLine x1
-    else
-	let 
-	    val m = (y2 - y1) / (x2 - x1)
-	    val b = y1 - m * x1
-	in
-	    Line(m,b)
+class GeometryExpression  
+	# do *not* change this class definition
+	Epsilon = 0.00001
+  end
+  
+  class GeometryValue 
+	# do *not* change methods in this class definition
+	# you can add methods if you wish
+  
+	private
+	# some helper methods that may be generally useful
+	def real_close(r1,r2) 
+	  (r1 - r2).abs < GeometryExpression::Epsilon
 	end
-
-(* helper function for interpreter: return value that is the intersection
-   of the arguments: 25 cases because there are 5 kinds of values, but
-   many cases can be combined, especially because intersection is commutative.
-   Do *not* call this function with non-values (e.g., shifts or lets)
- *)
-fun intersect (v1,v2) =
-    case (v1,v2) of
-	
-       (NoPoints, _) => NoPoints (* 5 cases *)
-     | (_, NoPoints) => NoPoints (* 4 additional cases *)
-
-     | 	(Point p1, Point p2) => if real_close_point p1 p2
-				then v1
-				else NoPoints
-
-      | (Point (x,y), Line (m,b)) => if real_close(y, m * x + b)
-				     then v1
-				     else NoPoints
-
-      | (Point (x1,_), VerticalLine x2) => if real_close(x1,x2)
-					   then v1
-					   else NoPoints
-
-      | (Point _, LineSegment seg) => intersect(v2,v1)
-
-      | (Line _, Point _) => intersect(v2,v1)
-
-      | (Line (m1,b1), Line (m2,b2)) =>
-	if real_close(m1,m2) 
-	then (if real_close(b1,b2)
-	      then v1 (* same line *)
-	      else  NoPoints) (* parallel lines do not intersect *)
-	else 
-	    let (* one-point intersection *)
-		val x = (b2 - b1) / (m1 - m2)
-		val y = m1 * x + b1
-	    in
-		Point (x,y)
-	    end
-
-      | (Line (m1,b1), VerticalLine x2) => Point(x2, m1 * x2 + b1)
-
-      | (Line _, LineSegment _) => intersect(v2,v1)
-
-      | (VerticalLine _, Point _) => intersect(v2,v1)
-      | (VerticalLine _, Line _)  => intersect(v2,v1)
-
-      | (VerticalLine x1, VerticalLine x2) =>
-	if real_close(x1,x2)
-	then v1 (* same line *)
-	else NoPoints (* parallel *)
-
-      | (VerticalLine _, LineSegment seg) => intersect(v2,v1)
-
-      | (LineSegment seg, _) => 
-	(* the hard case, actually 4 cases because v2 could be a point,
-	   line, vertical line, or line segment *)
-	(* First compute the intersection of (1) the line containing the segment 
-           and (2) v2. Then use that result to compute what we need. *)
-	(case intersect(two_points_to_line seg, v2) of
-	    NoPoints => NoPoints 
-	  | Point(x0,y0) => (* see if the point is within the segment bounds *)
-	    (* assumes v1 was properly preprocessed *)
-	    let 
-		fun inbetween(v,end1,end2) =
-		    (end1 - epsilon <= v andalso v <= end2 + epsilon)
-		    orelse (end2 - epsilon <= v andalso v <= end1 + epsilon)
-		val (x1,y1,x2,y2) = seg
-	    in
-		if inbetween(x0,x1,x2) andalso inbetween(y0,y1,y2)
-		then Point(x0,y0)
-		else NoPoints
-	    end
-	  | Line _ => v1 (* so segment seg is on line v2 *)
-	  | VerticalLine _ => v1 (* so segment seg is on vertical-line v2 *)
-	  | LineSegment seg2 => 
-	    (* the hard case in the hard case: seg and seg2 are on the same
-               line (or vertical line), but they could be (1) disjoint or 
-               (2) overlapping or (3) one inside the other or (4) just touching.
-	       And we treat vertical segments differently, so there are 4*2 cases.
-	     *)
-	    let
-		val (x1start,y1start,x1end,y1end) = seg
-		val (x2start,y2start,x2end,y2end) = seg2
-	    in
-		if real_close(x1start,x1end)
-		then (* the segments are on a vertical line *)
-		    (* let segment a start at or below start of segment b *)
-		    let 
-			val ((aXstart,aYstart,aXend,aYend),
-			     (bXstart,bYstart,bXend,bYend)) = if y1start < y2start
-							      then (seg,seg2)
-							      else (seg2,seg)
-		    in
-			if real_close(aYend,bYstart)
-			then Point (aXend,aYend) (* just touching *)
-			else if aYend < bYstart
-			then NoPoints (* disjoint *)
-			else if aYend > bYend
-			then LineSegment(bXstart,bYstart,bXend,bYend) (* b inside a *)
-			else LineSegment(bXstart,bYstart,aXend,aYend) (* overlapping *)
-		    end
-		else (* the segments are on a (non-vertical) line *)
-		    (* let segment a start at or to the left of start of segment b *)
-		    let 
-			val ((aXstart,aYstart,aXend,aYend),
-			     (bXstart,bYstart,bXend,bYend)) = if x1start < x2start
-							      then (seg,seg2)
-							      else (seg2,seg)
-		    in
-			if real_close(aXend,bXstart)
-			then Point (aXend,aYend) (* just touching *)
-			else if aXend < bXstart
-			then NoPoints (* disjoint *)
-			else if aXend > bXend
-			then LineSegment(bXstart,bYstart,bXend,bYend) (* b inside a *)
-			else LineSegment(bXstart,bYstart,aXend,aYend) (* overlapping *)
-		    end	
-	    end						
-	  | _ => raise Impossible "bad result from intersecting with a line")
-      | _ => raise Impossible "bad call to intersect: only for shape values"
-
-(* interpreter for our language: 
-   * takes a geometry expression and returns a geometry value
-   * for simplicity we have the top-level function take an environment,
-     (which should be [] for the whole program
-   * we assume the expression e has already been "preprocessed" as described
-     in the homework assignment: 
-         * line segments are not actually points (endpoints not real close)
-         * lines segment have left (or, if vertical, bottom) coordinate first
-*)
-
-fun eval_prog (e,env) =
-    case e of
-	NoPoints => e (* first 5 cases are all values, so no computation *)
-      | Point _  => e
-      | Line _   => e
-      | VerticalLine _ => e
-      | LineSegment _  => e
-      | Var s => 
-	(case List.find (fn (s2,v) => s=s2) env of
-	     NONE => raise BadProgram("var not found: " ^ s)
-	   | SOME (_,v) => v)
-      | Let(s,e1,e2) => eval_prog (e2, ((s, eval_prog(e1,env)) :: env))
-      | Intersect(e1,e2) => intersect(eval_prog(e1,env), eval_prog(e2, env))
-(* CHANGE: Add a case for Shift expressions *)
-
-(* CHANGE: Add function preprocess_prog of type geom_exp -> geom_exp *)
+	def real_close_point(x1,y1,x2,y2) 
+	  real_close(x1,x2) && real_close(y1,y2)
+	end
+	# two_points_to_line could return a Line or a VerticalLine
+	def two_points_to_line(x1,y1,x2,y2) 
+	  if real_close(x1,x2)
+		VerticalLine.new x1
+	  else
+		m = (y2 - y1).to_f / (x2 - x1)
+		b = y1 - m * x1
+		Line.new(m,b)
+	  end
+	end
+  
+	public
+	# we put this in this class so all subclasses can inherit it:
+	# the intersection of self with a NoPoints is a NoPoints object
+	def intersectNoPoints np
+	  np # could also have NoPoints.new here instead
+	end
+  
+	# we put this in this class so all subclasses can inhert it:
+	# the intersection of self with a LineSegment is computed by
+	# first intersecting with the line containing the segment and then
+	# calling the result's intersectWithSegmentAsLineResult with the segment
+	def intersectLineSegment seg
+	  line_result = intersect(two_points_to_line(seg.x1,seg.y1,seg.x2,seg.y2))
+	  line_result.intersectWithSegmentAsLineResult seg
+	end
+  end
+  
+  class NoPoints < GeometryValue
+	# do *not* change this class definition: everything is done for you
+	# (although this is the easiest class, it shows what methods every subclass
+	# of geometry values needs)
+	# However, you *may* move methods from here to a superclass if you wish to
+  
+	# Note: no initialize method only because there is nothing it needs to do
+	def eval_prog env 
+	  self # all values evaluate to self
+	end
+	def preprocess_prog
+	  self # no pre-processing to do here
+	end
+	def shift(dx,dy)
+	  self # shifting no-points is no-points
+	end
+	def intersect other
+	  other.intersectNoPoints self # will be NoPoints but follow double-dispatch
+	end
+	def intersectPoint p
+	  self # intersection with point and no-points is no-points
+	end
+	def intersectLine line
+	  self # intersection with line and no-points is no-points
+	end
+	def intersectVerticalLine vline
+	  self # intersection with line and no-points is no-points
+	end
+	# if self is the intersection of (1) some shape s and (2) 
+	# the line containing seg, then we return the intersection of the 
+	# shape s and the seg.  seg is an instance of LineSegment
+	def intersectWithSegmentAsLineResult seg
+	  self
+	end
+  end
+  
+  
+  class Point < GeometryValue
+	# *add* methods to this class -- do *not* change given code and do not
+	# override any methods
+  
+	# Note: You may want a private helper method like the local
+	# helper function inbetween in the ML code
+	attr_reader :x, :y
+	def initialize(x,y)
+	  @x = x
+	  @y = y
+	end
+  end
+  
+  class Line < GeometryValue
+	# *add* methods to this class -- do *not* change given code and do not
+	# override any methods
+	attr_reader :m, :b 
+	def initialize(m,b)
+	  @m = m
+	  @b = b
+	end
+  end
+  
+  class VerticalLine < GeometryValue
+	# *add* methods to this class -- do *not* change given code and do not
+	# override any methods
+	attr_reader :x
+	def initialize x
+	  @x = x
+	end
+  end
+  
+  class LineSegment < GeometryValue
+	# *add* methods to this class -- do *not* change given code and do not
+	# override any methods
+	# Note: This is the most difficult class.  In the sample solution,
+	#  preprocess_prog is about 15 lines long and 
+	# intersectWithSegmentAsLineResult is about 40 lines long
+	attr_reader :x1, :y1, :x2, :y2
+	def initialize (x1,y1,x2,y2)
+	  @x1 = x1
+	  @y1 = y1
+	  @x2 = x2
+	  @y2 = y2
+	end
+  end
+  
+  # Note: there is no need for getter methods for the non-value classes
+  
+  class Intersect < GeometryExpression
+	# *add* methods to this class -- do *not* change given code and do not
+	# override any methods
+	def initialize(e1,e2)
+	  @e1 = e1
+	  @e2 = e2
+	end
+  end
+  
+  class Let < GeometryExpression
+	# *add* methods to this class -- do *not* change given code and do not
+	# override any methods
+	# Note: Look at Var to guide how you implement Let
+	def initialize(s,e1,e2)
+	  @s = s
+	  @e1 = e1
+	  @e2 = e2
+	end
+  end
+  
+  class Var < GeometryExpression
+	# *add* methods to this class -- do *not* change given code and do not
+	# override any methods
+	def initialize s
+	  @s = s
+	end
+	def eval_prog env # remember: do not change this method
+	  pr = env.assoc @s
+	  raise "undefined variable" if pr.nil?
+	  pr[1]
+	end
+  end
+  
+  class Shift < GeometryExpression
+	# *add* methods to this class -- do *not* change given code and do not
+	# override any methods
+	def initialize(dx,dy,e)
+	  @dx = dx
+	  @dy = dy
+	  @e = e
+	end
+  end
