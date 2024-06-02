@@ -19,6 +19,7 @@ datatype geom_exp =
 	 | Intersect of geom_exp * geom_exp (* intersection expression *)
 	 | Let of string * geom_exp * geom_exp (* let s = e1 in e2 *)
 	 | Var of string
+	 | Shift of real * real * geom_exp
 (* CHANGE add shifts for expressions of the form Shift(deltaX, deltaY, exp *)
 
 exception BadProgram of string
@@ -191,10 +192,40 @@ fun eval_prog (e,env) =
       | LineSegment _  => e
       | Var s => 
 	(case List.find (fn (s2,v) => s=s2) env of
-	     NONE => raise BadProgram("var not found: " ^ s)
-	   | SOME (_,v) => v)
+	    NONE => raise BadProgram("var not found: " ^ s)
+	  | SOME (_,v) => v)
       | Let(s,e1,e2) => eval_prog (e2, ((s, eval_prog(e1,env)) :: env))
       | Intersect(e1,e2) => intersect(eval_prog(e1,env), eval_prog(e2, env))
+	  | Shift(deltaX,deltaY,e1) => 
+			let
+			val v1 = eval_prog(e1,env)
+			in
+			case v1 of
+				NoPoints => NoPoints
+			  | Point(x,y) => Point(x+deltaX,y+deltaY)
+			  | Line(m,intercept) => Line(m,((intercept + deltaY) - (m*deltaX)))
+			  | VerticalLine(x) => VerticalLine(x+deltaX)
+			  | LineSegment(r1,r2,r3,r4) => LineSegment(r1+deltaX,r2+deltaY,r3+deltaX,r4+deltaY)
+			end
+
+
 (* CHANGE: Add a case for Shift expressions *)
 
 (* CHANGE: Add function preprocess_prog of type geom_exp -> geom_exp *)
+fun preprocess_prog(e) =	
+	case e of
+		LineSegment (r1,r2,r3,r4)=> 
+			let
+			fun wrong_order(v1,v2,v3,v4) =
+				if v1 > v3 orelse real_close(v1,v3)
+				then v2 > v4
+				else false
+			in
+			if real_close(r1,r3) andalso real_close(r2,r4)
+			then Point(r1,r2)
+			else if wrong_order(r1,r2,r3,r4)
+			then LineSegment(r3,r4,r1,r2) 
+			else LineSegment(r1,r2,r3,r4)
+			end
+	  | Shift (r1,r2,e1) => Shift(r1,r2,preprocess_prog(e1))			
+	  | _ => e
