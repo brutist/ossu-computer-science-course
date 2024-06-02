@@ -205,7 +205,12 @@ class GeometryExpression
 	  @e2 = e2
 	end
 	def eval_prog env
-		raise "to override"
+		v1 = @e1.eval_prog(env)
+		v2 = @e2.eval_prog(env)
+		v1.intersect(v2)
+	end
+	def preprocess_prog
+		Intersect.new(@e1.preprocess_prog,@e2.preprocess_prog)
 	end
   end
   
