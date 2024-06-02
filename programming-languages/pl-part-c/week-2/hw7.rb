@@ -130,6 +130,9 @@ class GeometryExpression
 	  @x = x
 	  @y = y
 	end
+	def shift(dx,dy)
+		Point.new(@x+dx,@y+dy)
+	end
   end
   
   class Line < GeometryValue
@@ -140,6 +143,9 @@ class GeometryExpression
 	  @m = m
 	  @b = b
 	end
+	def shift(dx,dy)
+		Line.new(@m,((b+dy)-(m*dx)))
+	end
   end
   
   class VerticalLine < GeometryValue
@@ -148,6 +154,9 @@ class GeometryExpression
 	attr_reader :x
 	def initialize x
 	  @x = x
+	end
+	def shift(dx,dy)
+		VerticalLine.new(@x+dx)
 	end
   end
   
@@ -164,7 +173,6 @@ class GeometryExpression
 	  @x2 = x2
 	  @y2 = y2
 	end
-
 	def wrong_order
 		if @x1 > @x2 || self.real_close(@x1,@x3)
 			v2 > v4
@@ -172,7 +180,6 @@ class GeometryExpression
 			false
 		end
 	end
-
 	def preprocess_prog
 		just_point = self.real_close_point(@x1,@y1,@x2,@y2)
 		if just_point
@@ -182,6 +189,9 @@ class GeometryExpression
 		else
 			self
 		end
+	end
+	def shift(dx,dy)
+		LineSegment.new(@x1+dx,@y1+dy,@x2+dx,@y2+dy)
 	end
   end
   
@@ -193,6 +203,9 @@ class GeometryExpression
 	def initialize(e1,e2)
 	  @e1 = e1
 	  @e2 = e2
+	end
+	def eval_prog env
+		raise "to override"
 	end
   end
   
@@ -234,5 +247,9 @@ class GeometryExpression
 	end
 	def preprocess_prog
 		Shift.new(@dx,@dy,@e.preprocess_prog)
+	end
+	def eval_prog env
+		v = @e.eval_prog(env)
+		v.shift(@dx,@dy)
 	end
   end

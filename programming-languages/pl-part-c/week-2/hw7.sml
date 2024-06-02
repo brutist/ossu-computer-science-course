@@ -227,5 +227,8 @@ fun preprocess_prog(e) =
 			then LineSegment(r3,r4,r1,r2) 
 			else LineSegment(r1,r2,r3,r4)
 			end
-	  | Shift (r1,r2,e1) => Shift(r1,r2,preprocess_prog(e1))			
+	  | Shift (r1,r2,e1) => Shift(r1,r2,preprocess_prog(e1))
+	  | Intersect(e1,e2) => Intersect(preprocess_prog(e1),preprocess_prog(e2))
+	  | Var(s,e) 		 => Var(s,preprocess_prog(e))			
 	  | _ => e
+	  
