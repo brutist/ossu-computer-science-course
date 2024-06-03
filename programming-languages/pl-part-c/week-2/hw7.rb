@@ -130,6 +130,14 @@ class GeometryExpression
 	  @x = x
 	  @y = y
 	end
+	private
+	def inbetween(v,end1,end2)
+		ep = GeometryExpression::Epsilon
+		(end1 - ep <= v and v <= end2 + ep) or
+		(end2 - ep <= v and v <= end1 + ep)
+	end
+
+	public
 	def shift(dx,dy)
 		Point.new(@x+dx,@y+dy)
 	end
@@ -158,7 +166,11 @@ class GeometryExpression
 		end
 	end
 	def intersectWithSegmentAsLineResult seg
-		seg
+		if inbetween(@x,seg.x1,seg.x2) && inbetween(@y,seg.y1,seg.y2)
+			self
+		else
+			NoPoints.new
+		end
 	end
   end
   
