@@ -158,7 +158,7 @@ class GeometryExpression
 		end
 	end
 	def intersectWithSegmentAsLineResult seg
-		self
+		seg
 	end
   end
   
@@ -196,7 +196,7 @@ class GeometryExpression
 		Point.new(other.x, @m * other.x + @b)
 	end
 	def intersectWithSegmentAsLineResult seg
-		self
+		seg
 	end
   end
   
@@ -227,7 +227,7 @@ class GeometryExpression
 		end
 	end
 	def intersectWithSegmentAsLineResult seg
-		self
+		seg
 	end
   end
   
@@ -245,14 +245,14 @@ class GeometryExpression
 	  @y2 = y2
 	end
 	def wrong_order
-		if @x1 > @x2 || self.real_close(@x1,@x3)
-			v2 > v4
+		if @x1 > @x2 
+			true
 		else 
-			false
+			(@y1 > @y2) and real_close(@x1,@x2)
 		end
 	end
 	def preprocess_prog
-		just_point = self.real_close_point(@x1,@y1,@x2,@y2)
+		just_point = real_close_point(@x1,@y1,@x2,@y2)
 		if just_point
 			Point.new(@x1,@y1)
 		elsif wrong_order
@@ -265,16 +265,16 @@ class GeometryExpression
 		LineSegment.new(@x1+dx,@y1+dy,@x2+dx,@y2+dy)
 	end
 	def intersect other
-		other.intersectLineSegment self 
+		other.intersectLineSegment(self) 
 	end
 	def intersectPoint other
-		other.intersectLineSegment self
+		other.intersectLineSegment(self)
 	end
 	def intersectLine other
-		other.intersectLineSegment self
+		other.intersectLineSegment(self)
 	end
 	def intersectVerticalLine other
-		other.intersectLineSegment self
+		other.intersectLineSegment(self)
 	end
 	def intersectWithSegmentAsLineResult seg
 		self
@@ -312,6 +312,9 @@ class GeometryExpression
 	def eval_prog env
 		new_env = [[@s,@e1.eval_prog(env)]] + env
 		@e2.eval_prog(new_env)
+	end
+	def preprocess_prog
+		Let.new(@s,@e1.preprocess_prog,@e2.preprocess_prog)
 	end
   end
   

@@ -128,6 +128,11 @@ if not ((d5.is_a? NoPoints))
 end
 
 #Intersect Tests
+ia = Intersect.new(Point.new(-ONE,-TWO), Point.new(-ONE,-TWO))
+ia1 = ia.preprocess_prog.eval_prog([])
+if not (ia1.x == -ONE and ia1.y == -TWO)
+	puts "Intersect eval_prog should return the intersect between e1 and e2"
+end
 i = Intersect.new(LineSegment.new(-ONE,-TWO,THREE,FOUR), LineSegment.new(THREE,FOUR,-ONE,-TWO))
 i1 = i.preprocess_prog.eval_prog([])
 if not (i1.x1 == -ONE and i1.y1 == -TWO and i1.x2 == THREE and i1.y2 == FOUR)
