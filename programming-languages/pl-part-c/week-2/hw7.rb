@@ -156,6 +156,9 @@ class GeometryExpression
 		else
 			NoPoints.new
 	end
+	def intersectWithSegmentAsLineResult seg
+		self
+	end
   end
   
   class Line < GeometryValue
@@ -191,6 +194,9 @@ class GeometryExpression
 	def intersectVerticalLine other
 		Point.new(other.x, @m * other.x + @b)
 	end
+	def intersectWithSegmentAsLineResult seg
+		self
+	end
   end
   
   class VerticalLine < GeometryValue
@@ -218,6 +224,9 @@ class GeometryExpression
 		else 
 			NoPoints.new
 		end
+	end
+	def intersectWithSegmentAsLineResult seg
+		self
 	end
   end
   
@@ -258,13 +267,16 @@ class GeometryExpression
 		other.intersectLineSegment self 
 	end
 	def intersectPoint other
-		raise "to override"
+		other.intersectLineSegment self
 	end
 	def intersectLine other
-		raise "to override"
+		other.intersectLineSegment self
 	end
 	def intersectVerticalLine other
-		raise "to override"
+		other.intersectLineSegment self
+	end
+	def intersectWithSegmentAsLineResult seg
+		self
 	end
   end
   
