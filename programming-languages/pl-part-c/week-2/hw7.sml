@@ -217,9 +217,9 @@ fun preprocess_prog(e) =
 		LineSegment (r1,r2,r3,r4)=> 
 			let
 			fun wrong_order(v1,v2,v3,v4) =
-				if v1 > v3 orelse real_close(v1,v3)
-				then v2 > v4
-				else false
+				if v1 > v3 
+				then true
+				else v2 > v4 andalso real_close(v1,v3)
 			in
 			if real_close(r1,r3) andalso real_close(r2,r4)
 			then Point(r1,r2)
@@ -228,6 +228,7 @@ fun preprocess_prog(e) =
 			else LineSegment(r1,r2,r3,r4)
 			end
 	  | Shift (r1,r2,e1) => Shift(r1,r2,preprocess_prog(e1))
-	  | Intersect(e1,e2) => Intersect(preprocess_prog(e1),preprocess_prog(e2))		
+	  | Intersect(e1,e2) => Intersect(preprocess_prog(e1),preprocess_prog(e2))
+	  | Let(s,e1,e2)	 => Let(s,preprocess_prog(e1),preprocess_prog(e2))
 	  | _ => e
 	  
