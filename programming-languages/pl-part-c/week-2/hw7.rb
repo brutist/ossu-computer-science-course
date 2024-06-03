@@ -155,6 +155,7 @@ class GeometryExpression
 			self
 		else
 			NoPoints.new
+		end
 	end
 	def intersectWithSegmentAsLineResult seg
 		self
