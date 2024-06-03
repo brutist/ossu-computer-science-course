@@ -133,6 +133,29 @@ class GeometryExpression
 	def shift(dx,dy)
 		Point.new(@x+dx,@y+dy)
 	end
+	def intersect other
+		other.intersectPoint self 
+	end
+	def intersectPoint other
+		if real_close_point(@x,@y,other.x,other.y)
+			self
+		else
+			NoPoints.new
+		end
+	end
+	def intersectLine other
+		if real_close(@y,other.m * @x + other.b)
+			self
+		else
+			NoPoints.new
+		end
+	end
+	def intersectVerticalLine other
+		if real_close(@x,other.x)
+			self
+		else
+			NoPoints.new
+	end
   end
   
   class Line < GeometryValue
@@ -146,6 +169,28 @@ class GeometryExpression
 	def shift(dx,dy)
 		Line.new(@m,((b+dy)-(m*dx)))
 	end
+	def intersect other
+		other.intersectLine self 
+	end
+	def intersectPoint other
+		other.intersectLine(self)
+	end
+	def intersectLine other
+		if real_close(@m,other.m)
+			if real_close(@b,other.b)
+				self
+			else
+				NoPoints.new
+			end
+		else
+			x = (other.b - @b) / (@m - other.m)
+			y = (@m * x + @b)
+			Point.new(x,y)
+		end
+	end
+	def intersectVerticalLine other
+		Point.new(other.x, @m * other.x + @b)
+	end
   end
   
   class VerticalLine < GeometryValue
@@ -157,6 +202,22 @@ class GeometryExpression
 	end
 	def shift(dx,dy)
 		VerticalLine.new(@x+dx)
+	end
+	def intersect other
+		other.intersectVerticalLine self 
+	end
+	def intersectPoint other
+		other.intersectVerticalLine self 
+	end
+	def intersectLine other
+		other.intersectVerticalLine(self)
+	end
+	def intersectVerticalLine other
+		if real_close(@x,other.x)
+			self
+		else 
+			NoPoints.new
+		end
 	end
   end
   
@@ -192,6 +253,18 @@ class GeometryExpression
 	end
 	def shift(dx,dy)
 		LineSegment.new(@x1+dx,@y1+dy,@x2+dx,@y2+dy)
+	end
+	def intersect other
+		other.intersectLineSegment self 
+	end
+	def intersectPoint other
+		raise "to override"
+	end
+	def intersectLine other
+		raise "to override"
+	end
+	def intersectVerticalLine other
+		raise "to override"
 	end
   end
   
