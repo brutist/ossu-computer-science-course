@@ -3,6 +3,23 @@
 
 require "./hw7.rb"
 
+class Point
+	def ==(other)
+		self.class == other.class &&
+		  @x == other.x &&
+		  @y == other.y
+	end
+end
+
+class LineSegment
+	def ==(other)
+		self.class == other.class &&
+		  @x1 == other.x1 &&
+		  @x2 == other.x2 &&
+		  @y1 == other.y1 &&
+		  @y2 == other.y2
+	end
+end
 # Will not work completely until you implement all the classes and their methods
 
 # Will print only if code has errors; prints nothing if all tests pass
@@ -138,6 +155,78 @@ i1 = i.preprocess_prog.eval_prog([])
 if not (i1.x1 == -ONE and i1.y1 == -TWO and i1.x2 == THREE and i1.y2 == FOUR)
 	puts "Intersect eval_prog should return the intersect between e1 and e2"
 end
+ib = Intersect.new(Point.new(2.5,1.5),Intersect.new(LineSegment.new(2.0,1.0,3.0,2.0),Intersect.new(LineSegment.new(0.0,0.0,2.5,1.5),Line.new(1.0,-1.0))))
+ib1 = ib.preprocess_prog.eval_prog([])
+if not (ib1.is_a? Point and ib1.x == 2.5 and ib1.y == 1.5)
+	puts "Intersect eval_prog should return the intersect between e1 and e2"
+end
+ic = Point.new(1.0,1.0).intersect(LineSegment.new(1.0,1.0,5.0,6.0)) 
+ic1 = ic.preprocess_prog.eval_prog([])
+if not (ic1.is_a? Point and ic1.x == 1.0 and ic1.y == 1.0)
+	puts "Intersect eval_prog should return the intersect between e1 and e2"
+end
+id = Point.new(5.0,7.0).intersect(LineSegment.new(-1.0,2.0,5.0,7.0))
+id1 = id.preprocess_prog.eval_prog([])
+if not (id1.is_a? Point and id1.x == 5.0 and id1.y == 7.0)
+	puts "Intersect eval_prog should return the intersect between e1 and e2"
+end
+ie = Point.new(1.0,1.0).intersectLineSegment(LineSegment.new(1.0,1.0,5.0,6.0))
+ie1 = ie.preprocess_prog.eval_prog([])
+if not (ie1.is_a? Point and ie1.x == 1.0 and ie1.y == 1.0)
+	puts "Intersect eval_prog should return the intersect between e1 and e2"
+end
+ig = Point.new(5.0,5.0).intersectLineSegment(LineSegment.new(-1.0,5.0,10.0,5.0))
+ig1 = ig.preprocess_prog.eval_prog([])
+if not (ig1.is_a? Point and ig1.x == 5.0 and ig1.y == 5.0)
+	puts "Intersect eval_prog should return the intersect between e1 and e2"
+end
+
+TEST_INPUT = [Intersect.new(Point.new(2.5,1.5),Intersect.new(LineSegment.new(2.0,1.0,3.0,2.0),Intersect.new(LineSegment.new(0.0,0.0,2.5,1.5),Line.new(1.0,-1.0)))),
+			  Point.new(1.0,1.0).intersect(LineSegment.new(1.0,1.0,5.0,6.0)),
+			  Point.new(5.0,7.0).intersect(LineSegment.new(-1.0,2.0,5.0,7.0)),
+			  LineSegment.new(1.0,1.0,5.0,6.0).intersect(Point.new(1.0,1.0)),
+			  Line.new(5.0,0.0).intersectLineSegment(LineSegment.new(1.0,5.0,2.0,2.0)),
+			  LineSegment.new(-1.0,-1.0,1.0,5.0).intersectLine(Line.new(5.0,0.0)),
+			  LineSegment.new(-1.0,-1.0,3.0,3.0).intersect(VerticalLine.new(2.0)),
+			  LineSegment.new(-1.0,-1.0,3.0,3.0).intersect(VerticalLine.new(-1.0)),
+			  LineSegment.new(5.0,7.0,9.0,9.0).intersect(LineSegment.new(5.0,7.0,6.0,-1.0)),
+			  LineSegment.new(2.0,3.0,4.0,9.0).intersect(LineSegment.new(0.0,-3.0,6.0,15.0)),
+			  LineSegment.new(5.0,2.0,9.0,9.0).intersectLineSegment(LineSegment.new(-2.0,-1.0,5.0,2.0)),
+			  LineSegment.new(2.0,3.0,6.0,15.0).intersectLineSegment(LineSegment.new(0.0,-3.0,4.0,9.0)),
+			  LineSegment.new(1.0,1.0,4.0,1.0).intersectLineSegment(LineSegment.new(3.0,0.0,3.0,2.0))]
+TEST_OUTPUT = [Point.new(2.5,1.5),
+			   Point.new(1.0,1.0),
+			   Point.new(5.0,7.0),
+			   Point.new(1.0,1.0),
+			   Point.new(1.0,5.0),
+			   Point.new(1.0,5.0),
+			   Point.new(2.0,2.0),
+			   Point.new(-1.0,-1.0),
+			   Point.new(5.0,7.0),
+			   LineSegment.new(2.0,3.0,4.0,9.0),
+			   Point.new(5.0,2.0),
+			   LineSegment.new(2.0,3.0,4.0,9.0),
+			   Point.new(3.0,1.0)]
+
+def auto_test(inputl,outputl)
+	counter = 1
+	status = true
+	test = inputl.zip(outputl)
+	test.each do|pr| 
+		if not(pr[0].preprocess_prog.eval_prog([]) == pr[1])
+			puts "test failed on test " + counter.to_s
+			status = false
+		end
+		counter +=1
+	end
+	if status
+		puts "ALL " + counter.to_s + " TESTS PASSED."
+	end
+end
+
+
+auto_test(TEST_INPUT,TEST_OUTPUT)
+
 
 #Var Tests
 v = Var.new("a")

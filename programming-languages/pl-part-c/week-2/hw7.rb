@@ -289,7 +289,40 @@ class GeometryExpression
 		other.intersectLineSegment(self)
 	end
 	def intersectWithSegmentAsLineResult seg
-		self
+		if real_close(@x1,@x2)
+			if @y1 < seg.y1
+				aXstart,aYstart,aXend,aYend,bXstart,bYstart,bXend,bYend = @x1,@y1,@x2,@y2,seg.x1,seg.y1,seg.x2,seg.y2
+			else 
+				aXstart,aYstart,aXend,aYend,bXstart,bYstart,bXend,bYend = seg.x1,seg.y1,seg.x2,seg.y2,@x1,@y1,@x2,@y2
+			end
+
+			if real_close(aYend,bYstart)
+				Point.new(aXend,aYend)
+			elsif aYend < bYstart
+				NoPoints
+			elsif aYend > bYend
+				LineSegment.new(bXstart,bYstart,bXend,bYend)
+			else
+				LineSegment(bXstart,bYstart,aXend,aYend)
+			end
+		else
+			if @x1 < seg.x1
+				aXstart,aYstart,aXend,aYend,bXstart,bYstart,bXend,bYend = @x1,@y1,@x2,@y2,seg.x1,seg.y1,seg.x2,seg.y2
+			else
+				aXstart,aYstart,aXend,aYend,bXstart,bYstart,bXend,bYend = seg.x1,seg.y1,seg.x2,seg.y2,@x1,@y1,@x2,@y2
+			end
+
+			if real_close(aXend,bXstart)
+				Point.new(aXend,aYend)
+			elsif aXend < bXstart
+				NoPoints
+			elsif aXend > bXend
+				LineSegment.new(bXstart,bYstart,bXend,bYend)
+			else
+				LineSegment.new(bXstart,bYstart,aXend,aYend)
+
+			end
+	    end		
 	end
   end
   
