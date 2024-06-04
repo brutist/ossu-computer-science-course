@@ -218,7 +218,7 @@ fun preprocess_prog(e) =
 			let
 			fun wrong_order(v1,v2,v3,v4) =
 				if v1 > v3 
-				then true
+				then not(real_close(v1,v3))
 				else v2 > v4 andalso real_close(v1,v3)
 			in
 			if real_close(r1,r3) andalso real_close(r2,r4)
