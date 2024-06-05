@@ -1,3 +1,4 @@
+package lecture;
 import edu.duke.FileResource;
 
 public class hello {
