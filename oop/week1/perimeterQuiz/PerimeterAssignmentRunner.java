@@ -1,3 +1,4 @@
+package week1.perimeterQuiz;
 import edu.duke.*;
 import java.io.File;
 

@@ -1,4 +1,4 @@
-package lecture;
+package week1.lecture;
 public class PointNew {
     private int x;
     private int y;
