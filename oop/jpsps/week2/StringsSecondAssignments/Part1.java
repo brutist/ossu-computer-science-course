@@ -126,5 +126,7 @@ public class Part1 {
         test.testFindStopCodon();
         test.testFindGene();
         test.printAllGenes("ATGTGCCCCTAAGCTATGGATTAAGAAACC");
+        test.printAllGenes("ATGATCTAATTTATGCTGCAACGGTGAAGA");
+        test.printAllGenes("ATGATCATAAGAAGATAATAGAGGGCCATGTAA");
     }
 }
