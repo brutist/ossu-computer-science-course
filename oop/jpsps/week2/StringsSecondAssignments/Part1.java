@@ -118,7 +118,7 @@ public class Part1 {
         while (startIndex != -1) {
             String gene = findGene(dna.substring(startIndex));
             System.out.println(gene);
-            startIndex = dna.indexOf("ATG",startIndex+1);
+            startIndex = dna.indexOf("ATG",startIndex + gene.length());
         }
     }
     public static void main(String[] args) {
