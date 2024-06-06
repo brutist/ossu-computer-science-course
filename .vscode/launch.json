@@ -6,6 +6,41 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Part1",
+            "request": "launch",
+            "mainClass": "jpsps.week2.StringsFirstAssignments.Part1",
+            "projectName": "ossu-computer-science-course_a5dc2f25"
+        },
+        {
+            "type": "java",
+            "name": "PointNew",
+            "request": "launch",
+            "mainClass": "jpsps.week1.lecture.PointNew",
+            "projectName": "ossu-computer-science-course_a5dc2f25"
+        },
+        {
+            "type": "java",
+            "name": "hello",
+            "request": "launch",
+            "mainClass": "jpsps.week1.lecture.hello",
+            "projectName": "ossu-computer-science-course_a5dc2f25"
+        },
+        {
+            "type": "java",
+            "name": "PerimeterRunner",
+            "request": "launch",
+            "mainClass": "jpsps.week1.lecture.PerimeterRunner",
+            "projectName": "ossu-computer-science-course_a5dc2f25"
+        },
+        {
+            "type": "java",
+            "name": "PerimeterAssignmentRunner",
+            "request": "launch",
+            "mainClass": "jpsps.week1.perimeterQuiz.PerimeterAssignmentRunner",
+            "projectName": "ossu-computer-science-course_a5dc2f25"
+        },
+        {
+            "type": "java",
             "name": "Part4",
             "request": "launch",
             "mainClass": "week2.StringsFirstAssignments.Part4",

@@ -1,4 +1,4 @@
-package week1.lecture;
+package jpsps.week1.lecture;
 import edu.duke.FileResource;
 
 public class hello {

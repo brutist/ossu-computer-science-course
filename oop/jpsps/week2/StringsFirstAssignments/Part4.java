@@ -1,4 +1,4 @@
-package week2.StringsFirstAssignments;
+package jpsps.week2.StringsFirstAssignments;
 
 import edu.duke.URLResource;
 

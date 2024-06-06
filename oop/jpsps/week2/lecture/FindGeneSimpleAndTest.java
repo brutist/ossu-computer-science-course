@@ -1,4 +1,4 @@
-package week2.lecture;
+package jpsps.week2.lecture;
 
 public class FindGeneSimpleAndTest {
 
