@@ -54,8 +54,8 @@ public class Part2 {
         if (result.equals(answer)) {System.out.println("TEST 4 - PASSED");}
         else {System.out.println("TEST 4 - FAILED");}
 
-        dna = "ATGGCGTCATAATACGGT";
-        answer = "ATGGCGTCATAA";
+        dna = "AAATGCCCTAACTAGATTAAGAAACC";
+        answer = "ATGCCCTAA";
         result = findSimpleGene(dna,startCodon,stopCodon);
         System.out.println("Given dna = " + dna + "\n" + "Answer = " + result);
         if (result.equals(answer)) {System.out.println("TEST 5 - PASSED");}
