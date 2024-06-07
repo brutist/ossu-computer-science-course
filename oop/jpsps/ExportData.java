@@ -21,6 +21,18 @@ public class ExportData {
 
         parser = fr.getCSVParser();
         bigExporters(parser, "$999,999,999");
+
+        parser = fr.getCSVParser();
+        int noOfExporters = numberOfExporters(parser, "sugar");
+        System.out.print("Sugar Exporters: " + noOfExporters);
+        System.out.print("\n");
+
+        parser = fr.getCSVParser();
+        info = countryInfo(parser, "Nauru");
+        System.out.println(info);
+        
+        parser = fr.getCSVParser();
+        bigExporters(parser, "$999,999,999,999");
     }
     public String countryInfo(CSVParser parser, String country) {
         for (CSVRecord record : parser) {
