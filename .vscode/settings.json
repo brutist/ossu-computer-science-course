@@ -8,5 +8,6 @@
         "/home/jonathanhousepc2/java-jar/courserajava.jar"
     ],
     "java.dependency.packagePresentation": "flat",
-    "java.dependency.syncWithFolderExplorer": false
+    "java.dependency.syncWithFolderExplorer": false,
+    "java.configuration.runtimes": []
 }
