@@ -84,32 +84,32 @@ public class Part1 {
         String dna = "AACGCGTAATACGGT";
         String answer = "";
         String result = findGene(dna);
-        // if (result.equals(answer)) {System.out.println("TEST 1 - PASSED");}
+        if (result.equals(answer)) {System.out.println("TEST 1 - PASSED");}
         // else {System.out.println("TEST 1 - FAILED");}
        
         dna = "CGCGCGTCATACGGT";
         result = findGene(dna);
         System.out.println("Given dna = " + dna + "\n" + "Answer = " + result);
-        // if (result.equals(answer)) {System.out.println("TEST 2 - PASSED");}
+        if (result.equals(answer)) {System.out.println("TEST 2 - PASSED");}
         // else {System.out.println("TEST 2 - FAILED");}
 
         dna = "TAAGCGTCATACGGT";
         result = findGene(dna);
         System.out.println("Given dna = " + dna + "\n" + "Answer = " + result);
-        // if (result.equals(answer)) {System.out.println("TEST 3 - PASSED");}
+        if (result.equals(answer)) {System.out.println("TEST 3 - PASSED");}
         // else {System.out.println("TEST 3 - FAILED");}
 
         dna = "ATGGCGCATAATACGGT";
         result = findGene(dna);
         System.out.println("Given dna = " + dna + "\n" + "Answer = " + result);
-        // if (result.equals(answer)) {System.out.println("TEST 4 - PASSED");}
+        if (result.equals(answer)) {System.out.println("TEST 4 - PASSED");}
         // else {System.out.println("TEST 4 - FAILED");}
 
         dna = "AAATGCCCTAGCTAGATTAAGAAACC";
         answer = "ATGCCCTAG";
         result = findGene(dna);
         System.out.println("Given dna = " + dna + "\n" + "Answer = " + result);
-        // if (result.equals(answer)) {System.out.println("TEST 5 - PASSED");}
+        if (result.equals(answer)) {System.out.println("TEST 5 - PASSED");}
         // else {System.out.println("TEST 5 - FAILED");
         // System.out.println(result);}
     }
@@ -118,7 +118,7 @@ public class Part1 {
         while (startIndex != -1) {
             String gene = findGene(dna.substring(startIndex));
             System.out.println(gene);
-            startIndex = dna.indexOf("ATG",startIndex + gene.length());
+            startIndex = dna.indexOf("ATG",startIndex + gene.length() + 1);
         }
     }
     public static void main(String[] args) {
