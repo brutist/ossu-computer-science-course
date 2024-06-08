@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "WeatherParser",
+            "request": "launch",
+            "mainClass": "jpsps.week3.WeatherParser",
+            "projectName": "ossu-computer-science-course_a5dc2f25"
+        },
+        {
+            "type": "java",
             "name": "ExportData",
             "request": "launch",
             "mainClass": "jpsps.ExportData",
