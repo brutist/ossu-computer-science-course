@@ -1,4 +1,4 @@
-package jpsps;
+package jpsps.week3;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
