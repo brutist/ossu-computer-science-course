@@ -29,8 +29,14 @@ public class WeatherParser {
     public void testColdestHourInFile() {
         FileResource fr = new FileResource();
         CSVRecord coldest = coldestHourInFile(fr.getCSVParser());
+        String coldestTime = "";
+        try {
+            coldestTime = coldest.get("TimeEST");
+        } catch (Exception ResourceException) {
+            coldestTime = coldest.get("TimeEDT");
+        }
         System.out.println("coldest temperature was " + coldest.get("TemperatureF") +
-                           " at " + coldest.get("TimeEST"));
+                           " at " + coldestTime);
     }
     public String fileWithColdestTemperature() {
         DirectoryResource dr = new DirectoryResource();
@@ -55,8 +61,9 @@ public class WeatherParser {
     }
     public void testFileWithColdestTemperature() {
         String coldestTempInFiles = fileWithColdestTemperature();
-        FileResource fr = new FileResource(coldestTempInFiles);
+        FileResource fr = new FileResource("nc_weather/2014/" + coldestTempInFiles);
         CSVRecord coldestRecord = coldestHourInFile(fr.getCSVParser());
+        System.out.println(coldestRecord.get("DateUTC"));
 
         System.out.println("Coldest day was in file " + coldestTempInFiles);
         System.out.println("Coldest temperature on that day was " + coldestRecord.get("TemperatureF"));
@@ -174,5 +181,8 @@ public class WeatherParser {
         //w.testLowestHumidityInManyFiles();
         //w.testAverageTemperatureInFile();
         w.testAverageTemperatureWithHighHumidityInFile();
+        //w.testColdestHourInFile();
+        //w.testFileWithColdestTemperature();
+        //w.testLowestHumidityInFile();
     }
 }
