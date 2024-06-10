@@ -22,6 +22,19 @@ public class WordLengths {
             }
         }
     }
+    // Assumes that the int[] values has entries
+    public int indexOfMax(int[] values) {
+        int largestVal = 0;
+        int largestValIndex = 0;
+        for (int i = 0; i < values.length; i++) {
+            int currentVal = values[i];
+            if (currentVal > largestVal) {
+                largestVal = currentVal;
+                largestValIndex = i;
+            }
+        }
+        return largestValIndex;
+    }
     public void testCountWordLengths() {
         FileResource resource = new FileResource();
         int[] wordLengths = new int[31];
@@ -48,19 +61,6 @@ public class WordLengths {
                 System.out.println("\n");
             }
         }
-    }
-    // Assumes that the int[] values has entries
-    public int indexOfMax(int[] values) {
-        int largestVal = 0;
-        int largestValIndex = 0;
-        for (int i = 0; i < values.length; i++) {
-            int currentVal = values[i];
-            if (currentVal > largestVal) {
-                largestVal = currentVal;
-                largestValIndex = i;
-            }
-        }
-        return largestValIndex;
     }
     public void testIndexOfMax() {
         int[][] inputArr = {new int[]{1,3,4,5},
