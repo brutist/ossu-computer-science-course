@@ -1,4 +1,4 @@
-package jpalsd;
+package jpalsd.week1;
 
 public class CaesarCipher {
     public String encrypt(String input, int key) {

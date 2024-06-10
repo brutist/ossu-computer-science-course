@@ -1,4 +1,4 @@
-package jpalsd;
+package jpalsd.week1;
 
 public class WordPlay {
     public boolean isVowel(Character ch) {
