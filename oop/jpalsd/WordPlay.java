@@ -1,6 +1,4 @@
 package jpalsd;
-import java.util.Arrays;
-import java.util.List;
 
 public class WordPlay {
     public boolean isVowel(Character ch) {
@@ -50,12 +48,10 @@ public class WordPlay {
     public void testIsVowel() {
         Character[] inputArr = {'F','A','a','a'};
         Boolean[] outputArr = {false,true,true,true};
-        List<Character> inputList = Arrays.asList(inputArr);
-        List<Boolean> outputList = Arrays.asList(outputArr);
         
-        for (int i = 0; i < inputList.size(); i++) {
-            char currInput = inputList.get(i);
-            boolean currOutput = outputList.get(i);
+        for (int i = 0; i < inputArr.length; i++) {
+            char currInput = inputArr[i];
+            boolean currOutput = outputArr[i];
             boolean answer = isVowel(currInput);
             if (currOutput != answer) { System.out.println(String.format("Test %d - Failed", i+1)); }
         }
@@ -65,14 +61,11 @@ public class WordPlay {
         String[] inputArr1 = {"Hello World","Systematic","NEW YEAR NEW ME","Hey soul Sisters"};
         Character[] inputArr2 = {'*','q','m','1'};
         String[] outputArr = {"H*ll* W*rld","Systqmqtqc","NmW YmmR NmW Mm","H1y s11l S1st1rs"};
-        List<String> inputList1 = Arrays.asList(inputArr1);
-        List<Character> inputList2 = Arrays.asList(inputArr2);
-        List<String> outputList = Arrays.asList(outputArr);
-        
-        for (int i = 0; i < inputList1.size(); i++) {
-            String currInput1 = inputList1.get(i);
-            char currInput2 = inputList2.get(i);
-            String answer = outputList.get(i);
+ 
+        for (int i = 0; i < inputArr1.length; i++) {
+            String currInput1 = inputArr1[i];
+            char currInput2 = inputArr2[i];
+            String answer = outputArr[i];
             String currResult = replaceVowels(currInput1, currInput2);
             if (!currResult.equals(answer)) { 
                 System.out.println(String.format("Test %d - Failed", i+1));
@@ -86,14 +79,11 @@ public class WordPlay {
         String[] inputArr1 = {"dna ctgaaactga","Mary Bella Abracadabra","Mary Bella Abracadabra"};
         Character[] inputArr2 = {'a','a','1'};
         String[] outputArr = {"dn* ctg+*+ctg+","M+ry Bell+ +br*c*d*br+","Mary Bella Abracadabra"};
-        List<String> inputList1 = Arrays.asList(inputArr1);
-        List<Character> inputList2 = Arrays.asList(inputArr2);
-        List<String> outputList = Arrays.asList(outputArr);
         
-        for (int i = 0; i < inputList1.size(); i++) {
-            String currInput1 = inputList1.get(i);
-            char currInput2 = inputList2.get(i);
-            String answer = outputList.get(i);
+        for (int i = 0; i < inputArr1.length; i++) {
+            String currInput1 = inputArr1[i];
+            char currInput2 = inputArr2[i];
+            String answer = outputArr[i];
             String currResult = emphasize(currInput1, currInput2);
             if (!currResult.equals(answer)) { 
                 System.out.println(String.format("Test %d - Failed", i+1));

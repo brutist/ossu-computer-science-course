@@ -1,8 +1,5 @@
 package jpalsd;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class CaesarCipher {
     public String encrypt(String input, int key) {
         String output = "";
@@ -63,7 +60,6 @@ public class CaesarCipher {
                               "Wzijk Cvxzfe",
                               "Pi cddc qt xc iwt rdcutgtcrt gddb lxiw ndjg wpi dc udg p hjgegxht epgin. NTAA ADJS!"};
 
-        
         for (int i = 0; i < inputArr1.length; i++) {
             String currInput1 = inputArr1[i];
             int currInput2 = inputArr2[i];
