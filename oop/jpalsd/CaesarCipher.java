@@ -62,14 +62,12 @@ public class CaesarCipher {
                               "Cfopq Ibdflk",
                               "Wzijk Cvxzfe",
                               "Pi cddc qt xc iwt rdcutgtcrt gddb lxiw ndjg wpi dc udg p hjgegxht epgin. NTAA ADJS!"};
-        List<String> inputList1 = Arrays.asList(inputArr1);
-        List<Integer> inputList2 = Arrays.asList(inputArr2);
-        List<String> outputList = Arrays.asList(outputArr);
+
         
-        for (int i = 0; i < inputList1.size(); i++) {
-            String currInput1 = inputList1.get(i);
-            int currInput2 = inputList2.get(i);
-            String answer = outputList.get(i);
+        for (int i = 0; i < inputArr1.length; i++) {
+            String currInput1 = inputArr1[i];
+            int currInput2 = inputArr2[i];
+            String answer = outputArr[i];
             String currResult = encrypt(currInput1, currInput2);
             if (!currResult.equals(answer)) { 
                 System.out.println(String.format("Test %d - Failed", i+1));
@@ -88,16 +86,12 @@ public class CaesarCipher {
         String[] outputArr = {"Czojq Ivdzle",
                               "BdBdBd",
                               "Io iwjv jz dv bcm kjvammmikz mwju edbc twpz pvb wi awm v ncmxmqnm xvzog. TMGT TJCY!"};
-        List<String> inputList1 = Arrays.asList(inputArr1);
-        List<Integer> inputList2 = Arrays.asList(inputArr2);
-        List<Integer> inputList3 = Arrays.asList(inputArr3);
-        List<String> outputList = Arrays.asList(outputArr);
         
-        for (int i = 0; i < inputList1.size(); i++) {
-            String currInput1 = inputList1.get(i);
-            int currInput2 = inputList2.get(i);
-            int currInput3 = inputList3.get(i);
-            String answer = outputList.get(i);
+        for (int i = 0; i <  inputArr1.length; i++) {
+            String currInput1 = inputArr1[i];
+            int currInput2 = inputArr2[i];
+            int currInput3 = inputArr3[i];
+            String answer = outputArr[i];
             String currResult = encryptTwoKeys(currInput1, currInput2,currInput3);
             if (!currResult.equals(answer)) { 
                 System.out.println(String.format("Test %d - Failed", i+1));
