@@ -55,11 +55,13 @@ public class CaesarCipher {
     public void testEncrypt() {
         String[] inputArr1 = {"FIRST LEGION ATTACK EAST FLANK!",
                               "First Legion",
-                              "First Legion"};
-        Integer[] inputArr2 = {23,23,17};
+                              "First Legion",
+                              "At noon be in the conference room with your hat on for a surprise party. YELL LOUD!"};
+        Integer[] inputArr2 = {23,23,17,15};
         String[] outputArr = {"CFOPQ IBDFLK XQQXZH BXPQ CIXKH!",
                               "Cfopq Ibdflk",
-                              "Wzijk Cvxzfe"};
+                              "Wzijk Cvxzfe",
+                              "Pi cddc qt xc iwt rdcutgtcrt gddb lxiw ndjg wpi dc udg p hjgegxht epgin. NTAA ADJS!"};
         List<String> inputList1 = Arrays.asList(inputArr1);
         List<Integer> inputList2 = Arrays.asList(inputArr2);
         List<String> outputList = Arrays.asList(outputArr);
@@ -78,10 +80,14 @@ public class CaesarCipher {
         System.out.println("encrypt Tests Completed");
     }
     public void testEncryptTwoKeys() {
-        String[] inputArr1 = {"First Legion","AbAbAb"};
-        Integer[] inputArr2 = {23,1};
-        Integer[] inputArr3 = {17,2};
-        String[] outputArr = {"Czojq Ivdzle","BdBdBd"};
+        String[] inputArr1 = {"First Legion",
+                              "AbAbAb",
+                              "At noon be in the conference room with your hat on for a surprise party. YELL LOUD!"};
+        Integer[] inputArr2 = {23,1,8};
+        Integer[] inputArr3 = {17,2,21};
+        String[] outputArr = {"Czojq Ivdzle",
+                              "BdBdBd",
+                              "Io iwjv jz dv bcm kjvammmikz mwju edbc twpz pvb wi awm v ncmxmqnm xvzog. TMGT TJCY!"};
         List<String> inputList1 = Arrays.asList(inputArr1);
         List<Integer> inputList2 = Arrays.asList(inputArr2);
         List<Integer> inputList3 = Arrays.asList(inputArr3);
