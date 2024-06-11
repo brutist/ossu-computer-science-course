@@ -156,8 +156,10 @@ public class CaesarBreaker {
         }
     }
     public void testDecryptTwoKeys() {
-        String[] inputArr1 = {"Gwpv c vbuq pvokki yfve iqqu qc bgbgbgbgbgbgbgbgbu"};
-        String[] outputArr = {"Just a test string with lots of eeeeeeeeeeeeeeeees"};
+        String[] inputArr1 = {"Gwpv c vbuq pvokki yfve iqqu qc bgbgbgbgbgbgbgbgbu",
+                              "Akag tjw Xibhr awoa aoee xakex znxag xwko"};
+        String[] outputArr = {"Just a test string with lots of eeeeeeeeeeeeeeeees",
+                              "Eren and Emily have evil eerie green ears"};
         boolean testResult = true;
         int i = 0;
         for (; i < inputArr1.length; i++) {
@@ -172,7 +174,7 @@ public class CaesarBreaker {
             }
         }
         if (testResult) {
-            System.out.println(String.format("getKey Tests - ALL %d TESTS PASSED",i));
+            System.out.println(String.format("decryptTwoKeys Tests - ALL %d TESTS PASSED",i));
         }
     }
     public static void main(String[] args) {

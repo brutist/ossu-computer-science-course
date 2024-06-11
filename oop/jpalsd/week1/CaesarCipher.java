@@ -79,13 +79,15 @@ public class CaesarCipher {
         String[] inputArr1 = {"First Legion",
                               "AbAbAb",
                               "At noon be in the conference room with your hat on for a surprise party. YELL LOUD!",
-                              "Gwpv c vbuq pvokki yfve iqqu qc bgbgbgbgbgbgbgbgbu"};
-        Integer[] inputArr2 = {23,1,8,23};
-        Integer[] inputArr3 = {17,2,21,2};
+                              "Gwpv c vbuq pvokki yfve iqqu qc bgbgbgbgbgbgbgbgbu",
+                              "Top ncmy qkff vi vguv vbg ycpx"};
+        Integer[] inputArr2 = {23,1,8,26-23,26-(4-2)};
+        Integer[] inputArr3 = {17,2,21,26-(4-2),26-20};
         String[] outputArr = {"Czojq Ivdzle",
                               "BdBdBd",
                               "Io iwjv jz dv bcm kjvammmikz mwju edbc twpz pvb wi awm v ncmxmqnm xvzog. TMGT TJCY!",
-                              "Dyx e xywn mxlmhk acxb fsnw sz yiyiyiyiyiyiyiyiyw"};
+                              "Just a test string with lots of eeeeeeeeeeeeeeeees",
+                              "Run like wild to beat the wind"};
         
         for (int i = 0; i <  inputArr1.length; i++) {
             String currInput1 = inputArr1[i];

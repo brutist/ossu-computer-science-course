@@ -55,7 +55,7 @@ public class WordLengths {
                     }
                     wordLength = word.length();
                     if (wordLength == i) {
-                        System.out.print(String.format(" %s ", word));
+                        //System.out.print(String.format(" %s ", word));
                     }
                 }
                 System.out.println("\n");
@@ -85,7 +85,7 @@ public class WordLengths {
     }
     public static void main(String[] args) {
         WordLengths w = new WordLengths();
-        //w.testCountWordLengths();
-        w.testIndexOfMax();
+        w.testCountWordLengths();
+        //w.testIndexOfMax();
     }
 }
