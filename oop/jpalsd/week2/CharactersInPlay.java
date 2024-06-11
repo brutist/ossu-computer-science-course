@@ -1,4 +1,3 @@
-package jpalsd.week2;
 import java.util.ArrayList;
 
 import edu.duke.FileResource;
