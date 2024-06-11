@@ -51,11 +51,13 @@ public class CaesarCipher {
     }
     public void testEncrypt() {
         String[] inputArr1 = {"FIRST LEGION ATTACK EAST FLANK!",
+                              "eeeeeeeeeeeeeeeees",
                               "First Legion",
                               "First Legion",
                               "At noon be in the conference room with your hat on for a surprise party. YELL LOUD!"};
-        Integer[] inputArr2 = {23,23,17,15};
+        Integer[] inputArr2 = {23,2,23,17,15};
         String[] outputArr = {"CFOPQ IBDFLK XQQXZH BXPQ CIXKH!",
+                              "gggggggggggggggggu",
                               "Cfopq Ibdflk",
                               "Wzijk Cvxzfe",
                               "Pi cddc qt xc iwt rdcutgtcrt gddb lxiw ndjg wpi dc udg p hjgegxht epgin. NTAA ADJS!"};
@@ -76,12 +78,14 @@ public class CaesarCipher {
     public void testEncryptTwoKeys() {
         String[] inputArr1 = {"First Legion",
                               "AbAbAb",
-                              "At noon be in the conference room with your hat on for a surprise party. YELL LOUD!"};
-        Integer[] inputArr2 = {23,1,8};
-        Integer[] inputArr3 = {17,2,21};
+                              "At noon be in the conference room with your hat on for a surprise party. YELL LOUD!",
+                              "Gwpv c vbuq pvokki yfve iqqu qc bgbgbgbgbgbgbgbgbu"};
+        Integer[] inputArr2 = {23,1,8,23};
+        Integer[] inputArr3 = {17,2,21,2};
         String[] outputArr = {"Czojq Ivdzle",
                               "BdBdBd",
-                              "Io iwjv jz dv bcm kjvammmikz mwju edbc twpz pvb wi awm v ncmxmqnm xvzog. TMGT TJCY!"};
+                              "Io iwjv jz dv bcm kjvammmikz mwju edbc twpz pvb wi awm v ncmxmqnm xvzog. TMGT TJCY!",
+                              "Dyx e xywn mxlmhk acxb fsnw sz yiyiyiyiyiyiyiyiyw"};
         
         for (int i = 0; i <  inputArr1.length; i++) {
             String currInput1 = inputArr1[i];
