@@ -63,6 +63,8 @@ public class CharactersInPlay {
     }
     public static void main(String[] args) {
         CharactersInPlay cp = new CharactersInPlay();
-        cp.tester();
+        //cp.tester();
+
+        cp.charactersWithNumParts(10, 15);
     }
 }

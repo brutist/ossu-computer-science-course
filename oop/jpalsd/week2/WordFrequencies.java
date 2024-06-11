@@ -52,6 +52,13 @@ public class WordFrequencies {
     }
     public static void main(String[] args) {
         WordFrequencies wf = new WordFrequencies();
-        wf.tester();
+        //wf.tester();
+
+        wf.findUnique();
+        int uniqueWords = wf.myWords.size();
+        String mostCommonWord = wf.myWords.get(wf.findIndexOfMax());
+        int mostCommonWordTimes = wf.myFreqs.get(wf.findIndexOfMax());
+        System.out.println(String.format("No. of unique words %d Most common word: %s", uniqueWords, mostCommonWord));
+        System.out.println(String.format("The most common occured %s times", mostCommonWordTimes));
     }
 }
