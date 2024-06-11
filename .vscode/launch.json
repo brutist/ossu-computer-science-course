@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CharactersInPlay",
+            "request": "launch",
+            "mainClass": "jpalsd.week2.CharactersInPlay",
+            "projectName": "ossu-computer-science-course_5fd83b80"
+        },
+        {
+            "type": "java",
             "name": "WordFrequencies",
             "request": "launch",
             "mainClass": "jpalsd.week2.WordFrequencies",
