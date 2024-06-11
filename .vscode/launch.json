@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "WordFrequencies",
+            "request": "launch",
+            "mainClass": "jpalsd.week2.WordFrequencies",
+            "projectName": "ossu-computer-science-course_5fd83b80"
+        },
+        {
+            "type": "java",
+            "name": "TestCaesarCipherOo",
+            "request": "launch",
+            "mainClass": "jpalsd.week1.TestCaesarCipherOo",
+            "projectName": "ossu-computer-science-course_5fd83b80"
+        },
+        {
+            "type": "java",
             "name": "TestCaesarCipherOo",
             "request": "launch",
             "mainClass": "jpalsd.week1.TestCaesarCipherOo",

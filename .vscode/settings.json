@@ -5,7 +5,9 @@
     ],
     "java.project.referencedLibraries": [
         "/home/jonathanhousepc2/java-jar/apache-csv.jar",
-        "/home/jonathanhousepc2/java-jar/courserajava.jar"
+        "/home/jonathanhousepc2/java-jar/courserajava.jar",
+        "/home/jonathanworkpc/java-jar/courserajava.jar",
+        "/home/jonathanworkpc/java-jar/apache-csv.jar"
     ],
     "java.dependency.packagePresentation": "flat",
     "java.dependency.syncWithFolderExplorer": false,
