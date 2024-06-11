@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "TestCaesarCipherOo",
+            "request": "launch",
+            "mainClass": "jpalsd.week1.TestCaesarCipherOo",
+            "projectName": "ossu-computer-science-course_a5dc2f25"
+        },
+        {
+            "type": "java",
+            "name": "CaesarCipherOo",
+            "request": "launch",
+            "mainClass": "jpalsd.week1.CaesarCipherOo",
+            "projectName": "ossu-computer-science-course_a5dc2f25"
+        },
+        {
+            "type": "java",
             "name": "CaesarCipher",
             "request": "launch",
             "mainClass": "jpalsd.week1.CaesarCipher",
