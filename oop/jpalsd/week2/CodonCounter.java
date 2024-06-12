@@ -49,8 +49,8 @@ public class CodonCounter {
         }
     }
     public void tester() {
-        int START = 1;
-        int END = 5;
+        int START = 4;
+        int END = 4;
         String mostCommonCodon = "";
         for (int i = 0; i < 3; i++) {
             buildCodonMap(i, mainDna);
@@ -62,7 +62,11 @@ public class CodonCounter {
         }
     }
     public static void main(String[] args) {
-        CodonCounter cc = new CodonCounter("CGTTCAAGTTCAA");
+        String dnaMystery1 = "ATTAATACTTTGTTTAACAGTAATTATTCAACTATTAAATATTTAAATAATTAAGT" +
+                             "TATTAAACTATTAAGTACAGGGCCTGTATCTCTGATGCTGAACTATGATGTGTGACT" +
+                             "TAAGCCCCCAAATACATCATGTTATTTGGATCCAAGGTGCTGCACAGAACGCTGACC" +
+                             "CTCTCTAAGAGCTGGGTATTACT";
+        CodonCounter cc = new CodonCounter(dnaMystery1);
         cc.tester();
     }
 }

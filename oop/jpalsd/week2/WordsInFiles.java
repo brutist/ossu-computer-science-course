@@ -12,9 +12,13 @@ public class WordsInFiles {
 
     public WordsInFiles() {
         wordMap = new HashMap<String,ArrayList<String>>();
-        source = "gladlibtexts/";
-        testFiles = new String[]{source+"brief1.txt",source+"brief2.txt",
-                                source+"brief3.txt",source+"brief4.txt"};
+        //source = "gladlibtexts/";
+        //testFiles = new String[]{source+"brief1.txt",source+"brief2.txt",
+        //                        source+"brief3.txt",source+"brief4.txt"};
+        source = "literaturelib/";
+        testFiles = new String[]{source+"caesar.txt",source+"hamlet.txt",
+                                 source+"likeit.txt",source+"macbeth.txt",
+                                 source+"romeo.txt"};
     }
     private void addWordsFromFile(File f) {
         String filename = source + f.getName();
@@ -22,8 +26,11 @@ public class WordsInFiles {
         for (String word : fr.words()) {
             if (wordMap.containsKey(word)) {
                 ArrayList<String> val = wordMap.get(word);
-                val.add(f.getName());
-                wordMap.put(word,val);
+                String fname = f.getName();
+                if (!val.contains(fname)) {
+                    val.add(f.getName());
+                    wordMap.put(word,val);
+                }
             }
             else {
                 ArrayList<String> fname = new ArrayList<String>();
@@ -72,19 +79,23 @@ public class WordsInFiles {
     }
     public void tester() {
         buildWordFileMap();
-        int maxOccurence = maxNumber();
+        /*int maxOccurence = maxNumber();
         for (String key : wordMap.keySet()) {
             int currOccurence = wordMap.get(key).size();
             if (currOccurence >= maxOccurence) {
                 System.out.println(String.format("'%s' appeared %d times in the files",key,currOccurence));
-                printFilesIn(key);
+                //printFilesIn(key);
             }
-        }
+        }*/
+        int minFiles = 5;
+        ArrayList<String> wordsInFiveFiles = wordsInNumFiles(minFiles);
+        System.out.println(String.format("No. of words in %d files: %d",minFiles,wordsInFiveFiles.size()));
         System.out.println("All words in files");
-        for (String key : wordMap.keySet()) {
+        /*for (String key : wordMap.keySet()) {
             System.out.println(String.format("'%s' appeared %d times in the files",key,wordMap.get(key).size()));
             printFilesIn(key);
-        }
+        } 
+        printFilesIn("sad"); */
     }
     public static void main(String[] args) {
         WordsInFiles wf = new WordsInFiles();
