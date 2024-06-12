@@ -7,12 +7,18 @@ import java.io.File;
 
 public class WordsInFiles {
     private HashMap<String,ArrayList<String>> wordMap;
+    private String[] testFiles;
+    private String source;
 
     public WordsInFiles() {
         wordMap = new HashMap<String,ArrayList<String>>();
+        source = "gladlibtexts/";
+        testFiles = new String[]{source+"brief1.txt",source+"brief2.txt",
+                                source+"brief3.txt",source+"brief4.txt"};
     }
     private void addWordsFromFile(File f) {
-        FileResource fr = new FileResource(f);
+        String filename = source + f.getName();
+        FileResource fr = new FileResource(filename);
         for (String word : fr.words()) {
             if (wordMap.containsKey(word)) {
                 ArrayList<String> val = wordMap.get(word);
@@ -28,8 +34,13 @@ public class WordsInFiles {
     }
     public void buildWordFileMap() {
         wordMap.clear();
-        DirectoryResource dr = new DirectoryResource();
+        // use this if you want to pick the files
+        /* DirectoryResource dr = new DirectoryResource();
         for (File f : dr.selectedFiles()) {
+            addWordsFromFile(f);
+        }                                                  */
+        for (int i = 0; i < testFiles.length; i++) {
+            File f = new File(testFiles[i]);
             addWordsFromFile(f);
         }
     }
