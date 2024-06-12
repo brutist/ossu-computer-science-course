@@ -66,4 +66,97 @@ public class LogAnalyzer {
         }
         return uniqueIpCount;
     }
+    public HashMap<String, Integer> countVisitsPerIP() {
+        HashMap<String, Integer> visitPerIP = new HashMap<String, Integer>();
+
+        for (LogEntry e : records) {
+            String currIP = e.getIpAddress();
+            if (visitPerIP.containsKey(currIP)) {
+                int ipVisits = visitPerIP.get(currIP);
+                visitPerIP.put(currIP,ipVisits+1);
+            }
+            else {
+                visitPerIP.put(currIP,1);
+            }
+        }
+        return visitPerIP;
+    }
+    public int mostNumberVisitsByIP(HashMap<String, Integer> ipVisitRecord) {
+        int maxVisits = 0;
+
+        for (String key : ipVisitRecord.keySet()) {
+            int currIPVisits = ipVisitRecord.get(key);
+            if (currIPVisits > maxVisits) {
+                maxVisits = currIPVisits;
+            }
+        }
+        return maxVisits;
+    }
+    public ArrayList<String> iPsMostVisits(HashMap<String, Integer> ipVisitRecord) {
+        ArrayList<String> ipsWithMaxVisit = new ArrayList<String>();
+        int maxVisits = mostNumberVisitsByIP(ipVisitRecord);
+        
+        for (String ip: ipVisitRecord.keySet()) {
+            int currVisits = ipVisitRecord.get(ip);
+            if (currVisits == maxVisits && (!ipVisitRecord.containsKey(ip))) {
+                ipsWithMaxVisit.add(ip);
+            }
+        }
+        return ipsWithMaxVisit;
+    }
+    public HashMap<String, ArrayList<String>> iPsForDays() {
+        HashMap<String, ArrayList<String>> ipDayVisitsMap = new HashMap<String, ArrayList<String>>();
+        for (LogEntry e : records) {
+            String accessDate = e.getAccessTime().toString();
+            String[] dayInfo = accessDate.split(" ");
+            String currDay = dayInfo[1] + " " + dayInfo[2];
+            if (ipDayVisitsMap.containsKey(currDay)) {
+                ArrayList<String> currDayIPVisits = ipDayVisitsMap.get(currDay);
+                currDayIPVisits.add(e.getIpAddress());
+                ipDayVisitsMap.put(currDay, currDayIPVisits);
+            }
+            else {
+                ArrayList<String> currDayIPVisits = new ArrayList<String>();
+                currDayIPVisits.add(e.getIpAddress());
+                ipDayVisitsMap.put(currDay, currDayIPVisits);
+            }
+        }
+        return ipDayVisitsMap;
+    }
+    public String dayWithMostIPVisits(HashMap<String, ArrayList<String>> ipDaysVisitsMap) {
+        int maxVisits = 0;
+        String maxVisitedIP = null;
+
+        for (String key : ipDaysVisitsMap.keySet()) {
+            int currVisits = ipDaysVisitsMap.get(key).size();
+            if (currVisits > maxVisits) {
+                maxVisits = currVisits;
+                maxVisitedIP = key;
+            }
+        }
+        return maxVisitedIP;
+    }
+    public ArrayList<String> iPsWithMostVisitsOnDay(HashMap<String, ArrayList<String>> ipDaysVisitsMap, String day) {
+        HashMap<String, Integer> visitsPerIP = new HashMap<String, Integer>();
+        ArrayList<String> visitorIPs = ipDaysVisitsMap.get(day);
+        for (String ip : visitorIPs) {
+            if (visitsPerIP.containsKey(ip)) {
+                int ipTimesVisited = visitsPerIP.get(ip);
+                visitsPerIP.put(ip,ipTimesVisited+1);
+            }
+            else {
+                visitsPerIP.put(ip,1);
+            }
+        }
+
+        int maxVisit = mostNumberVisitsByIP(visitsPerIP);
+        ArrayList<String> maxVisitsIP = new ArrayList<String>();
+        for (String ip : visitsPerIP.keySet()) {
+            int keyVisits = visitsPerIP.get(ip);
+            if (keyVisits == maxVisit) {
+                maxVisitsIP.add(ip);
+            }
+        }
+        return maxVisitsIP;
+    }
 }
