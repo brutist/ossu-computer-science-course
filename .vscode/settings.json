@@ -1,8 +1,8 @@
 {
     "java.debug.settings.onBuildFailureProceed": true,
     "java.project.sourcePaths": [
-        "ossu/oop/jpalsd/week2",
-        "oop/jpalsd/week2"
+        "oop/jpalsd/week2",
+        "oop/jpalsd/week3"
     ],
     "java.project.referencedLibraries": [
         "/home/jonathanhousepc2/java-jar/apache-csv.jar",
