@@ -1,3 +1,4 @@
+import java.util.HashMap;
 import java.util.HashSet;
 
 import edu.duke.*;
@@ -24,14 +25,21 @@ public class VigenereBreaker {
         return key;
     }
 
-    public void breakVigenere (String language) {
-        FileResource fr = new FileResource();
-        String message = fr.asString();
+    public void breakVigenere () {
+        // list of dictionary filenames
+        String source = "dictionaries/";
+        String[] dictFilenames = new String[] {"Danish","Dutch","English","French",
+                                                "German","Italian","Portuguese","Spanish"};
+        
+        String encryptedMessage = new FileResource().asString();
+        HashMap<String,HashSet<String>> langsDictionaries = new HashMap<String,HashSet<String>>();
+        for (int i = 0; i < dictFilenames.length; i++) {
+            HashSet<String> currLangDict = readDictionary(new FileResource(source+dictFilenames[i]));
+            langsDictionaries.put(dictFilenames[i],currLangDict);
+        }
 
-        HashSet<String> dictionary = readDictionary(new FileResource("dictionaries/" + language));
-        String decryptedMessage = breakForLanguage(message, dictionary);
-
-        System.out.println(decryptedMessage);   
+        String decryptedMessage = breakForAllLangs(encryptedMessage,langsDictionaries);
+        System.out.println(decryptedMessage);
     }
 
     public HashSet<String> readDictionary(FileResource fr) {
@@ -61,7 +69,8 @@ public class VigenereBreaker {
         String decryptedMessage = "";
 
         for (int i = 1; i < maxKLength; i++) {
-            int[] key = tryKeyLength(encrypted, i, 'e');
+            char mostCommonChar = mostCommonCharIn(dictionary);
+            int[] key = tryKeyLength(encrypted, i, mostCommonChar);
             VigenereCipher cipher = new VigenereCipher(key);
             String currDecryptedMessage = cipher.decrypt(encrypted);
 
@@ -69,9 +78,51 @@ public class VigenereBreaker {
             if (currValidWords > maxValidWords) {
                 maxValidWords = currValidWords;
                 decryptedMessage = currDecryptedMessage;
-
             }
         }
         return decryptedMessage; 
+    }
+
+    // returns the most common character in the dictionary of words
+    public char mostCommonCharIn(HashSet<String> dictionary) {
+        HashMap<Character,Integer> charCount = new HashMap<Character,Integer>();
+        for (String word : dictionary) {
+            for (int i = 0; i < word.length(); i++) {
+                char currChar = Character.toLowerCase(word.charAt(i)) ;
+                if (charCount.containsKey(currChar)) {
+                    int currCharCount = charCount.get(currChar);
+                    charCount.put(currChar, currCharCount+1);
+                }
+                else {
+                    charCount.put(currChar,1);
+                }
+            }
+        }
+        
+        int maxCharCount = 0; 
+        char mostCommonChar = '?';
+        for (Character c : charCount.keySet()) {
+            int currCharCount = charCount.get(c);
+            if (currCharCount > maxCharCount) {
+                mostCommonChar = c;
+                maxCharCount = currCharCount;
+            }
+        }
+        return mostCommonChar;
+    }
+    public String breakForAllLangs(String encrypted,HashMap<String,HashSet<String>> languages) {
+        String decrypted = "";
+        int maxValidWords = 0;
+        
+        for (String language : languages.keySet()) {
+            HashSet<String> langDictionary = languages.get(language);
+            String currDecryptedMessage = breakForLanguage(encrypted, langDictionary);
+            int currValidWords = countWords(currDecryptedMessage, langDictionary);
+            if (currValidWords > maxValidWords) {
+                maxValidWords = currValidWords;
+                decrypted = currDecryptedMessage;
+            }
+        }
+        return decrypted;
     }
 }
