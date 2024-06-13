@@ -7,7 +7,7 @@ public class GladLibMap {
 	private ArrayList<String> identifierUsed;
 	private Random myRandom;
 	
-	private static String dataSourceURL = "http://dukelearntoprogram.com/course3/data";
+	//private static String dataSourceURL = "http://dukelearntoprogram.com/course3/data";
 	private static String dataSourceDirectory = "data";
 	
 	public GladLibMap(){
