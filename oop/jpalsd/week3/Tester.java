@@ -294,19 +294,28 @@ public class Tester {
 
     public static void main(String[] args) {
         Tester t = new Tester();
-        // t.testLogEntry();
-        // t.testLogAnalyzer();
-        t.testCountUniqueIps();
-        // t.testPrintAllHigherThanNum();
-        t.testUniqueIPVisitsOnDay();
-        // t.testUniqueIPVisitsOnDay("Mar 17");
-        t.testCountUniqueIPsInRange();
-        // t.testCountUniqueIPsInRange(200,299);
-        t.testCountVisitsPerIP();
-        t.testMostNumberVisitsByIP();
-        t.testIPsMostVisits();
-        t.testIPsForDays();
-        t.testDayWithMostIPVisits();
-        t.testIPswithMostVisitsOnDay();
+        //t.testLogEntry();
+        //t.testLogAnalyzer();
+        //t.testCountUniqueIps();
+        //t.testPrintAllHigherThanNum();
+        //t.testUniqueIPVisitsOnDay();
+        //t.testUniqueIPVisitsOnDay("Mar 17");
+        //t.testCountUniqueIPsInRange();
+        //t.testCountUniqueIPsInRange(200,299);
+        //t.testCountVisitsPerIP();
+        //t.testMostNumberVisitsByIP();
+        //t.testIPsMostVisits();
+        //t.testIPsForDays();
+        //t.testDayWithMostIPVisits();
+        //t.testIPswithMostVisitsOnDay();
+        LogAnalyzer analyzer = new LogAnalyzer();
+        analyzer.readFile("logs/weblog1_log");
+        //HashMap<String, Integer> map = analyzer.countVisitsPerIP();
+        //System.out.printf("Most visits IP: %s \n", analyzer.iPsMostVisits(map));
+
+        HashMap<String, ArrayList<String>> ipPerDayMap = analyzer.iPsForDays();
+        //System.out.printf("Day with most IP visits: %s \n", analyzer.dayWithMostIPVisits(ipPerDayMap));
+        System.out.printf("Day with most IP visits: %s \n", analyzer.iPsWithMostVisitsOnDay(ipPerDayMap, "Mar 17"));
+    
     }
 }
