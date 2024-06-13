@@ -98,8 +98,10 @@ public class LogAnalyzer {
         
         for (String ip: ipVisitRecord.keySet()) {
             int currVisits = ipVisitRecord.get(ip);
-            if (currVisits == maxVisits && (!ipVisitRecord.containsKey(ip))) {
-                ipsWithMaxVisit.add(ip);
+            if (currVisits == maxVisits) {
+                if (!ipsWithMaxVisit.contains(ip)) {
+                    ipsWithMaxVisit.add(ip);
+                }
             }
         }
         return ipsWithMaxVisit;
