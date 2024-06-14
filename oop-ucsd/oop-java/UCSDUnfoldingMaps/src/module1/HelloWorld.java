@@ -45,7 +45,7 @@ public class HelloWorld extends PApplet
 		this.background(200, 200, 200);
 		
 		// Select a map provider
-		AbstractMapProvider provider = new Google.GoogleTerrainProvider();
+		AbstractMapProvider provider = new Microsoft.AerialProvider();
 		// Set a zoom level
 		int zoomLevel = 10;
 		
@@ -66,7 +66,7 @@ public class HelloWorld extends PApplet
 		// Note if you are working offline you must use the MBTilesMapProvider
 
 		// Other providers in case google suspends access
-		provider = new Microsoft.AerialProvider();
+		//provider = new Google.GoogleTerrainProvider();
 		//provider = new OpenStreetMap.CloudmadeProvider(MapDisplayFactory.OSM_API_KEY, 23058);
 		map1 = new UnfoldingMap(this, 50, 50, 350, 500, provider);
 
