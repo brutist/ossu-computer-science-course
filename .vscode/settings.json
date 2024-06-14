@@ -1,15 +1,36 @@
 {
     "java.debug.settings.onBuildFailureProceed": true,
     "java.project.sourcePaths": [
+        "oop/jpalsd/week4/VigenereProgram",
         "oop/jpalsd/week3",
         "oop/jpalsd/week2",
-        "oop/jpalsd/week4/VigenereProgram"
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/src/module1"
     ],
     "java.project.referencedLibraries": [
         "/home/jonathanhousepc2/java-jar/apache-csv.jar",
         "/home/jonathanhousepc2/java-jar/courserajava.jar",
         "/home/jonathanworkpc/java-jar/courserajava.jar",
-        "/home/jonathanworkpc/java-jar/apache-csv.jar"
+        "/home/jonathanworkpc/java-jar/apache-csv.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/unfolding.0.9.7-uscd.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/sqlite-jdbc-3.7.2.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/log4j-1.2.15.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/libTUIO.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/json4processing.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/jogl-all.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/jogl-all-natives-windows-i586.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/jogl-all-natives-windows-amd64.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/jogl-all-natives-macosx-universal.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/jogl-all-natives-linux-i586.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/jogl-all-natives-linux-armv6hf.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/jogl-all-natives-linux-amd64.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/gluegen-rt.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/gluegen-rt-natives-windows-i586.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/gluegen-rt-natives-windows-amd64.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/gluegen-rt-natives-macosx-universal.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/gluegen-rt-natives-linux-i586.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/gluegen-rt-natives-linux-armv6hf.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/gluegen-rt-natives-linux-amd64.jar",
+        "oop-ucsd/oop-java/UCSDUnfoldingMaps/lib/core.jar"
     ],
     "java.dependency.packagePresentation": "flat",
     "java.dependency.syncWithFolderExplorer": false,
