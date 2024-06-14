@@ -4,6 +4,8 @@ import java.util.HashSet;
 import edu.duke.*;
 
 public class VigenereBreaker {
+
+
     public String sliceString(String message, int whichSlice, int totalSlices) {
         String slicedMessage = "";
         for (int i = whichSlice; i < message.length(); i+=totalSlices) {
@@ -16,7 +18,7 @@ public class VigenereBreaker {
         int[] key = new int[klength];
         
         for (int i = 0; i < klength; i++) {
-            CaesarCracker cracker = new CaesarCracker();
+            CaesarCracker cracker = new CaesarCracker(mostCommon);
             String slicedMessage = sliceString(encrypted, i, klength);
             int currKey = cracker.getKey(slicedMessage);
             key[i] = currKey;
@@ -27,19 +29,24 @@ public class VigenereBreaker {
 
     public void breakVigenere () {
         // list of dictionary filenames
+        HashMap<String,HashSet<String>> allLangDictsMap = createLangDictionaries();
+        
+        String encryptedMessage = new FileResource().asString();
+        String decryptedMessage = breakForAllLangs(encryptedMessage,allLangDictsMap);
+        System.out.println(decryptedMessage);
+    }
+
+    public HashMap<String,HashSet<String>> createLangDictionaries() {
+        HashMap<String,HashSet<String>> allLangDictsMap = new HashMap<String,HashSet<String>>();
         String source = "dictionaries/";
         String[] dictFilenames = new String[] {"Danish","Dutch","English","French",
                                                 "German","Italian","Portuguese","Spanish"};
         
-        String encryptedMessage = new FileResource().asString();
-        HashMap<String,HashSet<String>> langsDictionaries = new HashMap<String,HashSet<String>>();
         for (int i = 0; i < dictFilenames.length; i++) {
             HashSet<String> currLangDict = readDictionary(new FileResource(source+dictFilenames[i]));
-            langsDictionaries.put(dictFilenames[i],currLangDict);
+            allLangDictsMap.put(dictFilenames[i],currLangDict);
         }
-
-        String decryptedMessage = breakForAllLangs(encryptedMessage,langsDictionaries);
-        System.out.println(decryptedMessage);
+        return allLangDictsMap;
     }
 
     public HashSet<String> readDictionary(FileResource fr) {
@@ -88,7 +95,7 @@ public class VigenereBreaker {
         HashMap<Character,Integer> charCount = new HashMap<Character,Integer>();
         for (String word : dictionary) {
             for (int i = 0; i < word.length(); i++) {
-                char currChar = Character.toLowerCase(word.charAt(i)) ;
+                char currChar = word.charAt(i);
                 if (charCount.containsKey(currChar)) {
                     int currCharCount = charCount.get(currChar);
                     charCount.put(currChar, currCharCount+1);
@@ -115,9 +122,9 @@ public class VigenereBreaker {
         int maxValidWords = 0;
         
         for (String language : languages.keySet()) {
-            HashSet<String> langDictionary = languages.get(language);
-            String currDecryptedMessage = breakForLanguage(encrypted, langDictionary);
-            int currValidWords = countWords(currDecryptedMessage, langDictionary);
+            HashSet<String> currLangDictionary = languages.get(language);
+            String currDecryptedMessage = breakForLanguage(encrypted, currLangDictionary);
+            int currValidWords = countWords(currDecryptedMessage, currLangDictionary);
             if (currValidWords > maxValidWords) {
                 maxValidWords = currValidWords;
                 decrypted = currDecryptedMessage;
