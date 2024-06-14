@@ -51,17 +51,18 @@ public class EarthquakeCityMap extends PApplet {
 	
 	//feed with magnitude 2.5+ Earthquakes
 	private String earthquakesURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.atom";
+	private final int WIDTH = 950;
+	private final int HEIGHT = 600;
 
-	
 	public void setup() {
-		size(950, 600, OPENGL);
+		size(WIDTH, HEIGHT, OPENGL);
 
 		if (offline) {
-		    map = new UnfoldingMap(this, 200, 50, 700, 500, new MBTilesMapProvider(mbTilesString));
+		    map = new UnfoldingMap(this, WIDTH/4.75f, HEIGHT/12f, WIDTH/1.35f, HEIGHT/1.2f, new MBTilesMapProvider(mbTilesString));
 		    earthquakesURL = "2.5_week.atom"; 	// Same feed, saved Aug 7, 2015, for working offline
 		}
 		else {
-			map = new UnfoldingMap(this, 200, 50, 700, 500, new Microsoft.AerialProvider());
+			map = new UnfoldingMap(this, WIDTH/4.75f, HEIGHT/12f, WIDTH/1.35f, HEIGHT/1.2f, new Microsoft.AerialProvider());
 			// IF YOU WANT TO TEST WITH A LOCAL FILE, uncomment the next line
 			//earthquakesURL = "2.5_week.atom";
 		}
@@ -103,7 +104,7 @@ public class EarthquakeCityMap extends PApplet {
 		// To print all of the features in a PointFeature (so you can see what they are)
 		// uncomment the line below.  Note this will only print if you call createMarker 
 		// from setup
-		System.out.println(feature.getProperties());
+		//System.out.println(feature.getProperties());
 		
 		// Create a new SimplePointMarker at the location given by the PointFeature
 		SimplePointMarker marker = new SimplePointMarker(feature.getLocation());
@@ -156,24 +157,24 @@ public class EarthquakeCityMap extends PApplet {
 
 		// key border layout
 		fill(225,217,209);
-		rect(25,50,150,250);
+		rect(WIDTH/38f,HEIGHT/12f,WIDTH/6.33f,HEIGHT/2.4f);
 
 		// text attributes
 		fill(65,74,76);
 		textSize(11);
-		text("Earthquake Key",50,75);
+		text("Earthquake Key",WIDTH/19f,HEIGHT/8f);
 
 		//textAlign(RIGHT);
-		text("5.0+ Magnitude",75,125);
-		text("4.0+ Magnitude",75,175);
-		text("Below 4.0",75,225);
+		text("5.0+ Magnitude",WIDTH/12.67f,HEIGHT/4.8f);
+		text("4.0+ Magnitude",WIDTH/12.67f,HEIGHT/3.42f);
+		text("Below 4.0",WIDTH/12.67f,HEIGHT/2.67f);
 
 		fill(lightRed);
-		ellipse(50,125,16,16);
+		ellipse(WIDTH/19f,HEIGHT/4.8f,16,16);
 		fill(lightYellow);
-		ellipse(50,175,10,10);
+		ellipse(WIDTH/19f,HEIGHT/3.42f,10,10);
 		fill(lightBlue);
-		ellipse(50,225,6,10);
+		ellipse(WIDTH/19f,HEIGHT/2.67f,6,10);
 
 		// Remember you can use Processing's graphics methods here
 	
