@@ -85,9 +85,10 @@ public class HelloWorld extends PApplet
 		// TODO: Add code so that both maps are displayed
 		map1.draw();
 	}
-	public static void main(String[] args) {
-		HelloWorld h = new HelloWorld();
-		h.setup();
+
+	public static void main (String[] args) {
+		HelloWorld pt = new HelloWorld();
+		PApplet.runSketch(new String[]{"HelloWorld"}, pt);
 	}
 	
 }
