@@ -1,11 +1,10 @@
 package module1;
 
+import de.fhpotsdam.unfolding.mapdisplay.MapDisplayFactory;
+import de.fhpotsdam.unfolding.providers.*;
 import processing.core.PApplet;
 import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.geo.Location;
-import de.fhpotsdam.unfolding.providers.AbstractMapProvider;
-import de.fhpotsdam.unfolding.providers.Google;
-import de.fhpotsdam.unfolding.providers.MBTilesMapProvider;
 import de.fhpotsdam.unfolding.utils.MapUtils;
 
 /** HelloWorld
@@ -65,6 +64,10 @@ public class HelloWorld extends PApplet
 		// The 6th argument specifies the map provider.  
 		// There are several providers built-in.
 		// Note if you are working offline you must use the MBTilesMapProvider
+
+		// Other providers in case google suspends access
+		provider = new Microsoft.AerialProvider();
+		//provider = new OpenStreetMap.CloudmadeProvider(MapDisplayFactory.OSM_API_KEY, 23058);
 		map1 = new UnfoldingMap(this, 50, 50, 350, 500, provider);
 
 		// The next line zooms in and centers the map at 
@@ -74,16 +77,18 @@ public class HelloWorld extends PApplet
 		// This line makes the map interactive
 		MapUtils.createDefaultEventDispatcher(this, map1);
 		
-		// TODO: Add code here that creates map2 
-		// Then you'll modify draw() below
 
+		// Then you'll modify draw() below
+		map2 = new UnfoldingMap(this, 400, 50, 350, 500, provider);
+		map2.zoomAndPanTo(zoomLevel, new Location(10.33f, 123.9f));
+		MapUtils.createDefaultEventDispatcher(this, map2);
 	}
 
 	/** Draw the Applet window.  */
 	public void draw() {
 		// So far we only draw map1...
-		// TODO: Add code so that both maps are displayed
 		map1.draw();
+		map2.draw();
 	}
 
 	public static void main (String[] args) {
