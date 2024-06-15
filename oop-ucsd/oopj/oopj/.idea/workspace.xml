@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="5bfcb3a9-486c-49e2-beb5-57f376bf1680" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/.idea/libraries/lib.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/LICENSE.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/README" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/UCSDUnfoldingMaps.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/data/2.5_week.atom" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/data/LifeExpectancyWorldBank.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/data/LifeExpectancyWorldBankModule3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/data/airports.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/data/blankDark-1-3.mbtiles" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/data/blankLight-1-3.mbtiles" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/data/city-data.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/data/countries.geo.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/data/palmTrees.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/data/quiz1.atom" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/data/quiz2.atom" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/data/routes.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/data/sortAndPrint.test2.out.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/data/test1.atom" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/data/test1.out.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/data/test2.atom" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/data/test2.out.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/core.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/gluegen-rt-natives-linux-amd64.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/gluegen-rt-natives-linux-armv6hf.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/gluegen-rt-natives-linux-i586.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/gluegen-rt-natives-macosx-universal.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/gluegen-rt-natives-windows-amd64.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/gluegen-rt-natives-windows-i586.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/gluegen-rt.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/jogl-all-natives-linux-amd64.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/jogl-all-natives-linux-armv6hf.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/jogl-all-natives-linux-i586.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/jogl-all-natives-macosx-universal.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/jogl-all-natives-windows-amd64.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/jogl-all-natives-windows-i586.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/jogl-all.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/json4processing.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/libTUIO.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/log4j-1.2.15.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/sqlite-jdbc-3.7.2.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/lib/unfolding.0.9.7-uscd.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/HelloUCSDWorld.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/OfflineMapApp.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/demos/Airport.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/demos/EarthquakeCityMapDemo.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/demos/LifeExpectancy.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/demos/LocationTester.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/demos/MyDisplay.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/demos/MyPApplet.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/demos/Person.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/demos/SearchAndSort.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/demos/SimpleLocation.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/demos/Student.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module1/HelloWorld.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module3/EarthquakeCityMap.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module4/CityMarker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module4/EarthquakeCityMap.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module4/EarthquakeMarker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module4/LandQuakeMarker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module4/OceanQuakeMarker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module5/CityMarker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module5/CommonMarker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module5/EarthquakeCityMap.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module5/EarthquakeMarker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module5/LandQuakeMarker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module5/OceanQuakeMarker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module6/AirportMap.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module6/AirportMarker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module6/CityMarker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module6/CommonMarker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module6/EarthquakeCityMap.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module6/EarthquakeMarker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module6/LandQuakeMarker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module6/LifeExpectancy.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/module6/OceanQuakeMarker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/out/production/UCSDUnfoldingMaps/parsing/ParseFeed.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/HelloUCSDWorld.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/OfflineMapApp.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/demos/Airport.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/demos/EarthquakeCityMapDemo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/demos/LifeExpectancy.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/demos/LocationTester.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/demos/MyDisplay.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/demos/MyPApplet.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/demos/Person.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/demos/SearchAndSort.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/demos/SimpleLocation.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/demos/Student.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module1/HelloWorld.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module3/EarthquakeCityMap.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module4/CityMarker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module4/EarthquakeCityMap.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module4/EarthquakeMarker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module4/LandQuakeMarker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module4/OceanQuakeMarker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module5/CityMarker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module5/CommonMarker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module5/EarthquakeCityMap.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module5/EarthquakeMarker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module5/LandQuakeMarker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module5/OceanQuakeMarker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module6/AirportMap.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module6/AirportMarker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module6/CityMarker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module6/CommonMarker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module6/EarthquakeCityMap.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module6/EarthquakeMarker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module6/LandQuakeMarker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module6/LifeExpectancy.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/module6/OceanQuakeMarker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oop-java/UCSDUnfoldingMaps/src/parsing/ParseFeed.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 2
+}]]></component>
+  <component name="ProjectId" id="2hvCSMvbZqa5CyzWgJ7DN6xTcdb" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5bfcb3a9-486c-49e2-beb5-57f376bf1680" name="Changes" comment="" />
+      <created>1718465164465</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1718465164465</updated>
+    </task>
+    <servers />
+  </component>
+</project>
