@@ -80,7 +80,9 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 	// But this is up to you, of course.
 	// You might find the getters below helpful.
 	private void colorDetermine(PGraphics pg) {
-		//TODO: Implement this method
+		if (this.getDepth() > THRESHOLD_DEEP) {
+
+		}
 	}
 	
 	

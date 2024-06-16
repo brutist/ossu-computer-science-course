@@ -26,16 +26,24 @@ public class CityMarker extends SimplePointMarker {
 	public CityMarker(Feature city) {
 		super(((PointFeature)city).getLocation(), city.getProperties());
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Implementation of method to draw marker on the map.
 	 */
 	public void draw(PGraphics pg, float x, float y) {
 		// Save previous drawing style
 		pg.pushStyle();
-		
+
+        float topY = y-TRI_SIZE;
+		float leftX = x-TRI_SIZE;
+		float leftY = y+TRI_SIZE;
+		float rightX = x+TRI_SIZE;
+		float rightY = y+TRI_SIZE;
+
+		pg.fill(149, 174, 241);
+		pg.triangle(x,topY,leftX,leftY,rightX,rightY);
 		// TODO: Add code to draw a triangle to represent the CityMarker
 		// HINT: pg is the graphics object on which you call the graphics
 		// methods.  e.g. pg.fill(255, 0, 0) will set the color to red
@@ -45,8 +53,7 @@ public class CityMarker extends SimplePointMarker {
 		// e.g. pg.rect(x, y, 10, 10) will draw a 10x10 square
 		// whose upper left corner is at position x, y
 		// Check out the processing documentation for more methods
-		
-		
+
 		// Restore previous drawing style
 		pg.popStyle();
 	}

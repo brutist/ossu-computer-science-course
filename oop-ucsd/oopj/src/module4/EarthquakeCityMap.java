@@ -2,6 +2,8 @@ package module4;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
+import java.util.HashMap;
 
 import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.data.Feature;
@@ -17,6 +19,8 @@ import de.fhpotsdam.unfolding.providers.Microsoft;
 import de.fhpotsdam.unfolding.utils.MapUtils;
 import parsing.ParseFeed;
 import processing.core.PApplet;
+import processing.core.PGraphics;
+import processing.core.PShape;
 
 /** EarthquakeCityMap
  * An application with an interactive map displaying earthquake data.
@@ -81,7 +85,7 @@ public class EarthquakeCityMap extends PApplet {
 		
 		// FOR TESTING: Set earthquakesURL to be one of the testing files by uncommenting
 		// one of the lines below.  This will work whether you are online or offline
-		earthquakesURL = "test1.atom";
+		//earthquakesURL = "test1.atom";
 		//earthquakesURL = "test2.atom";
 		
 		// WHEN TAKING THIS QUIZ: Uncomment the next line
@@ -138,31 +142,55 @@ public class EarthquakeCityMap extends PApplet {
 	// TODO: Update this method as appropriate
 	private void addKey() {	
 		// Remember you can use Processing's graphics methods here
-		int lightYellow = color(255, 255, 0);
-		int lightBlue = color(173,216,230);
-		int lightRed = color(255,127,127);
+		int cityColor = color(149,174,241);
+		int quakeColor = color(255,255,255);
+		int shallowColor = color(255,255,0);
+		int intermediateColor = color(0,0,255);
+		int deepColor = color(255,0,0);
+		int[] magnitudeColors = {shallowColor,intermediateColor,deepColor};
+
+		float keyStartX = WIDTH/38f;
+		float keyStartY = HEIGHT/14f;
+		float keyWidth = WIDTH/6.33f;
+		float keyHeight = HEIGHT/2.4f;
+		float textX = 65f;
+		float headX = 50f;
+		float keyElemtSpacingY = 25f;
 
 		// key border layout
 		fill(225,217,209);
-		rect(WIDTH/38f,HEIGHT/14f,WIDTH/6.33f,HEIGHT/2.4f);
+		rect(keyStartX,keyStartY,keyWidth,keyHeight);
 
 		// text attributes
 		fill(65,74,76);
-		textSize(12);
-		text("Earthquake Key",WIDTH/19f,HEIGHT/8f);
+		textSize(10);
 
-		//textAlign(RIGHT);
-		text("5.0+ Magnitude",WIDTH/15f,HEIGHT/4.8f);
-		text("4.0+ Magnitude",WIDTH/15f,HEIGHT/3.42f);
-		text("Below 4.0",WIDTH/15f,HEIGHT/2.67f);
+		text("Earthquake Key",headX,keyStartY+(2*keyElemtSpacingY));
+		String markers = "City Marker\nLand Quake\nOcean Quake";
+		textLeading(keyElemtSpacingY);
+		text(markers,textX,keyStartY+(3f*keyElemtSpacingY));
 
-		fill(lightRed);
-		ellipse(WIDTH/21f,HEIGHT/4.8f,16,16);
-		fill(lightYellow);
-		ellipse(WIDTH/21f,HEIGHT/3.42f,10,10);
-		fill(lightBlue);
-		ellipse(WIDTH/21f,HEIGHT/2.67f,6,6);
+		text("Size ~ Magnitude",headX,keyStartY+(6*keyElemtSpacingY));
+		String sizes = "Shallow\nIntermediate\nDeep";
+		textLeading(keyElemtSpacingY);
+		text(sizes,textX,keyStartY+(7*keyElemtSpacingY));
 
+		PShape triMarker,sqrMarker,circMarker,keyMarkers;
+		fill(cityColor);
+		triMarker = createShape(TRIANGLE,5f,0f,0f,10f,10f,10f);
+		fill(quakeColor);
+		circMarker = createShape(ELLIPSE,0,0,10f,10f);
+		sqrMarker = createShape(RECT,0f,0f,10f,10f);
+
+		shape(triMarker,headX,keyStartY+(2.6f*keyElemtSpacingY));
+		shape(circMarker,headX,keyStartY+(3.6f*keyElemtSpacingY));
+		shape(sqrMarker,headX,keyStartY+(4.6f*keyElemtSpacingY));
+
+		for (int i = 0; i < magnitudeColors.length; i++) {
+			fill(magnitudeColors[i]);
+			circMarker = createShape(ELLIPSE,0,0,10f,10f);
+			shape(circMarker,headX,keyStartY+((6.6f + (float)i)*keyElemtSpacingY));
+		}
 	}
 
 	
@@ -196,27 +224,39 @@ public class EarthquakeCityMap extends PApplet {
 	 * */
 	private void printQuakes() 
 	{
-		int oceanQuakeCounter = 0;
+		HashSet<String> countryNames = new HashSet<String>();
 		for (Marker m : countryMarkers) {
-			oceanQuakeCounter = 0;
-			int quakeCounter = 0;
-			for (Marker qm : quakeMarkers) {
-				EarthquakeMarker quakeMarker = (EarthquakeMarker)qm;
-				if (quakeMarker.isOnLand()) {
-					LandQuakeMarker lqm = (LandQuakeMarker)quakeMarker;
-					String currCountryName = (String)m.getProperty("name");
-					String currLandQuakeCountryName = (String)lqm.getProperty("country");
-					if (currCountryName.equals(currLandQuakeCountryName)) {
-						quakeCounter++;
+			String currCountryName = (String)m.getProperty("name");
+            countryNames.add(currCountryName);
+		}
+
+		HashMap<String,Integer> countryQuakeMap = new HashMap<String,Integer>();
+		int oceanQuakeCounter = 0;
+		for (Marker qm : quakeMarkers) {
+			EarthquakeMarker quakeMarker = (EarthquakeMarker)qm;
+
+			if (quakeMarker.isOnLand()) {
+				LandQuakeMarker lqm = (LandQuakeMarker)quakeMarker;
+				String currLandQuakeCountryName = lqm.getCountry();
+
+				boolean quakeInCountry = countryNames.contains(currLandQuakeCountryName);
+				boolean countryInCounter = countryQuakeMap.containsKey(currLandQuakeCountryName);
+
+				if (quakeInCountry) {
+					if (countryInCounter) {
+                        countryQuakeMap.compute(currLandQuakeCountryName, (k, currCount) -> currCount + 1);
+					}
+					else {
+						countryQuakeMap.put(currLandQuakeCountryName,1);
 					}
 				}
-				if (qm instanceof OceanQuakeMarker) {
-					oceanQuakeCounter++;
-				}
 			}
-			if (quakeCounter > 0) {
-				System.out.printf("%s: %d\n",m.getProperty("name"),quakeCounter);
+			else  {
+				oceanQuakeCounter++;
 			}
+		}
+		for (String country : countryQuakeMap.keySet()) {
+			System.out.printf("%s: %d\n",country,countryQuakeMap.get(country));
 		}
 		System.out.printf("OCEAN QUAKES: %d\n", oceanQuakeCounter);
 	}
