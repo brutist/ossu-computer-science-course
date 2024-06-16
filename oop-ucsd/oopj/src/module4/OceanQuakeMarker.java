@@ -30,13 +30,13 @@ public class OceanQuakeMarker extends EarthquakeMarker {
 		// and how it is set in the EarthquakeMarker constructor
 
 		if (this.getMagnitude() < THRESHOLD_LIGHT) {
-			pg.rect(x,y,6f,6f);
+			pg.rect(x-LIGHT_SIZE/2f,y-LIGHT_SIZE/2f,LIGHT_SIZE,LIGHT_SIZE);
 		}
 		else if (this.getMagnitude() < THRESHOLD_MODERATE) {
-			pg.rect(x,y,8f,8f);
+			pg.rect(x-MODERATE_SIZE/2f,y-MODERATE_SIZE/2f,MODERATE_SIZE,MODERATE_SIZE);
 		}
 		else {
-			pg.rect(x,y,12f,12f);
+			pg.rect(x-STRONG_SIZE/2f,y-STRONG_SIZE/2f,STRONG_SIZE,STRONG_SIZE);
 		}
 
 	}

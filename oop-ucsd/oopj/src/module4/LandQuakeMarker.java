@@ -32,13 +32,13 @@ public class LandQuakeMarker extends EarthquakeMarker {
 		// HINT: Notice the radius variable in the EarthquakeMarker class
 		// and how it is set in the EarthquakeMarker constructor
 		if (this.getMagnitude() < THRESHOLD_LIGHT) {
-			pg.ellipse(x,y,6f,6f);
+			pg.ellipse(x,y,LIGHT_SIZE,LIGHT_SIZE);
 		}
 		else if (this.getMagnitude() < THRESHOLD_MODERATE) {
-			pg.ellipse(x,y,8f,8f);
+			pg.ellipse(x,y,MODERATE_SIZE,MODERATE_SIZE);
 		}
 		else {
-			pg.ellipse(x,y,12f,12f);
+			pg.ellipse(x,y,STRONG_SIZE,STRONG_SIZE);
 		}
 
 	}

@@ -2,12 +2,14 @@ package module4;
 
 import de.fhpotsdam.unfolding.data.PointFeature;
 import de.fhpotsdam.unfolding.marker.SimplePointMarker;
+import javafx.scene.paint.Color;
 import processing.core.PGraphics;
+
 
 /** Implements a visual marker for earthquakes on an earthquake map
  * 
  * @author UC San Diego Intermediate Software Development MOOC team
- * @author Your name here
+ * @author Mauring Jr.
  *
  */
 public abstract class EarthquakeMarker extends SimplePointMarker
@@ -35,10 +37,12 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 	public static final float THRESHOLD_INTERMEDIATE = 70;
 	/** Greater than or equal to this threshold is a deep depth */
 	public static final float THRESHOLD_DEEP = 300;
+	public static final float THRESHOLD_SHALLOW = 70;
 
-	// ADD constants for colors
+	public static final float LIGHT_SIZE = 6f;
+	public static final float MODERATE_SIZE = 10f;
+	public static final float STRONG_SIZE = 16f;
 
-	
 	// abstract method implemented in derived classes
 	public abstract void drawEarthquake(PGraphics pg, float x, float y);
 		
@@ -68,7 +72,13 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 		drawEarthquake(pg, x, y);
 		
 		// OPTIONAL TODO: draw X over marker if within past day		
-		
+		String timeOccured = "Past Day";
+		if (timeOccured.equals(getProperty("age"))) {
+			float r = getRadius()/1.4f;
+			pg.strokeWeight(2);
+			pg.line(x-r,y-r,x+r,y+r);
+			pg.line(x+r,y-r,x-r,y+r);
+		}
 		// reset to previous styling
 		pg.popStyle();
 		
@@ -80,8 +90,14 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 	// But this is up to you, of course.
 	// You might find the getters below helpful.
 	private void colorDetermine(PGraphics pg) {
-		if (this.getDepth() > THRESHOLD_DEEP) {
-
+		if (this.getDepth() <= THRESHOLD_SHALLOW) {
+			pg.fill(255,255,0);
+		}
+		else if (this.getDepth() <= THRESHOLD_INTERMEDIATE) {
+			pg.fill(0,0,255);
+		}
+		else if (this.getDepth() <= THRESHOLD_DEEP) {
+			pg.fill(255,0,0);
 		}
 	}
 	
