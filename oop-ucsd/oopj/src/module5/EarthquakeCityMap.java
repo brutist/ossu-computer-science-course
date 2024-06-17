@@ -164,11 +164,28 @@ public class EarthquakeCityMap extends PApplet {
 	public void mouseClicked()
 	{
 		// TODO: Implement this method
+		if (lastClicked != null) {
+			lastClicked.setClicked(false);
+			lastClicked = null;
+		}
+		selectMarkerIfClicked(quakeMarkers);
+		selectMarkerIfClicked(cityMarkers);
 		// Hint: You probably want a helper method or two to keep this code
 		// from getting too long/disorganized
 	}
 	
-	
+	private void selectMarkerIfClicked(List<Marker> markers) {
+		for (Marker m : markers) {
+			if (lastClicked != null) {
+				break;
+			} else if (m.isInside(map, mouseX, mouseY) && mousePressed) {
+				lastClicked = (CommonMarker) m;
+				lastClicked.setClicked(true);
+				break;
+			}
+		}
+	}
+
 	// loop over and unhide all markers
 	private void unhideMarkers() {
 		for(Marker marker : quakeMarkers) {
