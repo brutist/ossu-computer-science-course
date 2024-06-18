@@ -58,7 +58,7 @@ public class EarthquakeCityMap extends PApplet {
 
 	// A List of country markers
 	private List<Marker> countryMarkers;
-	
+
 	// NEW IN MODULE 5
 	private CommonMarker lastSelected;
 	private CommonMarker lastClicked;
@@ -113,12 +113,12 @@ public class EarthquakeCityMap extends PApplet {
 	    //           for their geometric properties
 	    map.addMarkers(quakeMarkers);
 	    map.addMarkers(cityMarkers);
-	    
+
 	}  // End setup
 	
 	
 	public void draw() {
-		background(0);
+		background(255,255,255);
 		map.draw();
 		addKey();
 		
@@ -144,8 +144,7 @@ public class EarthquakeCityMap extends PApplet {
 	// set the lastSelected to be the first marker found under the cursor
 	// Make sure you do not select two markers.
 	// 
-	private void selectMarkerIfHover(List<Marker> markers)
-	{
+	private void selectMarkerIfHover(List<Marker> markers) {
 		for (Marker m : markers) {
 			if (m.isInside(map,mouseX,mouseY) && lastSelected == null) {
 				lastSelected = (CommonMarker)m;
@@ -161,27 +160,57 @@ public class EarthquakeCityMap extends PApplet {
 	 * where the city is in the threat circle
 	 */
 	@Override
-	public void mouseClicked()
-	{
+	public void mouseClicked() {
 		// TODO: Implement this method
-		if (lastClicked != null) {
-			lastClicked.setClicked(false);
+		if (lastClicked != null && lastClicked.isSelected()) {
+			unhideMarkers();
 			lastClicked = null;
 		}
-		selectMarkerIfClicked(quakeMarkers);
-		selectMarkerIfClicked(cityMarkers);
+
+		else if (lastClicked == null) {
+			selectMarkerIfClicked(quakeMarkers);
+			selectMarkerIfClicked(cityMarkers);
+
+			if (lastClicked != null && lastClicked instanceof EarthquakeMarker) {
+				hideMarkersExcept(lastClicked, quakeMarkers);
+				EarthquakeMarker clicked = (EarthquakeMarker)lastClicked;
+				for (Marker cityMarker : cityMarkers) {
+					if (clicked.threatCircle() < cityMarker.getDistanceTo(clicked.getLocation())) {
+						cityMarker.setHidden(true);
+					}
+				}
+			}
+			else if (lastClicked != null && lastClicked instanceof CityMarker) {
+				hideMarkersExcept(lastClicked, cityMarkers);
+				for (Marker m : quakeMarkers) {
+					EarthquakeMarker quakeMarker = (EarthquakeMarker)m;
+					if (quakeMarker.threatCircle() < lastClicked.getDistanceTo(quakeMarker.getLocation())) {
+						quakeMarker.setHidden(true);
+					}
+				}
+			}
+		}
+
+
+
 		// Hint: You probably want a helper method or two to keep this code
 		// from getting too long/disorganized
 	}
 	
 	private void selectMarkerIfClicked(List<Marker> markers) {
 		for (Marker m : markers) {
-			if (lastClicked != null) {
-				break;
-			} else if (m.isInside(map, mouseX, mouseY) && mousePressed) {
+			if (m.isSelected()) {
 				lastClicked = (CommonMarker) m;
-				lastClicked.setClicked(true);
+				lastClicked.setSelected(true);
 				break;
+			}
+		}
+	}
+
+	private void hideMarkersExcept (Marker clicked, List<Marker> markers) {
+		for (Marker m : markers) {
+			if (!m.equals(clicked)) {
+				m.setHidden(true);
 			}
 		}
 	}

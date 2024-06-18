@@ -97,9 +97,9 @@ public abstract class EarthquakeMarker extends CommonMarker
 		float textWidth = pg.textWidth(title);
 
 		pg.fill(255,255,255);
-		pg.rect(x+6f,y-12f,textWidth,16f,2f);
+		pg.rect(x+10f,y-12f,textWidth+4f,16f,2f);
 		pg.fill(0);
-		pg.text(title,x,y);
+		pg.text(title,x+12f,y);
 	}
 
 	

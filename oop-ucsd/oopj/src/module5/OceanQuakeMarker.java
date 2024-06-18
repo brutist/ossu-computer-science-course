@@ -1,6 +1,7 @@
 package module5;
 
 import de.fhpotsdam.unfolding.data.PointFeature;
+import de.fhpotsdam.unfolding.utils.ScreenPosition;
 import processing.core.PGraphics;
 
 /** Implements a visual marker for ocean earthquakes on an earthquake map
