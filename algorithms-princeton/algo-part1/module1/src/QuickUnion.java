@@ -6,31 +6,36 @@
 
 import edu.princeton.cs.algs4.StdIn;
 
-public class UFind {
-    private int[] arr;
+public class QuickUnion {
+    private int[] id;
 
-    public UFind(int n) {
-        arr = new int[n];
+    public QuickUnion(int n) {
+        id = new int[n];
         for (int i = 0; i < n; i++) {
-            arr[i] = i;
-        }
-    }
-
-    public void union(int p, int q) {
-        for (int i = 0; i < arr.length; i++) {
-            if (p == arr[i] || i == p) {
-                arr[i] = q;
-            }
+            id[i] = i;
         }
     }
 
     public boolean connected(int p, int q) {
-        return arr[p] == arr[q];
+        return root(p) == root(q);
+    }
+
+    public int root(int i) {
+        while (i != id[i]) {
+            i = id[i];
+        }
+        return i;
+    }
+
+    public void union(int p, int q) {
+        int proot = root(p);
+        int qroot = root(q);
+        id[proot] = qroot;
     }
 
     public static void main(String[] args) {
         int n = StdIn.readInt();
-        UFind uf = new UFind(n);
+        QuickUnion uf = new QuickUnion(n);
 
         while (!StdIn.isEmpty()) {
             int p = StdIn.readInt();
@@ -38,6 +43,9 @@ public class UFind {
             if (!uf.connected(p, q)) {
                 uf.union(p, q);
                 System.out.printf("%d %d\n", p, q);
+            }
+            else {
+                System.out.printf("Already connected: %d %d\n", p, q);
             }
         }
     }
