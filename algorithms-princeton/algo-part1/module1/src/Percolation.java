@@ -21,7 +21,6 @@ public class Percolation {
     private WeightedQuickUnionUF unionSet;
     private int topVirtualSite;
     private int bottomVirtualSite;
-    private int rowAndColLimit;
 
     // creates n-by-n grid, with all sites initially blocked
     public Percolation(int n) {
@@ -31,12 +30,12 @@ public class Percolation {
         // the grid starts at (1,1)
         // all zero-index column or row are not considered (left blank)
         gridWith = n;
-        rowAndColLimit = n + 2;  // zero index columns are not considered
         openSitesCounter = 0;
 
-        percolateGrid = new boolean[rowAndColLimit][rowAndColLimit];
-        for (int i = 1; i < rowAndColLimit; i++) {
-            for (int j = 1; j < rowAndColLimit; j++) {
+        int numTiles = n + 2;  // zero index columns are not considered
+        percolateGrid = new boolean[numTiles][numTiles];
+        for (int i = 1; i < numTiles; i++) {
+            for (int j = 1; j < numTiles; j++) {
                 percolateGrid[i][j] = false;
             }
         }
@@ -50,18 +49,12 @@ public class Percolation {
         topVirtualSite = totalSites + 1;
         bottomVirtualSite = totalSites + 2;
         unionSet = new WeightedQuickUnionUF(totalSites + 3);
-
-        // index zero is not considered
-        for (int i = 1; i <= n; i++) {
-            unionSet.union(topVirtualSite, i);
-            unionSet.union(bottomVirtualSite, topVirtualSite - i);
-        }
     }
 
     // opens the site (row, col) if it is not open already
     public void open(int row, int col) {
-        boolean rowInGrid = row > 0 && row < rowAndColLimit;
-        boolean colInGrid = col > 0 && col < rowAndColLimit;
+        boolean rowInGrid = row > 0 && row <= gridWith;
+        boolean colInGrid = col > 0 && col <= gridWith;
         if (!rowInGrid) {
             throw new IllegalArgumentException("row out of grid");
         }
@@ -69,12 +62,20 @@ public class Percolation {
             throw new IllegalArgumentException("column out of grid");
         }
 
+        int currRowAndColIndex = (row * gridWith) + (col - gridWith);
         boolean open = true;
         if (percolateGrid[row][col] != open) {
             percolateGrid[row][col] = open;
             openSitesCounter++;
+
+            if (row == 1) {
+                unionSet.union(topVirtualSite, currRowAndColIndex);
+            }
+            else if (row == gridWith) {
+                unionSet.union(bottomVirtualSite, currRowAndColIndex);
+            }
         }
-        int currRowAndColIndex = (row * gridWith) + (col - gridWith);
+
         int topRow = row - 1;
         int bottomRow = row + 1;
         int leftCol = col - 1;
@@ -105,8 +106,8 @@ public class Percolation {
 
     // is the site (row, col) open?
     public boolean isOpen(int row, int col) {
-        boolean rowInGrid = row > 0 && row < rowAndColLimit;
-        boolean colInGrid = col > 0 && col < rowAndColLimit;
+        boolean rowInGrid = row > 0 && row <= gridWith;
+        boolean colInGrid = col > 0 && col <= gridWith;
         if (!rowInGrid) {
             throw new IllegalArgumentException("row out of grid");
         }
@@ -118,17 +119,24 @@ public class Percolation {
 
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
-        boolean rowInGrid = row > 0 && row < rowAndColLimit;
-        boolean colInGrid = col > 0 && col < rowAndColLimit;
+        boolean rowInGrid = row > 0 && row <= gridWith;
+        boolean colInGrid = col > 0 && col <= gridWith;
         if (!rowInGrid) {
             throw new IllegalArgumentException("row out of grid");
         }
         if (!colInGrid) {
             throw new IllegalArgumentException("column out of grid");
         }
-        int mainRoot = unionSet.find(topVirtualSite);
-        int root = unionSet.find((row * gridWith) + (col - gridWith));
-        return mainRoot == root;
+
+        // if it's not open it is not full
+        if (!isOpen(row, col)) {
+            return false;
+        }
+        else {
+            int mainRoot = unionSet.find(topVirtualSite);
+            int root = unionSet.find((row * gridWith) + (col - gridWith));
+            return mainRoot == root;
+        }
     }
 
     // returns the number of open sites
@@ -144,18 +152,30 @@ public class Percolation {
     // test client
     public static void main(String[] args) {
         int n = 10;
-        Percolation model = new Percolation(n);
+        Percolation modelA = new Percolation(n);
         for (int i = 1; i <= n; i++) {
             for (int j = 1; j <= n; j++) {
-                model.open(i, j);
-                boolean connected = model.unionSet.find(model.topVirtualSite)
-                        == model.unionSet.find(model.bottomVirtualSite);
+                modelA.open(i, j);
+                boolean connected = modelA.unionSet.find(modelA.topVirtualSite)
+                        == modelA.unionSet.find(modelA.bottomVirtualSite);
                 if (connected) {
                     System.out.printf("connected to bottom at i= %d j= %d\n", i, j);
                 }
             }
         }
-        System.out.println(model.percolates());
+        System.out.println(modelA.percolates());
 
+        // call methods with invalid arguments
+        Percolation modelB = new Percolation(n);
+        int[] rows = { -1, 11, 0, 5, 5 };
+        int[] col = { 5, 5, 5, -1, 11 };
+        for (int i = 0; i < rows.length; i++) {
+            try {
+                modelB.open(rows[i], col[i]);
+            }
+            catch (IllegalArgumentException e) {
+                System.out.printf("Exception catched: %d\n", i + 1);
+            }
+        }
     }
 }
