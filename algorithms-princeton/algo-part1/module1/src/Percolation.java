@@ -8,13 +8,16 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
     // sites legend
-    // zero {blocked}; one {open}; two {full}
-    private int[][] percolateGrid;
-    private int blocked = 0;
-    private int open = 1;
-    private int full = 2;
+    // false {blocked}; true {open}
+
+    // percolate grid is 1-based index
+    private boolean[][] percolateGrid;
     private int openSitesCounter;
     private int gridWith;
+
+    // unionSet is 1-based index with 1->n as percolate sites,
+    //  n+1 is topVirtualSite connected to all top sites
+    //  n+2 is bottomVirtualSite connected to all bottom sites
     private WeightedQuickUnionUF unionSet;
     private int topVirtualSite;
     private int bottomVirtualSite;
@@ -28,36 +31,31 @@ public class Percolation {
         // the grid starts at (1,1)
         // all zero-index column or row are not considered (left blank)
         gridWith = n;
-        rowAndColLimit = n + 2;  // zero and last val are not included
+        rowAndColLimit = n + 2;  // zero index columns are not considered
         openSitesCounter = 0;
 
-        percolateGrid = new int[rowAndColLimit][rowAndColLimit];
+        percolateGrid = new boolean[rowAndColLimit][rowAndColLimit];
         for (int i = 1; i < rowAndColLimit; i++) {
             for (int j = 1; j < rowAndColLimit; j++) {
-                percolateGrid[i][j] = blocked;
+                percolateGrid[i][j] = false;
             }
         }
 
-        // create an instance of weightedQuickUnionUF with n+2 elements
-        // n is the top site connected to all first row sites
-        // n+1 is the bottom site connected to all last row sites
+        // create an instance of weightedQuickUnionUF with n+3 elements
+        // index 1->n are the percolate sites
+        // n+1 is the top site connected to all first row sites
+        // n+2 is the bottom site connected to all last row sites
+        // index 0 is not considered to simplify converting to row and columns
         int totalSites = n * n;
-        int lastSite = totalSites - 1;
-        topVirtualSite = totalSites;
-        bottomVirtualSite = topVirtualSite + 1;
-        unionSet = new WeightedQuickUnionUF(totalSites + 2);
+        topVirtualSite = totalSites + 1;
+        bottomVirtualSite = totalSites + 2;
+        unionSet = new WeightedQuickUnionUF(totalSites + 3);
 
-        for (int i = 0; i < n; i++) {
+        // index zero is not considered
+        for (int i = 1; i <= n; i++) {
             unionSet.union(topVirtualSite, i);
-            unionSet.union(bottomVirtualSite, lastSite - i);
+            unionSet.union(bottomVirtualSite, topVirtualSite - i);
         }
-    }
-
-    // convert rows and columns to unionSet index
-    private int toIndex(int row, int col) {
-        row -= 1;
-        col -= 1;
-        return (row * gridWith) + col;
     }
 
     // opens the site (row, col) if it is not open already
@@ -71,27 +69,37 @@ public class Percolation {
             throw new IllegalArgumentException("column out of grid");
         }
 
+        boolean open = true;
         if (percolateGrid[row][col] != open) {
             percolateGrid[row][col] = open;
             openSitesCounter++;
         }
+        int currRowAndColIndex = (row * gridWith) + (col - gridWith);
         int topRow = row - 1;
         int bottomRow = row + 1;
         int leftCol = col - 1;
         int rightCol = col + 1;
 
-        // union only to already opened immediate neighbours
+        int topSiteIndex = (topRow * gridWith) + (col - gridWith);
+        int bottomSiteIndex = (bottomRow * gridWith) + (col - gridWith);
+        int leftSiteIndex = (row * gridWith) + (leftCol - gridWith);
+        int rightSiteIndex = (row * gridWith) + (rightCol - gridWith);
+
+        // union only to already opened neighbours
         if (topRow > 0 && isOpen(topRow, col)) {
-            unionSet.union(toIndex(row, col), toIndex(topRow, col));
+            unionSet.union(currRowAndColIndex, topSiteIndex);
         }
+
         if (bottomRow <= gridWith && isOpen(bottomRow, col)) {
-            unionSet.union(toIndex(row, col), toIndex(bottomRow, col));
+            unionSet.union(currRowAndColIndex, bottomSiteIndex);
         }
+
         if (leftCol > 0 && isOpen(row, leftCol)) {
-            unionSet.union(toIndex(row, col), toIndex(row, leftCol));
+            unionSet.union(currRowAndColIndex, leftSiteIndex);
         }
+
         if (rightCol <= gridWith && isOpen(row, rightCol)) {
-            unionSet.union(toIndex(row, col), toIndex(row, rightCol));
+            unionSet.union(currRowAndColIndex, rightSiteIndex);
         }
     }
 
@@ -105,7 +113,7 @@ public class Percolation {
         if (!colInGrid) {
             throw new IllegalArgumentException("column out of grid");
         }
-        return percolateGrid[row][col] == open;
+        return percolateGrid[row][col];
     }
 
     // is the site (row, col) full?
@@ -118,7 +126,9 @@ public class Percolation {
         if (!colInGrid) {
             throw new IllegalArgumentException("column out of grid");
         }
-        return percolateGrid[row][col] == full;
+        int mainRoot = unionSet.find(topVirtualSite);
+        int root = unionSet.find((row * gridWith) + (col - gridWith));
+        return mainRoot == root;
     }
 
     // returns the number of open sites
@@ -136,12 +146,16 @@ public class Percolation {
         int n = 10;
         Percolation model = new Percolation(n);
         for (int i = 1; i <= n; i++) {
-            for (int j = 1; j <= n + 1; j++) {
-                if (j == 2) {
-                    model.open(i, j);
+            for (int j = 1; j <= n; j++) {
+                model.open(i, j);
+                boolean connected = model.unionSet.find(model.topVirtualSite)
+                        == model.unionSet.find(model.bottomVirtualSite);
+                if (connected) {
+                    System.out.printf("connected to bottom at i= %d j= %d\n", i, j);
                 }
             }
         }
         System.out.println(model.percolates());
+
     }
 }
