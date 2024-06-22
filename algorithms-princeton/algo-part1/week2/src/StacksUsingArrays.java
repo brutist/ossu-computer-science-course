@@ -1,50 +1,46 @@
 import edu.princeton.cs.algs4.StdIn;
 
-public class StacksUsingLinkedList {
-    private Node topMostNode;
-    private int stackSize;
+public class StacksUsingArrays {
+    private String[] arr;
+    private int topMostIndex = 0;
 
-    private static class Node {
-        String item;
-        Node next;
-    }
-    public StacksUsingLinkedList(){
-        topMostNode = null;
-        stackSize = 0;
+    public StacksUsingArrays() {
+        int initialSize = 2;
+        arr = new String[initialSize];
     }
 
-    public void push (String item) {
-        Node newTop = new Node();
-        newTop.item = item;
-        newTop.next = topMostNode;
-        topMostNode = newTop;
-        stackSize++;
+    private void resize() {
+        String[] newArr = new String[arr.length * 2];
+        System.arraycopy(arr, 0, newArr, 0, arr.length);
+        arr = newArr;
     }
 
-    public String pop () {
-        if (isEmpty()) {
-            throw new IllegalCallerException("pop is not allowed on empty stack");
+    public void push(String item) {
+        // add 1 first to the top index then check if that exceeds the length
+        topMostIndex++;
+
+        if (topMostIndex == arr.length) {
+            resize();
         }
-        else {
-            String topItem = topMostNode.item;
-            topMostNode = topMostNode.next;
-            stackSize--;
-            return topItem;
-        }
+        arr[topMostIndex] = item;
+    }
+
+    public String pop() {
+        return arr[topMostIndex--];
     }
 
     public boolean isEmpty() {
-        return topMostNode == null;
+        return topMostIndex == 0;
     }
 
-    public int size () {
-        return stackSize;
+    public int size() {
+        return topMostIndex;
     }
 
     public static void main (String[] args) {
         int size = 0;
         boolean testResult = true;
-        StacksUsingLinkedList stack = new StacksUsingLinkedList();
+        StacksUsingArrays stack = new StacksUsingArrays();
         while (!StdIn.isEmpty()) {
             String s = StdIn.readString();
             if (s.equals("-")) {
