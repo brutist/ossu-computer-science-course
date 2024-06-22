@@ -1,11 +1,11 @@
 import edu.princeton.cs.algs4.StdIn;
 
-public class StacksUsingLinkedList {
+public class StacksUsingLinkedList<Item> {
     private Node topMostNode;
     private int stackSize;
 
-    private static class Node {
-        String item;
+    private class Node {
+        Item item;
         Node next;
     }
     public StacksUsingLinkedList(){
@@ -13,7 +13,7 @@ public class StacksUsingLinkedList {
         stackSize = 0;
     }
 
-    public void push (String item) {
+    public void push (Item item) {
         Node newTop = new Node();
         newTop.item = item;
         newTop.next = topMostNode;
@@ -21,12 +21,12 @@ public class StacksUsingLinkedList {
         stackSize++;
     }
 
-    public String pop () {
+    public Item pop () {
         if (isEmpty()) {
             throw new IllegalCallerException("pop is not allowed on empty stack");
         }
         else {
-            String topItem = topMostNode.item;
+            Item topItem = topMostNode.item;
             topMostNode = topMostNode.next;
             stackSize--;
             return topItem;
@@ -44,7 +44,7 @@ public class StacksUsingLinkedList {
     public static void main (String[] args) {
         int size = 0;
         boolean testResult = true;
-        StacksUsingLinkedList stack = new StacksUsingLinkedList();
+        StacksUsingLinkedList<String> stack = new StacksUsingLinkedList<String>();
         while (!StdIn.isEmpty()) {
             String s = StdIn.readString();
             if (s.equals("-")) {

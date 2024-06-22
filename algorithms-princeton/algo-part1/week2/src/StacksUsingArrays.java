@@ -1,21 +1,21 @@
 import edu.princeton.cs.algs4.StdIn;
 
-public class StacksUsingArrays {
-    private String[] arr;
+public class StacksUsingArrays<Item> {
+    private Item[] arr;
     private int topMostIndex = 0;
 
     public StacksUsingArrays() {
         int initialSize = 2;
-        arr = new String[initialSize];
+        arr = (Item[]) new Object[initialSize];
     }
 
     private void resize() {
-        String[] newArr = new String[arr.length * 2];
+        Item[] newArr = (Item[]) new Object[arr.length * 2];
         System.arraycopy(arr, 0, newArr, 0, arr.length);
         arr = newArr;
     }
 
-    public void push(String item) {
+    public void push(Item item) {
         // add 1 first to the top index then check if that exceeds the length
         topMostIndex++;
 
@@ -25,8 +25,8 @@ public class StacksUsingArrays {
         arr[topMostIndex] = item;
     }
 
-    public String pop() {
-        String lastElem = arr[topMostIndex];
+    public Item pop() {
+        Item lastElem = arr[topMostIndex];
         arr[topMostIndex] = null;
         topMostIndex--;
         return lastElem;
@@ -43,7 +43,7 @@ public class StacksUsingArrays {
     public static void main (String[] args) {
         int size = 0;
         boolean testResult = true;
-        StacksUsingArrays stack = new StacksUsingArrays();
+        StacksUsingArrays<String> stack = new StacksUsingArrays<String>();
         while (!StdIn.isEmpty()) {
             String s = StdIn.readString();
             if (s.equals("-")) {
