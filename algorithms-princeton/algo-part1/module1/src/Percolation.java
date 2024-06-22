@@ -7,54 +7,39 @@
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
-    // sites legend
-    // false {blocked}; true {open}
-
-    // percolate grid is 1-based index
-    private boolean[][] percolateGrid;
+    private byte[] sitesStatus;
+    private byte blockedSite = 0;               // 000
+    private final byte openSite = 4;                  // 100
+    private final byte topConnectedSite = 6;          // 110
+    private final byte bottomConnectedSite = 5;       // 101
+    private final byte topNBottomConnectedSite = 7;   // 111
     private int openSitesCounter;
-    private int gridWith;
-
-    // unionSet is 1-based index with 1->n as percolate sites,
-    //  n+1 is topVirtualSite connected to all top sites
-    //  n+2 is bottomVirtualSite connected to all bottom sites
-    private WeightedQuickUnionUF unionSet;
-    private int topVirtualSite;
-    private int bottomVirtualSite;
+    private final int gridWidth;
+    private WeightedQuickUnionUF sitesSet;
+    private boolean percolationStatus;
 
     // creates n-by-n grid, with all sites initially blocked
     public Percolation(int n) {
         if (n <= 0) {
             throw new IllegalArgumentException("grid size should be more than zero");
         }
-        // the grid starts at (1,1)
         // all zero-index column or row are not considered (left blank)
-        gridWith = n;
+        gridWidth = n;
         openSitesCounter = 0;
 
-        int numTiles = n + 2;  // zero index columns are not considered
-        percolateGrid = new boolean[numTiles][numTiles];
-        for (int i = 1; i < numTiles; i++) {
-            for (int j = 1; j < numTiles; j++) {
-                percolateGrid[i][j] = false;
-            }
-        }
-
-        // create an instance of weightedQuickUnionUF with n+3 elements
-        // index 1->n are the percolate sites
-        // n+1 is the top site connected to all first row sites
-        // n+2 is the bottom site connected to all last row sites
-        // index 0 is not considered to simplify converting to row and columns
         int totalSites = n * n;
-        topVirtualSite = totalSites + 1;
-        bottomVirtualSite = totalSites + 2;
-        unionSet = new WeightedQuickUnionUF(totalSites + 3);
+        sitesStatus = new byte[totalSites];
+        for (int i = 0; i < totalSites; i++) {
+            sitesStatus[i] = blockedSite;
+        }
+        sitesSet = new WeightedQuickUnionUF(totalSites);
+        percolationStatus = false;
     }
 
     // opens the site (row, col) if it is not open already
     public void open(int row, int col) {
-        boolean rowInGrid = row > 0 && row <= gridWith;
-        boolean colInGrid = col > 0 && col <= gridWith;
+        boolean rowInGrid = row > 0 && row <= gridWidth;
+        boolean colInGrid = col > 0 && col <= gridWidth;
         if (!rowInGrid) {
             throw new IllegalArgumentException("row out of grid");
         }
@@ -62,81 +47,110 @@ public class Percolation {
             throw new IllegalArgumentException("column out of grid");
         }
 
-        int currRowAndColIndex = (row * gridWith) + (col - gridWith);
-        boolean open = true;
-        if (percolateGrid[row][col] != open) {
-            percolateGrid[row][col] = open;
+        int currSite = ((row * gridWidth) + (col - gridWidth) - 1);
+        byte currSiteStatus = sitesStatus[currSite];
+        if (sitesStatus[currSite] != openSite) {
+            sitesStatus[currSite] = openSite;
             openSitesCounter++;
 
             if (row == 1) {
-                unionSet.union(topVirtualSite, currRowAndColIndex);
+                sitesStatus[currSite] = topConnectedSite;
+
+                if (row == gridWidth) {
+                    sitesStatus[currSite] = topNBottomConnectedSite;
+                    percolationStatus = true;
+                }
             }
-            else if (row == gridWith) {
-                unionSet.union(bottomVirtualSite, currRowAndColIndex);
+            else if (row == gridWidth) {
+                sitesStatus[currSite] = bottomConnectedSite;
             }
-        }
 
-        int topRow = row - 1;
-        int bottomRow = row + 1;
-        int leftCol = col - 1;
-        int rightCol = col + 1;
+            int topRow = row - 1;
+            int bottomRow = row + 1;
+            int leftCol = col - 1;
+            int rightCol = col + 1;
 
-        int topSiteIndex = (topRow * gridWith) + (col - gridWith);
-        int bottomSiteIndex = (bottomRow * gridWith) + (col - gridWith);
-        int leftSiteIndex = (row * gridWith) + (leftCol - gridWith);
-        int rightSiteIndex = (row * gridWith) + (rightCol - gridWith);
+            int topSiteIndex = ((topRow * gridWidth) + (col - gridWidth) - 1);
+            int bottomSiteIndex = ((bottomRow * gridWidth) + (col - gridWidth) - 1);
+            int leftSiteIndex = ((row * gridWidth) + (leftCol - gridWidth) - 1);
+            int rightSiteIndex = ((row * gridWidth) + (rightCol - gridWidth) - 1);
 
-        // union only to already opened neighbours
-        if (topRow > 0 && isOpen(topRow, col)) {
-            unionSet.union(currRowAndColIndex, topSiteIndex);
-        }
 
-        if (bottomRow <= gridWith && isOpen(bottomRow, col)) {
-            unionSet.union(currRowAndColIndex, bottomSiteIndex);
-        }
+            int otherRoot = 0;
+            byte otherRootStatus = 0;
+            int newRoot = 0;
+            byte combinedStatus = 0;
+            // union only to already opened neighbours
+            if (topRow > 0 && isOpen(topRow, col)) {
+                otherRoot = sitesSet.find(topSiteIndex);
+                otherRootStatus = sitesStatus[otherRoot];
+                sitesSet.union(currSite, topSiteIndex);
+                newRoot = sitesSet.find(currSite);
+                combinedStatus = (byte) (otherRootStatus | currSiteStatus);
+                sitesStatus[newRoot] = combinedStatus;
+            }
 
-        if (leftCol > 0 && isOpen(row, leftCol)) {
-            unionSet.union(currRowAndColIndex, leftSiteIndex);
-        }
+            if (bottomRow <= gridWidth && isOpen(bottomRow, col)) {
+                otherRoot = sitesSet.find(bottomSiteIndex);
+                otherRootStatus = sitesStatus[otherRoot];
+                sitesSet.union(currSite, bottomSiteIndex);
+                newRoot = sitesSet.find(currSite);
+                combinedStatus = (byte) (otherRootStatus | currSiteStatus);
+                sitesStatus[newRoot] = combinedStatus;
+            }
 
-        if (rightCol <= gridWith && isOpen(row, rightCol)) {
-            unionSet.union(currRowAndColIndex, rightSiteIndex);
+            if (leftCol > 0 && isOpen(row, leftCol)) {
+                otherRoot = sitesSet.find(leftSiteIndex);
+                otherRootStatus = sitesStatus[otherRoot];
+                sitesSet.union(currSite, leftSiteIndex);
+                newRoot = sitesSet.find(currSite);
+                combinedStatus = (byte) (otherRootStatus | currSiteStatus);
+                sitesStatus[newRoot] = combinedStatus;
+            }
+
+            if (rightCol <= gridWidth && isOpen(row, rightCol)) {
+                otherRoot = sitesSet.find(rightSiteIndex);
+                otherRootStatus = sitesStatus[otherRoot];
+                sitesSet.union(currSite, rightSiteIndex);
+                newRoot = sitesSet.find(currSite);
+                combinedStatus = (byte) (otherRootStatus | currSiteStatus);
+                sitesStatus[newRoot] = combinedStatus;
+            }
+            if (combinedStatus == topNBottomConnectedSite) {
+                percolationStatus = true;
+            }
         }
     }
 
     // is the site (row, col) open?
     public boolean isOpen(int row, int col) {
-        boolean rowInGrid = row > 0 && row <= gridWith;
-        boolean colInGrid = col > 0 && col <= gridWith;
+        boolean rowInGrid = row > 0 && row <= gridWidth;
+        boolean colInGrid = col > 0 && col <= gridWidth;
         if (!rowInGrid) {
             throw new IllegalArgumentException("row out of grid");
         }
         if (!colInGrid) {
             throw new IllegalArgumentException("column out of grid");
         }
-        return percolateGrid[row][col];
+        int root = sitesSet.find(((row * gridWidth) + (col - gridWidth) - 1));
+        byte rootStatus = sitesStatus[root];
+        return rootStatus >= openSite;
     }
 
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
-        boolean rowInGrid = row > 0 && row <= gridWith;
-        boolean colInGrid = col > 0 && col <= gridWith;
+        boolean rowInGrid = row > 0 && row <= gridWidth;
+        boolean colInGrid = col > 0 && col <= gridWidth;
         if (!rowInGrid) {
             throw new IllegalArgumentException("row out of grid");
         }
         if (!colInGrid) {
             throw new IllegalArgumentException("column out of grid");
         }
+        int root = sitesSet.find(((row * gridWidth) + (col - gridWidth) - 1));
+        byte rootStatus = sitesStatus[root];
+        return rootStatus == topConnectedSite || rootStatus == topNBottomConnectedSite;
 
-        // if it's not open it is not full
-        if (!isOpen(row, col)) {
-            return false;
-        }
-        else {
-            int mainRoot = unionSet.find(topVirtualSite);
-            int root = unionSet.find((row * gridWith) + (col - gridWith));
-            return mainRoot == root;
-        }
     }
 
     // returns the number of open sites
@@ -146,7 +160,7 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        return unionSet.find(topVirtualSite) == unionSet.find(bottomVirtualSite);
+        return percolationStatus;
     }
 
     // test client
@@ -156,8 +170,7 @@ public class Percolation {
         for (int i = 1; i <= n; i++) {
             for (int j = 1; j <= n; j++) {
                 modelA.open(i, j);
-                boolean connected = modelA.unionSet.find(modelA.topVirtualSite)
-                        == modelA.unionSet.find(modelA.bottomVirtualSite);
+                boolean connected = modelA.percolates();
                 if (connected) {
                     System.out.printf("connected to bottom at i= %d j= %d\n", i, j);
                 }
@@ -174,7 +187,7 @@ public class Percolation {
                 modelB.open(rows[i], col[i]);
             }
             catch (IllegalArgumentException e) {
-                System.out.printf("Exception catched: %d\n", i + 1);
+                System.out.printf("Exception caught: %d\n", i + 1);
             }
         }
     }
