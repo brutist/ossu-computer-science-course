@@ -26,7 +26,10 @@ public class StacksUsingArrays {
     }
 
     public String pop() {
-        return arr[topMostIndex--];
+        String lastElem = arr[topMostIndex];
+        arr[topMostIndex] = null;
+        topMostIndex--;
+        return lastElem;
     }
 
     public boolean isEmpty() {
