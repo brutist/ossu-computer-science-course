@@ -8,11 +8,11 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
     private byte[] sitesStatus;
-    private byte blockedSite = 0;               // 000
-    private final byte openSite = 4;                  // 100
-    private final byte topConnectedSite = 6;          // 110
-    private final byte bottomConnectedSite = 5;       // 101
-    private final byte topNBottomConnectedSite = 7;   // 111
+    private byte blockedSite = (byte)0b00000000;                    // 0
+    private final byte openSite = (byte)0b00000100;                 // 4
+    private final byte topConnectedSite = (byte)0b00000110;         // 6
+    private final byte bottomConnectedSite = (byte)0b00000101;      // 5
+    private final byte topNBottomConnectedSite = (byte)0b00000111;  // 7
     private int openSitesCounter;
     private final int gridWidth;
     private WeightedQuickUnionUF sitesSet;
@@ -55,14 +55,16 @@ public class Percolation {
 
             if (row == 1) {
                 sitesStatus[currSite] = topConnectedSite;
-
+                currSiteStatus = topConnectedSite;
                 if (row == gridWidth) {
                     sitesStatus[currSite] = topNBottomConnectedSite;
+                    currSiteStatus = topNBottomConnectedSite;
                     percolationStatus = true;
                 }
             }
             else if (row == gridWidth) {
                 sitesStatus[currSite] = bottomConnectedSite;
+                currSiteStatus = bottomConnectedSite;
             }
 
             int topRow = row - 1;
@@ -132,8 +134,7 @@ public class Percolation {
         if (!colInGrid) {
             throw new IllegalArgumentException("column out of grid");
         }
-        int root = sitesSet.find(((row * gridWidth) + (col - gridWidth) - 1));
-        byte rootStatus = sitesStatus[root];
+        byte rootStatus = sitesStatus[((row * gridWidth) + (col - gridWidth) - 1)];
         return rootStatus >= openSite;
     }
 
@@ -165,11 +166,15 @@ public class Percolation {
 
     // test client
     public static void main(String[] args) {
-        int n = 10;
+        int n = 5;
         Percolation modelA = new Percolation(n);
         for (int i = 1; i <= n; i++) {
             for (int j = 1; j <= n; j++) {
                 modelA.open(i, j);
+                if (!modelA.isOpen(i, j) && modelA.isFull(i, j)) {
+                    System.out.printf("Not opened or full i= %d j= %d\n", i, j);
+                }
+
                 boolean connected = modelA.percolates();
                 if (connected) {
                     System.out.printf("connected to bottom at i= %d j= %d\n", i, j);
