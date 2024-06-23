@@ -5,15 +5,17 @@ public class QueueUsingArrays<Item> {
     int head = 0, tail = 0, size = 0;
 
     public QueueUsingArrays() {
-        items = (Item[]) new Object[2];
+        int initialSize = 2;
+        items = (Item[]) new Object[initialSize];
     }
 
-    private void resize() {
-        int newSize = tail - head;
-        Item[] newItems = (Item[]) new Object[newSize];
-        for (int i = head; i <= newSize; i++) {
-            items[i];
-        }
+    private void resize(int to) {
+        // resets head and tail indexes and create a *to-length array
+        Item[] newItems = (Item[]) new Object[to];
+        System.arraycopy(items, head, newItems, 0, size);
+        items = newItems;
+        head = 0;
+        tail = size;
     }
 
 
@@ -21,11 +23,13 @@ public class QueueUsingArrays<Item> {
         if (isEmpty()) {
             head = 0;
             tail = 0;
-            items[head] = item;
         }
-        else {
-            items[tail] = item;
+
+        if (head + size == items.length) {
+            resize(items.length * 2);
         }
+
+        items[tail] = item;
         tail++;
         size++;
     }
@@ -35,14 +39,20 @@ public class QueueUsingArrays<Item> {
             throw new IllegalCallerException("can't dequeue in empty queue object");
         }
 
+        if (size < items.length / 4) {
+            resize(items.length / 2);
+        }
+
         Item firstItem = items[head];
+        items[head] = null;
         head++;
         size--;
+
         return firstItem;
     }
 
     public boolean isEmpty() {
-        return head - tail == 0;
+        return size == 0;
     }
 
     public int size() {
