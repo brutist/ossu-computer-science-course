@@ -29,6 +29,12 @@ public class StacksUsingArrays<Item> {
         Item lastElem = arr[topMostIndex];
         arr[topMostIndex] = null;
         topMostIndex--;
+
+        // resize array if topMostIndex >= arr.length/4
+        if (topMostIndex >= arr.length / 4) {
+            resize();
+        }
+
         return lastElem;
     }
 
