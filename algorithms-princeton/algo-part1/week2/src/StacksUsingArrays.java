@@ -9,9 +9,9 @@ public class StacksUsingArrays<Item> {
         arr = (Item[]) new Object[initialSize];
     }
 
-    private void resize() {
-        Item[] newArr = (Item[]) new Object[arr.length * 2];
-        System.arraycopy(arr, 0, newArr, 0, arr.length);
+    private void resize(int from, int to) {
+        Item[] newArr = (Item[]) new Object[to];
+        System.arraycopy(arr, 0, newArr, 0, topMostIndex);
         arr = newArr;
     }
 
@@ -20,7 +20,7 @@ public class StacksUsingArrays<Item> {
         topMostIndex++;
 
         if (topMostIndex == arr.length) {
-            resize();
+            resize(arr.length, arr.length * 2);
         }
         arr[topMostIndex] = item;
     }
@@ -28,13 +28,13 @@ public class StacksUsingArrays<Item> {
     public Item pop() {
         Item lastElem = arr[topMostIndex];
         arr[topMostIndex] = null;
-        topMostIndex--;
 
         // resize array if topMostIndex >= arr.length/4
-        if (topMostIndex >= arr.length / 4) {
-            resize();
+        if (topMostIndex <= arr.length / 4) {
+            resize(arr.length, arr.length / 2);
         }
 
+        topMostIndex--;
         return lastElem;
     }
 
