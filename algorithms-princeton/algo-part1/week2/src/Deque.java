@@ -3,7 +3,7 @@ import java.util.NoSuchElementException;
 
 public class Deque<Item> implements Iterable<Item> {
     int size;
-    Node lastNode, firstNode, currentNode;
+    Node lastNode, firstNode;
     private class Node {
         Item item;
         Node prev, next;
@@ -42,7 +42,7 @@ public class Deque<Item> implements Iterable<Item> {
         size++;
 
         if (size == 1) {
-            currentNode = newFirst;
+            lastNode = firstNode;
         }
     }
 
@@ -62,7 +62,7 @@ public class Deque<Item> implements Iterable<Item> {
         size++;
 
         if (size == 1) {
-            currentNode = newLast;
+            firstNode = lastNode;
         }
     }
 
@@ -71,8 +71,17 @@ public class Deque<Item> implements Iterable<Item> {
         if (isEmpty()) {
             throw new NoSuchElementException("deque is empty");
         }
+
         Item query = firstNode.item;
-        firstNode = firstNode.prev;
+
+        if (size == 1) {
+            firstNode = null;
+            lastNode = null;
+        }
+        else {
+            firstNode = firstNode.prev;
+            firstNode.next = null;
+        }
 
         size--;
         return query;
@@ -83,8 +92,17 @@ public class Deque<Item> implements Iterable<Item> {
         if (isEmpty()) {
             throw new NoSuchElementException("deque is empty");
         }
+
         Item query = lastNode.item;
-        lastNode = lastNode.next;
+
+        if (size == 1) {
+            firstNode = null;
+            lastNode = null;
+        }
+        else {
+            lastNode = lastNode.next;
+            lastNode.prev = null;
+        }
 
         size--;
         return query;
@@ -109,6 +127,7 @@ public class Deque<Item> implements Iterable<Item> {
             if (!hasNext()) {
                 throw new NoSuchElementException("no more elements in the iterator");
             }
+            Node currentNode = firstNode;
             Item query = currentNode.item;
             currentNode = currentNode.next;
             return query;
@@ -123,6 +142,49 @@ public class Deque<Item> implements Iterable<Item> {
 
     // unit testing (required)
     public static void main(String[] args) {
+        String[] inputsA = {"hey", "Jude", "don't", "make", "it", "bad"};
 
+        // test isEmpty() and size()
+        Deque<String> dequeA = new Deque<String>();
+        boolean resultA = dequeA.isEmpty();
+
+        int i = 0;
+        for (; i < inputsA.length; i++) {
+            dequeA.addLast(inputsA[i]);
+            if (dequeA.size() != i + 1) {
+                resultA = false;
+            }
+            if (i == 1 || i == 2) {
+                dequeA.removeFirst();
+            }
+
+            if (dequeA.size() != inputsA.length - 2) {
+                resultA = false;
+            }
+        }
+
+        if (resultA ) { System.out.printf("isEmpty() and size() %d tests passed\n", i + 1); }
+
+        // test addLast() and removeFirst()
+        boolean resultB = true;
+        Deque<String> dequeB = new Deque<String>();
+        i = 0;
+        for (; i < inputsA.length; i++) {
+            dequeB.addLast(inputsA[i]);
+            //System.out.printf("%s  => ", dequeB.removeFirst());
+            //dequeB.addLast(inputsA[i]);
+            if (dequeB.isEmpty()) {
+                resultB = false;
+                System.out.print("test addLast() and removeFirst(): deque should not be empty");
+            }
+        }
+        for (String s : inputsA) {
+            String first = dequeB.removeFirst();
+            if (!first.equals(s)) {
+                resultB = false;
+                System.out.print("test addLast() and removeFirst(): removeFirst() is getting wrong answers");
+            }
+        }
+        if (resultB) { System.out.printf("addLast() and removeFirst() %d tests passed\n", i + 1); }
     }
 }
