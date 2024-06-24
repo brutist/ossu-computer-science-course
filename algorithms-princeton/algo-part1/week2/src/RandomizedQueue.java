@@ -57,7 +57,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             throw new NoSuchElementException("cannot dequeue an empty randomized queue");
         }
         int randomIndex = StdRandom.uniformInt(topIndex);
-
         Item query = items[randomIndex];
 
         // save the last item then change it to null to avoid loitering
@@ -92,19 +91,24 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     private class RandomizedQueueIterator implements Iterator<Item> {
-        Item[] itemsCopy;
-        int currTopIndex;
+        private Item[] shuffledItems;
+        private int i = 0;
 
         // create a RandomizedQueue to iterate through
         public RandomizedQueueIterator() {
-            currTopIndex = topIndex;
-            itemsCopy = (Item[]) new Object[items.length];
-            System.arraycopy(items, 0, itemsCopy, 0, currTopIndex);
+            shuffledItems = (Item[]) new Object[size];
+            System.arraycopy(items, 0, shuffledItems, 0, size);
+            for (int i = 0; i < shuffledItems.length; i++) {
+                int r = StdRandom.uniformInt(i + 1);
+                Item temp = shuffledItems[r];
+                shuffledItems[r] = shuffledItems[i];
+                shuffledItems[i] = temp;
+            }
         }
 
         @Override
         public boolean hasNext() {
-            return currTopIndex != 0;
+            return i < shuffledItems.length;
         }
 
         @Override
@@ -112,16 +116,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             if (!hasNext()) {
                 throw new NoSuchElementException("cannot call next() on an empty randomized queue");
             }
-            int randIndex = StdRandom.uniformInt(currTopIndex);
-            Item query = itemsCopy[randIndex];
-
-            Item lastItem = itemsCopy[currTopIndex - 1];
-            itemsCopy[currTopIndex - 1] = null;
-            itemsCopy[randIndex] = lastItem;
-
-            currTopIndex--;
-
-            return query;
+            return shuffledItems[i++];
         }
 
         @Override
@@ -243,6 +238,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
                 System.out.printf("Not equal: got '%s' instead of '%s' \n", s, inputsA[i]);
             }
             i++;
+        }
+        if (i != inputsA.length) {
+            System.out.printf("Iterator produced: %d items instead of %d", i, inputsA.length);
         }
         if (randQB.size() != inputsA.length) {
             System.out.println("Iterator should not change the size of the object");
