@@ -23,7 +23,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         System.arraycopy(items, 0, resizedItems, 0, size);
 
         // adjust appropriately the instance variables
-        topIndex = size;
         items = resizedItems;
     }
 
@@ -57,12 +56,14 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (isEmpty()) {
             throw new NoSuchElementException("cannot dequeue an empty randomized queue");
         }
-        // check if the item in the randIndex is null, should not return that
         int randomIndex = StdRandom.uniformInt(topIndex);
 
         Item query = items[randomIndex];
+
+        // save the last item then change it to null to avoid loitering
         Item lastItem = items[topIndex - 1];
         items[topIndex - 1] = null;
+        // move the last item to the random index
         items[randomIndex] = lastItem;
 
         topIndex--;
@@ -98,9 +99,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             randQIterator = new RandomizedQueue<Item>();
 
             for (int i = 0; i < topIndex; i++) {
-                if (items[i] != null) {
-                    randQIterator.enqueue(items[i]);
-                }
+                randQIterator.enqueue(items[i]);
             }
         }
 
