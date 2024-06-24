@@ -18,17 +18,12 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     //  this also removes all null items in the items[]
     private void resize(int newSize) {
         Item[] resizedItems = (Item[]) new Object[newSize];
-        int resizedIndex = 0;
-        // recopy the array into length newSize and remove all nulls
-        for (Item item : items) {
-            if (item != null) {
-                resizedItems[resizedIndex] = item;
-                resizedIndex++;
-            }
-        }
-        // adjust appropriately for removed null items
-        topIndex = resizedIndex;
-        size = resizedIndex;
+
+        // recopy the array into length newSize
+        System.arraycopy(items, 0, resizedItems, 0, size);
+
+        // adjust appropriately the instance variables
+        topIndex = size;
         items = resizedItems;
     }
 
@@ -49,7 +44,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         }
 
         if (topIndex == items.length) {
-            // this might change the topIndex
             resize(items.length * 2);
         }
 
@@ -65,12 +59,13 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         }
         // check if the item in the randIndex is null, should not return that
         int randomIndex = StdRandom.uniformInt(topIndex);
-        while (items[randomIndex] == null) {
-            randomIndex  = StdRandom.uniformInt(topIndex);
-        }
 
         Item query = items[randomIndex];
-        items[randomIndex] = null;
+        Item lastItem = items[topIndex - 1];
+        items[topIndex - 1] = null;
+        items[randomIndex] = lastItem;
+
+        topIndex--;
         size--;
 
         int oneQuarter = items.length / 4;
@@ -87,10 +82,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             throw new NoSuchElementException("cannot sample an empty randomized queue");
         }
         int randomIndex = StdRandom.uniformInt(topIndex);
-        // check if the item in the randIndex is null, should not return that
-        while (items[randomIndex] == null) {
-            randomIndex  = StdRandom.uniformInt(topIndex);
-        }
         return items[randomIndex];
     }
 
