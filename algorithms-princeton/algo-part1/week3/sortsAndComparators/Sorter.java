@@ -1,7 +1,5 @@
 import edu.princeton.cs.algs4.StdRandom;
 
-import java.util.function.IntConsumer;
-
 public class Sorter<Comparables extends Comparable<Comparables>>{
 
     private boolean less(Comparables objectA, Comparables objectB) {
@@ -122,8 +120,8 @@ public class Sorter<Comparables extends Comparable<Comparables>>{
         // double the size of arrays to merge each time
         for (int mergeSize = 1; mergeSize <= n; mergeSize = (mergeSize * 2)) {
             for (int l = 0; l < n - mergeSize; l += (mergeSize * 2)) {
-                // need to create a new merge() that would take in mid, because it's possible that
-                //  the two sorted arrays are not of equal lengths
+                // must have a merge() that accepts mid [the border of two sorted arrays] because
+                //  the two sorted arrays may not be of equal lengths
                 merge(toSort, aux, l, l + mergeSize -1 ,Math.min(l + (mergeSize * 2) - 1, n -1));
             }
         }
