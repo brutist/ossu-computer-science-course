@@ -115,6 +115,20 @@ public class Sorter<Comparables extends Comparable<Comparables>>{
         }
     }
 
+    public void mergeSortBU(Comparables[] toSort) {
+        Comparables[] aux = (Comparables[]) new Comparable[toSort.length];
+        int n = toSort.length;
+
+        // double the size of arrays to merge each time
+        for (int mergeSize = 1; mergeSize <= n; mergeSize = (mergeSize * 2)) {
+            for (int l = 0; l < n - mergeSize; l += (mergeSize * 2)) {
+                // need to create a new merge() that would take in mid, because it's possible that
+                //  the two sorted arrays are not of equal lengths
+                merge(toSort, aux, l, l + mergeSize -1 ,Math.min(l + (mergeSize * 2) - 1, n -1));
+            }
+        }
+    }
+
     public void mergeSort(Comparables[] toSort) {
         Comparables[] aux = (Comparables[]) new Comparable[toSort.length];
         mergeSort(toSort, aux, 0, toSort.length - 1);
@@ -127,11 +141,11 @@ public class Sorter<Comparables extends Comparable<Comparables>>{
         int mid = low + ((high - low) / 2);
         mergeSort(toSort, aux, low, mid);
         mergeSort(toSort, aux, mid + 1, high);
-        merge(toSort, aux, low, high);
+        merge(toSort, aux, low, mid ,high);
     }
 
-    private void merge(Comparables[] toSort, Comparables[] aux, int low, int high) {
-        int mid = low + ((high - low) / 2);
+
+    private void merge(Comparables[] toSort, Comparables[] aux, int low, int mid, int high) {
 
         assert isSorted(toSort, low, mid);
         assert isSorted(toSort, mid + 1, high);
@@ -171,15 +185,16 @@ public class Sorter<Comparables extends Comparable<Comparables>>{
 
 
         // testing selectionSort(), insertionSort()
-        int arraySize = 100;
-        int trials = 10;
+        int trials = 50;
         int SsortCounter = 0;
         int IsortCounter = 0;
         int ShsortCounter = 0;
         int MsortCounter = 0;
+        int MsortBUCounter = 0;
         boolean testSucess = true;
 
         for (int i = 0; i < trials; i++) {
+            int arraySize = StdRandom.uniformInt(101) + 20;
             Integer[] unsorted = integerSorter.unsortedNumbers(arraySize);
             if (integerSorter.isSorted(unsorted)) {
                 System.out.println("Reshuffling failed");
@@ -238,13 +253,29 @@ public class Sorter<Comparables extends Comparable<Comparables>>{
                 System.out.printf("mergeSort() tests %s FAILED\n", MsortCounter);
             }
 
+            // reshuffle the array
+            unsorted = integerSorter.unsortedNumbers(arraySize);
+            if (integerSorter.isSorted(unsorted)) {
+                System.out.println("Reshuffling failed");
+            }
+            // testing mergeSortBU()
+            integerSorter.mergeSortBU(unsorted);
+            //integerSorter.printArray(unsorted);
+            MsortBUCounter++;
+
+            if (!integerSorter.isSorted(unsorted)) {
+                testSucess = false;
+                System.out.printf("mergeSortBU() tests %s FAILED\n", MsortCounter);
+            }
+
         }
         if (testSucess) {
             System.out.printf("selectionSort() %s tests PASSED\n" +
                               "insertionSort() %s tests PASSED\n" +
                               "shellSort()     %s tests PASSED\n" +
-                              "mergeSort()     %s tests PASSED\n",
-                    SsortCounter, IsortCounter, ShsortCounter, MsortCounter);
+                              "mergeSort()     %s tests PASSED\n" +
+                              "mergeSortBU()   %s tests PASSED\n",
+                    SsortCounter, IsortCounter, ShsortCounter, MsortCounter, MsortBUCounter);
         }
     }
 }
