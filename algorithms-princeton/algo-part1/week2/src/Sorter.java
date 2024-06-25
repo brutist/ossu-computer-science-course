@@ -1,5 +1,7 @@
 import edu.princeton.cs.algs4.StdRandom;
 
+import java.util.function.IntConsumer;
+
 public class Sorter<Comparables extends Comparable<Comparables>>{
 
     private boolean less(Comparables objectA, Comparables objectB) {
@@ -9,6 +11,15 @@ public class Sorter<Comparables extends Comparable<Comparables>>{
     private boolean isSorted(Comparables[] items) {
 
         for (int i = 1; i < items.length; i++) {
+            if (less(items[i], items[i - 1])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isSorted(Comparables[] items, int low, int high) {
+        for (int i = low + 1; i < high; i++) {
             if (less(items[i], items[i - 1])) {
                 return false;
             }
@@ -104,6 +115,43 @@ public class Sorter<Comparables extends Comparable<Comparables>>{
         }
     }
 
+    public void mergeSort(Comparables[] toSort) {
+        Comparables[] aux = (Comparables[]) new Comparable[toSort.length];
+        mergeSort(toSort, aux, 0, toSort.length - 1);
+    }
+
+    private void mergeSort(Comparables[] toSort, Comparables[] aux, int low, int high) {
+        if (low >= high) {
+            return;
+        }
+        int mid = low + ((high - low) / 2);
+        mergeSort(toSort, aux, low, mid);
+        mergeSort(toSort, aux, mid + 1, high);
+        merge(toSort, aux, low, high);
+    }
+
+    private void merge(Comparables[] toSort, Comparables[] aux, int low, int high) {
+        int mid = low + ((high - low) / 2);
+
+        assert isSorted(toSort, low, mid);
+        assert isSorted(toSort, mid + 1, high);
+
+        for (int n = low; n <= high; n++) {
+            aux[n] = toSort[n];
+        }
+
+        int i = low, j = mid + 1;
+        for (int k = low; k <= high; k++) {
+            if (i > mid)                           { toSort[k] = aux[j++];  }
+            else if (j > high)                     { toSort[k] = aux[i++];  }
+            else if (less(aux[i], aux[j]))         { toSort[k] = aux[i++];  }
+            else                                   { toSort[k] = aux[j++];  }
+        }
+
+        assert isSorted(toSort, low, high);
+    }
+
+
 
     public static void main(String[] args) {
         // testing isSorted()
@@ -123,11 +171,12 @@ public class Sorter<Comparables extends Comparable<Comparables>>{
 
 
         // testing selectionSort(), insertionSort()
-        int arraySize = 50;
+        int arraySize = 100;
         int trials = 10;
         int SsortCounter = 0;
         int IsortCounter = 0;
         int ShsortCounter = 0;
+        int MsortCounter = 0;
         boolean testSucess = true;
 
         for (int i = 0; i < trials; i++) {
@@ -173,11 +222,29 @@ public class Sorter<Comparables extends Comparable<Comparables>>{
                 testSucess = false;
                 System.out.printf("shellSort() tests %s FAILED\n", IsortCounter);
             }
+
+
+            // reshuffle the array
+            unsorted = integerSorter.unsortedNumbers(arraySize);
+            if (integerSorter.isSorted(unsorted)) {
+                System.out.println("Reshuffling failed");
+            }
+            // testing mergeSort()
+            integerSorter.mergeSort(unsorted);
+            MsortCounter++;
+
+            if (!integerSorter.isSorted(unsorted)) {
+                testSucess = false;
+                System.out.printf("mergeSort() tests %s FAILED\n", MsortCounter);
+            }
+
         }
         if (testSucess) {
             System.out.printf("selectionSort() %s tests PASSED\n" +
                               "insertionSort() %s tests PASSED\n" +
-                              "shellSort()     %s tests PASSED\n", SsortCounter, IsortCounter, ShsortCounter);
+                              "shellSort()     %s tests PASSED\n" +
+                              "mergeSort()     %s tests PASSED\n",
+                    SsortCounter, IsortCounter, ShsortCounter, MsortCounter);
         }
     }
 }
