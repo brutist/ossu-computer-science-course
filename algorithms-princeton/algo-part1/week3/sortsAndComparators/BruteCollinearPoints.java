@@ -91,7 +91,6 @@ public class BruteCollinearPoints {
                 result[i] = collinearSegments[i];
             }
         }
-
         return result;
     }
 
@@ -105,12 +104,13 @@ public class BruteCollinearPoints {
         Point f = new Point(2, 0);
         Point g = new Point(2, -1);
 
-        Point h = new Point(6, 1); // d-h-i-j are collinear
-        Point i = new Point(6, 2);
-        Point j = new Point(6, 3);
+        Point h = new Point(-2, 59); // k-j-i-h are collinear
+        Point i = new Point(-6, 59);
+        Point j = new Point(-10, 59);
+        Point k = new Point(53, 59);
 
-        Point k = new Point(79, 89); // not collinear
-        Point l = new Point(53, 59);
+        Point l = new Point(79, 89); // extra
+
 
         // simple tests for finding collinear segments
         Point[] points = {a, b, c, d, e, f, g, h, i, j, k, l};
