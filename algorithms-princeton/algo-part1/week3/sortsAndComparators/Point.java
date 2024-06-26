@@ -98,6 +98,7 @@ public class Point implements Comparable<Point> {
         else            return 1;
     }
 
+
     /**
      * Compares two points by the slope they make with this point.
      * The slope is defined as in the slopeTo() method.
