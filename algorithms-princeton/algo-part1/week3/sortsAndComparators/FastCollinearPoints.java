@@ -16,8 +16,10 @@ public class FastCollinearPoints {
         //   there could only be at max (n/4 + 1) line segments given n-points (this is a proposition)
         maximalLineSegments = new LineSegment[(points.length / 4) + 1];
         maximalLineSegmentsCounter = 0;
-        // ith index represent points[i], ith element is true if point[i] is already an endpoint of a segment
-        boolean[] includedEndPoints = new boolean[points.length];
+        // ith-index contains a Point that is its endpoint, it's initial endpoint is the points[i]
+        Point[] endPoints = new Point[points.length];
+        System.arraycopy(points, 0, endPoints, 0, points.length);
+
 
         // pick an origin point
         for (int i = 0; i < points.length; i++) {
@@ -48,6 +50,19 @@ public class FastCollinearPoints {
             // sort the array of other points by slope they make with the origin point (point[i])
             Arrays.sort(otherPoints, points[i].slopeOrder());
 
+            // find the line segments formed by 3 or more collinear points
+            for (int k = 0; k < otherPoints.length - 1; k++) {
+                Double currentPointSlope = points[i].slopeTo(points[k]);
+                Double nextPointSlope = points[i].slopeTo(points[k + 1]);
+
+
+                if (currentPointSlope.equals(nextPointSlope)) {
+
+                }
+
+
+
+            }
 
 
         }

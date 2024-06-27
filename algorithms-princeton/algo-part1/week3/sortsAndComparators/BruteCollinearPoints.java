@@ -1,3 +1,7 @@
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.StdOut;
+
 public class BruteCollinearPoints {
 
     LineSegment[] collinearSegments;
@@ -12,10 +16,14 @@ public class BruteCollinearPoints {
         // (will) contain all the line segments that are made from collinear points
         //   because segments need to be made of at least 4 points and subsegments are not allowed,
         //   there could only be at max (n/4 + 1) line segments given n-points (this is a proposition)
-        collinearSegments = new LineSegment[(points.length / 4) + 1];
+        collinearSegments = new LineSegment[(points.length / 3) + 1];
         colSegCount = 0;
-        // ith index represent points[i], true if point[i] is already made to a segment
-        boolean[] includedEndPoints = new boolean[points.length];
+        // ith index contains it endpoints
+        int[] endPoints = new int[points.length];
+        // endpoint of ith element is i
+        for (int i = 0; i < endPoints.length; i++) {
+            endPoints[i] = i;
+        }
 
         int N = points.length;
         for (int i = 0; i < N; i++) {
@@ -42,14 +50,15 @@ public class BruteCollinearPoints {
                         if (m == i || m == j || m == k) {
                             continue;
                         }
+
                         Double jSlope = points[i].slopeTo(points[j]);
                         Double kSlope = points[i].slopeTo(points[k]);
                         Double mSlope = points[i].slopeTo(points[m]);
                         // a line segment is formed when the slope formed by Point p to
                         //   other Points q, r, s are equal
                         boolean lineSegFormed = jSlope.equals(kSlope) && jSlope.equals(mSlope);
-                        // true if this line segment was already found
-                        boolean endPointsIncluded = includedEndPoints[i] && includedEndPoints[m];
+                        // true if we have already found a line whose endpoints are i and m
+                        boolean endPointsIncluded = endPoints[i] == m || endPoints[m] == i;
 
                         // check if the formed segment is valid
                         //   a segment is valid if it is either decreasing or increasing
@@ -66,8 +75,13 @@ public class BruteCollinearPoints {
                         boolean validSegment = increasingSegment || decreasingSegment;
 
                         if (lineSegFormed && validSegment && (!endPointsIncluded)) {
-                            includedEndPoints[i] = true;
-                            includedEndPoints[m] = true;
+                            if (endPoints[i] != m) {
+                                endPoints[i] = m;
+                            }
+                            else if (endPoints[m] != i) {
+                                endPoints[m] = i;
+                            }
+
                             // include this collinear segment
                             collinearSegments[colSegCount] = new LineSegment(points[i], points[m]);
                             colSegCount++;
@@ -95,44 +109,42 @@ public class BruteCollinearPoints {
     }
 
     public static void main(String[] args) {
-        Point a = new Point(0, -3);  // a -> d are collinear
-        Point b = new Point(2, -2);
-        Point c = new Point(4, -1);
-        Point d = new Point(6, 0);
 
-        Point e = new Point(2, -3); // e-b-f-g are collinear
-        Point f = new Point(2, 0);
-        Point g = new Point(2, -1);
+        // read the n points from a file
+        In in = new In(args[0]);
+        int n = in.readInt();
+        Point[] points = new Point[n];
+        int maxX = 0;
+        int maxY = 0;
+        for (int i = 0; i < n; i++) {
+            int x = in.readInt();
+            int y = in.readInt();
 
-        Point h = new Point(-2, 59); // k-j-i-h are collinear
-        Point i = new Point(-6, 59);
-        Point j = new Point(-10, 59);
-        Point k = new Point(53, 59);
-
-        Point l = new Point(79, 89); // extra
-
-
-        // simple tests for finding collinear segments
-        Point[] points = {a, b, c, d, e, f, g, h, i, j, k, l};
-        BruteCollinearPoints bruteForce = new BruteCollinearPoints(points);
-        System.out.printf("Number of segments found: %d\n", bruteForce.numberOfSegments());
-        for (LineSegment ls : bruteForce.segments()) {
-            System.out.println(ls);
-        }
-
-        // testing IllegalArgumentException
-        Point[] nullConstructor = null;
-        Point[] arrayContainsNull = {a, b, null};
-        Point[] arrayContainsRepeat = {a, a, b, c, d};
-        Point[][] exceptionTests = {nullConstructor, arrayContainsNull, arrayContainsRepeat};
-
-        for (Point[] exceptionTest : exceptionTests) {
-            try {
-                BruteCollinearPoints bf = new BruteCollinearPoints(exceptionTest);
-            } catch (IllegalArgumentException x) {
-                System.out.println("IllegalArgumentException tests PASSED");
+            if (Math.abs(x) > maxX) {
+                maxX = Math.abs(x);
             }
+            if (Math.abs(y) > maxY) {
+                maxY = Math.abs(y);
+            }
+
+            points[i] = new Point(x, y);
         }
 
+        // draw the points
+        StdDraw.enableDoubleBuffering();
+        StdDraw.setXscale(0, maxX);
+        StdDraw.setYscale(0, maxX);
+        for (Point p : points) {
+            p.draw();
+        }
+        StdDraw.show();
+
+        // print and draw the line segments
+        BruteCollinearPoints collinear = new BruteCollinearPoints(points);
+        for (LineSegment segment : collinear.segments()) {
+            StdOut.println(segment);
+            segment.draw();
+        }
+        StdDraw.show();
     }
 }
