@@ -4,8 +4,8 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class BruteCollinearPoints {
 
-    LineSegment[] collinearSegments;
-    int colSegCount;
+    private LineSegment[] collinearSegments;
+    private int colSegCount;
 
     // finds all line segments containing 4 points
     public BruteCollinearPoints(Point[] points) {

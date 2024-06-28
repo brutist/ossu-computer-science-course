@@ -2,19 +2,17 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
-import javax.sound.sampled.Line;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class FastCollinearPoints {
-    ArrayList<LineSegment> lineSegmentsFound;
-    ArrayList<Point> maxEndpoints;
-    ArrayList<Point> minEndpoints;
+    private ArrayList<LineSegment> lineSegmentsFound;
+    private ArrayList<Point> maxEndpoints;
+    private ArrayList<Point> minEndpoints;
     // finds all line segments containing 4 or more points
     public FastCollinearPoints(Point[] points) {
-        // throw an exception if points is null or it contains null
+        // throw an exception if points is null, or it contains null
         checkNull(points);
-
 
         // (will) contain all the maximal line segments that are made from collinear points.
         //   segments can be made of at the very least 3 unique points and because subsegments are not allowed,
@@ -43,7 +41,6 @@ public class FastCollinearPoints {
                 // populate an array of other points
                 sortedPoints[OPIndex] = points[j];
                 OPIndex++;
-
             }
 
             // sort the array of other points by slope they make with the origin point (point[i])
@@ -57,36 +54,33 @@ public class FastCollinearPoints {
     private void findSegments(Point[] sortedPoints, Point origin) {
         // find the line segments formed by 3 or more collinear points (adjacent points with equal
         //   slopes to points[i])
-
-
-        for (int k = 2; k < sortedPoints.length; k++) {
-            Point minPoint = origin;
-            Point maxPoint = origin;
-            int equalPoints = 1;
-            int current = k;
+        for (int k = 1; k < sortedPoints.length; k++) {
+            int equalPoints = 2;
             int prev = k - 1;
-            Point currentPoint = sortedPoints[current];
-            Point prevPoint = sortedPoints[prev];
-            Double currentPointSlope = origin.slopeTo(currentPoint);
-            Double prevPointSlop = origin.slopeTo(prevPoint);
+            Point minPoint = sortedPoints[prev];
+            Point maxPoint = sortedPoints[prev];
 
-
-            while (currentPointSlope.equals(prevPointSlop)) {
-                if (currentPoint.compareTo(minPoint) < 0) {
-                    minPoint = currentPoint;
+            while (k < sortedPoints.length &&
+                    sortedPoints[k].slopeTo(origin) == sortedPoints[prev].slopeTo(origin)) {
+                if (sortedPoints[k].compareTo(minPoint) < 0) {
+                    minPoint = sortedPoints[k];
                 }
-                if (currentPoint.compareTo(maxPoint) > 0) {
-                    maxPoint = currentPoint;
+                if (sortedPoints[k].compareTo(maxPoint) > 0) {
+                    maxPoint = sortedPoints[k];
                 }
-                System.out.printf("%s -> ", currentPoint);
                 equalPoints++;
-                current--;
-                prev--;
+                k++;
+                prev++;
+            }
+
+            if (origin.compareTo(minPoint) < 0) {
+                minPoint = origin;
+            }
+            if (origin.compareTo(maxPoint) > 0) {
+                maxPoint = origin;
             }
 
             boolean validCollinearPoints = equalPoints >= 3;
-
-            System.out.printf(" %s ::", origin);
             boolean validEndpoints = !endPointsFound(minPoint, maxPoint);
             if (validCollinearPoints && validEndpoints) {
                 lineSegmentsFound.add(new LineSegment(minPoint, maxPoint));
@@ -95,9 +89,6 @@ public class FastCollinearPoints {
                 minEndpoints.add(minPoint);
                 maxEndpoints.add(maxPoint);
             }
-
-            System.out.print("\n");
-
         }
     }
 
