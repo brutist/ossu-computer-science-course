@@ -71,9 +71,9 @@ public class Point implements Comparable<Point> {
         boolean vertical = x == that.getX();
         boolean equalPoints = this.compareTo(that) == 0;
 
-        if (horizontal)         return +0.0;
+        if (equalPoints)        return Double.NEGATIVE_INFINITY;
         else if (vertical)      return Double.POSITIVE_INFINITY;
-        else if (equalPoints)   return Double.NEGATIVE_INFINITY;
+        else if (horizontal)    return +0.0;
         else                    return (that.getY() - y) / (double) (that.getX() - x);
     }
 

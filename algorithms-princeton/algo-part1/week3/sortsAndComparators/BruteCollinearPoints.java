@@ -9,9 +9,8 @@ public class BruteCollinearPoints {
 
     // finds all line segments containing 4 points
     public BruteCollinearPoints(Point[] points) {
-        if (points == null) {
-            throw new IllegalArgumentException("constructor only accepts non-empty Point[]");
-        }
+        // throw an Illegal argument exception if points is null, or it contains null items
+        checkNull(points);
 
         // (will) contain all the line segments that are made from collinear points
         //   because segments need to be made of at least 4 points and subsegments are not allowed,
@@ -31,10 +30,6 @@ public class BruteCollinearPoints {
             for (int j = 0; j < N; j++) {
                 if (j == i) {
                     continue;
-                }
-
-                if (points[j] == null) {
-                    throw new IllegalArgumentException("Point[] should not contain null items");
                 }
 
                 if (points[i].compareTo(points[j]) == 0) {
@@ -88,6 +83,16 @@ public class BruteCollinearPoints {
                         }
                     }
                 }
+            }
+        }
+    }
+    private void checkNull(Point[] points) {
+        if (points == null) {
+            throw new IllegalArgumentException("argument should not be null");
+        }
+        for (Point p : points) {
+            if (p == null) {
+                throw new IllegalArgumentException("argument should not contain any null items");
             }
         }
     }
