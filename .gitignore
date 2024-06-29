@@ -1,0 +1,7 @@
+# ignore .idea paths
+*.idea
+*.iml
+*.class
+*.lift
+**/out
+
