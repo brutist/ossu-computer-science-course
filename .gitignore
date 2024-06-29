@@ -4,4 +4,4 @@
 *.class
 *.lift
 **/out
-
+*.vscode
