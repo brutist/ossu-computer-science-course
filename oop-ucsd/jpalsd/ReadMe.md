@@ -1,1 +1,0 @@
-This folder contains all of my coursework for Duke University Coursera Course Java Programming: Arrays, Lists, and Structured Data (https://www.coursera.org/learn/java-programming-arrays-lists-data).
