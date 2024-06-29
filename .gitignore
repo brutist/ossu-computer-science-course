@@ -1,5 +1,5 @@
 # ignore .idea paths
-**/idea
+**/.idea
 **/out
 **/lift
 *.iml
