@@ -1,0 +1,1 @@
+This folder contains my solutions for the activities found in Python for Everyone course by Chuck Severance.
