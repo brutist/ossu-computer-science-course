@@ -1,6 +1,10 @@
 import edu.princeton.cs.algs4.StdRandom;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Random;
 
 public class Sorter<Comparables extends Comparable<Comparables>>{
+    public static final Random rand = new Random();
 
     private boolean less(Comparables objectA, Comparables objectB) {
         return objectA.compareTo(objectB) < 0;
@@ -45,8 +49,8 @@ public class Sorter<Comparables extends Comparable<Comparables>>{
     }
 
     // swaps the index i and j in the source array
-    private void swap(Comparables[] source, int i, int j) {
-        Comparables temp = source[i];
+    private void swap(Object[] source, int i, int j) {
+        Object temp = source[i];
         source[i] = source[j];
         source[j] = temp;
     }
@@ -163,7 +167,69 @@ public class Sorter<Comparables extends Comparable<Comparables>>{
         assert isSorted(toSort, low, high);
     }
 
+    public void shuffleSort(Object[] toSort) {
+        if (toSort == null) {
+            throw new IllegalArgumentException("null item are not allowed");
+        }
+        for (int i = 0; i < toSort.length; i++) {
+            int r = rand.nextInt(i + 1);
+            swap(toSort, i, r);
+        }
+    }
 
+    public void quickSort(Comparables[] toSort) {
+        shuffleSort(toSort);
+        quickSort(toSort, 0, toSort.length - 1);
+    }
+
+    private void quickSort(Comparables[] toSort, int lo, int hi) {
+        if (hi <= lo) return;
+        int j = partition(toSort, lo, hi);
+        // don't include the partitioning element, it is already in the right position
+        quickSort(toSort, lo, j - 1);
+        quickSort(toSort, j + 1, hi);
+    }
+
+    private int partition(Comparables[] toSort, int lo, int hi) {
+        // first element as partitioning element
+        int i = lo;
+        int j = hi + 1;
+
+        while (true) {
+
+            while (less(toSort[++i], toSort[lo])) {
+                if (i == hi) break;
+            }
+
+            while (less(toSort[lo], toSort[--j])) {
+                if (j == lo) break;
+            }
+
+            if (i >= j) break;
+            swap(toSort, i, j);
+        }
+
+        swap(toSort, lo, j);
+        return j;
+    }
+
+    public Comparables kthLargest(Comparables[] toSearch, int k) {
+        if (k > toSearch.length) {
+            throw new IllegalArgumentException("k should not be larger than the number of items in the array");
+        }
+        // probabilistic performance guarantee
+        shuffleSort(toSearch);
+        int lo = 0;
+        int hi = toSearch.length - 1;
+
+        while (hi > lo) {
+            int j = partition(toSearch, lo, hi);
+            if      (j < k)     lo = j + 1;
+            else if (j > k)     hi = j - 1;
+            else                return toSearch[k];
+        }
+        return toSearch[k];
+    }
 
     public static void main(String[] args) {
         // testing isSorted()
@@ -189,6 +255,7 @@ public class Sorter<Comparables extends Comparable<Comparables>>{
         int ShsortCounter = 0;
         int MsortCounter = 0;
         int MsortBUCounter = 0;
+        int QsortCounter = 0;
         boolean testSucess = true;
 
         for (int i = 0; i < trials; i++) {
@@ -209,7 +276,7 @@ public class Sorter<Comparables extends Comparable<Comparables>>{
 
 
             // reshuffle the array
-            unsorted = integerSorter.unsortedNumbers(arraySize);
+            integerSorter.shuffleSort(unsorted);
             if (integerSorter.isSorted(unsorted)) {
                 System.out.println("Reshuffling failed");
             }
@@ -223,7 +290,7 @@ public class Sorter<Comparables extends Comparable<Comparables>>{
             }
 
             // reshuffle the array
-            unsorted = integerSorter.unsortedNumbers(arraySize);
+            integerSorter.shuffleSort(unsorted);
             if (integerSorter.isSorted(unsorted)) {
                 System.out.println("Reshuffling failed");
             }
@@ -238,7 +305,7 @@ public class Sorter<Comparables extends Comparable<Comparables>>{
 
 
             // reshuffle the array
-            unsorted = integerSorter.unsortedNumbers(arraySize);
+            integerSorter.shuffleSort(unsorted);
             if (integerSorter.isSorted(unsorted)) {
                 System.out.println("Reshuffling failed");
             }
@@ -252,18 +319,31 @@ public class Sorter<Comparables extends Comparable<Comparables>>{
             }
 
             // reshuffle the array
-            unsorted = integerSorter.unsortedNumbers(arraySize);
+            integerSorter.shuffleSort(unsorted);
             if (integerSorter.isSorted(unsorted)) {
                 System.out.println("Reshuffling failed");
             }
             // testing mergeSortBU()
             integerSorter.mergeSortBU(unsorted);
-            //integerSorter.printArray(unsorted);
             MsortBUCounter++;
 
             if (!integerSorter.isSorted(unsorted)) {
                 testSucess = false;
                 System.out.printf("mergeSortBU() tests %s FAILED\n", MsortCounter);
+            }
+
+            // reshuffle the array
+            integerSorter.shuffleSort(unsorted);
+            if (integerSorter.isSorted(unsorted)) {
+                System.out.println("Reshuffling failed");
+            }
+            // testing quickSort()
+            integerSorter.quickSort(unsorted);
+            QsortCounter++;
+
+            if (!integerSorter.isSorted(unsorted)) {
+                testSucess = false;
+                System.out.printf("quickSort() tests %s FAILED\n", QsortCounter);
             }
 
         }
@@ -272,8 +352,9 @@ public class Sorter<Comparables extends Comparable<Comparables>>{
                               "insertionSort() %s tests PASSED\n" +
                               "shellSort()     %s tests PASSED\n" +
                               "mergeSort()     %s tests PASSED\n" +
-                              "mergeSortBU()   %s tests PASSED\n",
-                    SsortCounter, IsortCounter, ShsortCounter, MsortCounter, MsortBUCounter);
+                              "mergeSortBU()   %s tests PASSED\n" +
+                              "quickSort()     %s tests PASSED\n",
+                    SsortCounter, IsortCounter, ShsortCounter, MsortCounter, MsortBUCounter, QsortCounter);
         }
     }
 }
