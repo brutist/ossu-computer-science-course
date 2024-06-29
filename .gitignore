@@ -5,8 +5,8 @@
 *.iml
 **/out
 *.vscode
-.gitignore.swp
-.gitignore
+*/.gitignore.swp
+*/.gitignore
 
 
 ### IntelliJ IDEA ###
