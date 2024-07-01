@@ -1,5 +1,4 @@
 import edu.princeton.cs.algs4.StdRandom;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
