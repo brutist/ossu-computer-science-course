@@ -10,6 +10,9 @@ public class BinaryHeap<Key extends Comparable<Key>> {
     }
 
     public Key delMax() {
+        if (N == 0) {
+            throw new IllegalCallerException("delMax is not allowed on empty queue");
+        }
         // index zero is not considered
         Key max = heapArray[1];
         swap(1, N--);
@@ -82,7 +85,11 @@ public class BinaryHeap<Key extends Comparable<Key>> {
     private void heapResize(int newSize) {
         Key[] newHeapArray = (Key[]) new Comparable[newSize];
         // copy previous heap array to another array with the new size
-        System.arraycopy(heapArray, 0, newHeapArray, 0, heapArray.length);
+        for (int i = 0; i < heapArray.length; i++) {
+            if (heapArray[i] != null) {
+                newHeapArray[i] = heapArray[i];
+            }
+        }
         heapArray = newHeapArray;
     }
 
@@ -115,5 +122,17 @@ public class BinaryHeap<Key extends Comparable<Key>> {
 
         heap.insert("S");
         heap.printHeapArray("Inserted","S");
+
+        for (int i = 0; i < testInput.length; i++) {
+            heap.delMax();
+            heap.printHeapArray("Deleted", "max");
+        }
+
+        try {
+            heap.delMax();
+        }
+        catch (IllegalCallerException e) {
+            System.out.println("test on calling delMax() on empty queue success");
+        }
     }
 }
