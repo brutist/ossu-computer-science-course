@@ -1,10 +1,10 @@
 import edu.princeton.cs.algs4.StdDraw;
 import java.util.Random;
 
-public class Ball {
+public class all {
     private double rx, ry;              // position
     private double vx, vy;              // velocity
-    private final double radius = 0.3;  // radius
+    private final double radius;  // radius
 
     public Ball() {
         Random rand = new Random();
@@ -12,13 +12,15 @@ public class Ball {
         ry = rand.nextDouble();
         vx = rand.nextDouble();
         vy = rand.nextDouble();
+        radius = rand.nextDouble();
     }
 
-    public Ball(double dx, double dy, double sx, double sy) {
+    public Ball(double dx, double dy, double sx, double sy, double r) {
         rx = dx;
         ry = dy;
         vx = sx;
         vy = sy;
+        radius = r;
     }
 
     public void move(double dt) {
