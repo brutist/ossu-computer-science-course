@@ -48,4 +48,4 @@ public class BouncingBall {
             StdDraw.pause(20);
         }
     }
-    }
+}

@@ -1,7 +1,7 @@
 import edu.princeton.cs.algs4.StdDraw;
 import java.util.Random;
 
-public class all {
+public class Ball {
     private double rx, ry;              // position
     private double vx, vy;              // velocity
     private final double radius;  // radius
