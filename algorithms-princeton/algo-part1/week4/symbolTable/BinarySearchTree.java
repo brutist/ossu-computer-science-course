@@ -8,10 +8,12 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         private final Key key;
         private Value val;
         private Node left, right;
+        private int count;
 
         public Node(Key key, Value val) {
             this.key = key;
             this.val = val;
+            this.count = 1;
         }
     }
 
@@ -33,15 +35,10 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         if (node == null) return new Node(key, val);
 
         int cmp = key.compareTo(node.key);
-        if (cmp < 0) {
-            node.left = put(node.left, key, val);
-        }
-        else if (cmp > 0) {
-            node.right = put(node.right, key, val);
-        }
-        else {
-            node.val = val;
-        }
+        if (cmp < 0)        node.left = put(node.left, key, val);
+        else if (cmp > 0)   node.right = put(node.right, key, val);
+        else                node.val = val;
+        node.count = 1 + size(node.left) + size(node.right);
         return node;
     }
 
@@ -89,11 +86,71 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
     }
 
     public Key floor(Key key) {
+        // find the node of the floor
+        Node node = floor(root, key);
+        // if the node is null then return it, otherwise return the node's key
+        if (node == null)  return null;
+        return node.key;
+    }
 
+    private Node floor(Node root, Key key) {
+        // if node is null then there is no floor
+        if (root == null) return null;
+
+        int cmp = key.compareTo(root.key);
+        // the floor of a key can be itself
+        if (cmp == 0)     return root;
+        // if the key is smaller than the node's key then the floor is in the left subtree
+        if (cmp < 0)      return floor(root.left, key);
+
+        // explore right subtree
+        // if there is a node's key in the right subtree that is <= key then that's the floor
+        // else the previous smaller node's key is the floor
+        Node t = floor(root.right, key);
+        if (t != null)    return t;
+        else              return root;
     }
 
     public Key ceiling(Key key) {
-        
+        Node node = ceiling(root, key);
+        if (node == null) return null;
+        return node.key;
+    }
+
+    private Node ceiling(Node root, Key key) {
+        if (root == null)   return null;
+
+        int cmp = key.compareTo(root.key);
+        if (cmp == 0)       return root;
+        if (cmp > 0)        return ceiling(root.right, key);
+
+        Node t = ceiling(root.right, key);
+        if (t != null)      return t;
+        else                return root;
+    }
+
+    // return the number of keys that are smaller than the given key
+    public int rank(Key key) {
+        return rank(key, root);
+    }
+
+    // an ingenious helper function for rank()
+    private int rank(Key key, Node root) {
+        if (root == null)   return 0;
+
+        int cmp = key.compareTo(root.key);
+        if (cmp > 0)        return 1 + size(root.left) + rank(key, root.right);
+        else if (cmp < 0)   return rank(key, root.left);
+        else                return size(root.left);
+    }
+
+    public int size() {
+        return size(root);
+    }
+
+    private int size(Node x) {
+        if (x == null)  return 0;
+        return x.count;
     }
 
     // deletes the key-val pair in the symbol table
@@ -118,9 +175,6 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         }
     }
 
-    private void reconnect(BinarySearchTree<Key, Value> bst, Node orphan) {
-
-    }
 
     // provides an iterable for this symbol table
     public Iterable<Key> iterator() {
