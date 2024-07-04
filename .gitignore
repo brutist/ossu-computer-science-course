@@ -7,7 +7,7 @@
 *.vscode
 */.gitignore.swp
 */.gitignore
-
+*/data
 
 ### IntelliJ IDEA ###
 out/
