@@ -66,6 +66,36 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         return null;
     }
 
+    public Key getMax() {
+        if (isEmpty()) {
+            throw new IllegalCallerException("cannot call getMax() on empty BST");
+        }
+        Node node = root;
+        while (node.right != null) {
+            node = node.right;
+        }
+        return node.key;
+    }
+
+    public Key getMin() {
+        if (isEmpty()) {
+            throw new IllegalCallerException("cannot call getMin() on empty BST");
+        }
+        Node node = root;
+        while (node.left != null) {
+            node = node.left;
+        }
+        return node.key;
+    }
+
+    public Key floor(Key key) {
+
+    }
+
+    public Key ceiling(Key key) {
+        
+    }
+
     // deletes the key-val pair in the symbol table
     public void delete(Key key) {
         Node node = root;
