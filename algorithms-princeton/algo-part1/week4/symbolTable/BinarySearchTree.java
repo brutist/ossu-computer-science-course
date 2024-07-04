@@ -1,3 +1,5 @@
+import edu.princeton.cs.algs4.Queue;
+
 public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 
     private Node root;
@@ -177,7 +179,18 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 
 
     // provides an iterable for this symbol table
-    public Iterable<Key> iterator() {
+    public Iterable<Key> keys() {
+        Queue<Key> q = new Queue<Key>();
+        inorder(root, q);
+        return q;
+    }
 
+    // another lovely thing to insert all keys into the queue
+    // provides keys in ascending order
+    private void inorder(Node root, Queue<Key> q) {
+        if (root == null)   return;
+        inorder(root.left, q);
+        q.enqueue(root.key);
+        inorder(root.right, q);
     }
 }
