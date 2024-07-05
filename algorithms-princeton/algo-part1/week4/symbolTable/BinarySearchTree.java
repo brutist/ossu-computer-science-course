@@ -1,4 +1,5 @@
 import edu.princeton.cs.algs4.Queue;
+import org.jetbrains.annotations.NotNull;
 
 public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 
@@ -95,22 +96,22 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         return node.key;
     }
 
-    private Node floor(Node root, Key key) {
+    private Node floor(Node x, Key key) {
         // if node is null then there is no floor
-        if (root == null) return null;
+        if (x == null) return null;
 
-        int cmp = key.compareTo(root.key);
+        int cmp = key.compareTo(x.key);
         // the floor of a key can be itself
-        if (cmp == 0)     return root;
+        if (cmp == 0)     return x;
         // if the key is smaller than the node's key then the floor is in the left subtree
-        if (cmp < 0)      return floor(root.left, key);
+        if (cmp < 0)      return floor(x.left, key);
 
         // explore right subtree
         // if there is a node's key in the right subtree that is <= key then that's the floor
         // else the previous smaller node's key is the floor
-        Node t = floor(root.right, key);
+        Node t = floor(x.right, key);
         if (t != null)    return t;
-        else              return root;
+        else              return x;
     }
 
     public Key ceiling(Key key) {
@@ -137,13 +138,13 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
     }
 
     // an ingenious helper function for rank()
-    private int rank(Key key, Node root) {
-        if (root == null)   return 0;
+    private int rank(Key key, Node x) {
+        if (x == null)   return 0;
 
-        int cmp = key.compareTo(root.key);
-        if (cmp > 0)        return 1 + size(root.left) + rank(key, root.right);
-        else if (cmp < 0)   return rank(key, root.left);
-        else                return size(root.left);
+        int cmp = key.compareTo(x.key);
+        if (cmp > 0)        return 1 + size(x.left) + rank(key, x.right);
+        else if (cmp < 0)   return rank(key, x.left);
+        else                return size(x.left);
     }
 
     public int size() {
@@ -155,28 +156,70 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         return x.count;
     }
 
-    // deletes the key-val pair in the symbol table
-    public void delete(Key key) {
-        Node node = root;
-        while (node != null) {
-            // node to be deleted has no child
-            if (key.compareTo(node.key) == 0 && node.left == null && node.right == null) {
-                node = null;
-            }
-            // node to be deleted only has right child
-            else if (key.compareTo(node.key) == 0 && node.left == null && node.right != null) {
-                node = node.right;
-            }
-            else if (key.compareTo(node.key) == 0 && node.left != null && node.right == null) {
-                node = node.left;
-            }
-            // node to be deleted has both left and right children
-            else if (key.compareTo(node.key) == 0) {
-
-            }
-        }
+    public void deleteMin() {
+        root = deleteMin(root);
     }
 
+    // deletes the minimum of the current BST
+    private Node deleteMin(Node x) {
+        if (x.left == null)  return x.right;
+        // update the count as well
+        x.left = deleteMin(x.left);
+        x.count = 1 + size(x.left) + size(x.right);
+        return x;
+    }
+
+    public void deleteMax() {
+        root = deleteMax(root);
+    }
+
+    private Node deleteMax(@NotNull Node x) {
+        if (x.right == null)    return x.left;
+        // update the count as well
+        x.right = deleteMax(x.right);
+        x.count = 1 + size(x.left) + size(x.right);
+        return x;
+    }
+
+    // deletes the key-val pair in the symbol table using Hibbard deletion
+    //      a glorious and simple method to delete a node in a BST
+    public void delete(Key key) {
+        root = delete(root, key);
+    }
+
+    private Node delete(Node x, Key key) {
+        // trying to delete a non-existent key will lead to nothing
+        if (x == null)  return null;
+
+        int cmp = key.compareTo(x.key);
+        if      (cmp < 0)    x.left  = delete(x.left, key);
+        else if (cmp > 0)    x.right = delete(x.right, key);
+        // we've found the key
+        else {
+            // no right child
+            if (x.right == null)  return x.left;
+            // no left child
+            if (x.left == null)   return x.right;
+
+            // there are two children [left and right]
+            // replace with successor
+            Node t = x;
+            x = min(t.right);
+            x.right = deleteMin(t.right);
+            x.left = t.left;
+        }
+        // update subtree counts
+        x.count = 1 + size(x.left) + size(x.right);
+        return x;
+    }
+
+    // return the node that contains the minimum key
+    private Node min(Node node) {
+        while (node.left != null) {
+            node = node.left;
+        }
+        return node;
+    }
 
     // provides an iterable for this symbol table
     public Iterable<Key> keys() {
