@@ -1,26 +1,66 @@
+import edu.princeton.cs.algs4.BST;
 import edu.princeton.cs.algs4.Queue;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class Board {
-    private final int[][] goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
-    private final int[][] tiles;
+    private final BST<Position, Integer> goal;
+    private final BST<Position, Integer> tiles;
     private final int N;
     private int rowEmpty;
     private int colEmpty;
+
+    // signify row and column position of a tile in the board
+    private class Position implements Comparable<Position> {
+        private final int row;
+        private final int col;
+
+        public Position(int i, int j) {
+            row = i;
+            col = j;
+        }
+
+        public boolean equals(Object that) {
+            if (that == this)  return true;                        // check for true equality
+            if (that == null)  return false;                       // check for null
+            if (that.getClass() != this.getClass())  return false; // unequal class are not equal
+
+            Position other = (Position) that;
+            // positions are equal if they have the same row and column
+            return other.row == row && other.col == col;
+        }
+
+        public int compareTo(Position other) {
+            boolean equal = row == other.row && col == other.col;
+            boolean less = row < other.row || (row == other.row && col < other.col);
+            if (equal)          return  0;
+            else if (less)      return -1;
+            else                return  1;
+        }
+    }
+
     // create a board from an n-by-n array of tiles,
     // where tiles[row][col] = tile at (row, col)
     public Board(int[][] tiles) {
         N = tiles.length;
-
-        this.tiles = new int[N][N];
+        this.tiles = new BST<>();
+        goal = new BST<>();
+        int g = 1;
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 if (tiles[i][j] == 0) {
                     rowEmpty = i;
                     colEmpty = j;
                 }
-                this.tiles[i][j] = tiles[i][j];
+                // instantiate goal BST with row-major order
+                goal.put(new Position(i, j), g++);
+                if (i == N - 1 && j == N - 1) {
+                    goal.put(new Position(i, j), 0);
+                }
+
+                this.tiles.put(new Position(i, j), tiles[i][j]);
             }
         }
     }
@@ -28,16 +68,14 @@ public class Board {
     // string representation of this board
     public String toString() {
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < tiles[i].length; j++) {
-                result.append(" ").append(tiles[i][j]);
-                // newline after the last column
-                if (j == (N - 1)) {
-                    result.append("\n");
-                }
-            }
+        for (Position p : tiles.keys()) {
+            if (p.col == 0)             result.append(" ");
+            else                        result.append("  ");
+
+            result.append(tiles.get(p));
+            if (p.col == N - 1)         result.append("\n");
         }
-        return tiles.length + "\n" + result;
+        return tiles.size() + "\n" + result;
     }
 
     // board dimension n
@@ -52,7 +90,7 @@ public class Board {
             for (int j = 0; j < N; j++) {
                 // don't count the blank cell [emptyTile]
                 // score refers to the no. of tiles in wrong position
-                if (i != rowEmpty && j != colEmpty && tiles[i] != goal[i]) {
+                if (tiles[i][j] != 0 && tiles[i][j] != goal[i][j]) {
                     score++;
                 }
             }
@@ -81,7 +119,7 @@ public class Board {
         for (int i = 0; i < N; i++) {
             // look for the index of val in the goal
             for (int j = 0; j < N; j++) {
-                if (tiles[i][j] == goal[i][j]) {
+                if (val == goal[i][j]) {
                     distance = Math.abs(row - i) + Math.abs(col - j);
                 }
             }
@@ -155,6 +193,94 @@ public class Board {
 
     // unit testing (not graded)
     public static void main(String[] args) {
+        // testing toString()
+        int[][] toStringInput = {{1, 0, 3}, {4, 2, 5}, {7, 8, 6}};
+        String toStringAnswer = "3\n 1  0  3\n 4  2  5\n 7  8  6\n";
+        Board toStringBoard = new Board(toStringInput);
+        String toStringResult = toStringBoard.toString();
+
+        if (!toStringAnswer.equals(toStringResult)) {
+            System.out.println("toString() test FAILED");
+            System.out.printf("got: \n%s instead of: \n%s", toStringResult, toStringAnswer);
+        }
+        else {
+            System.out.println("toString() test SUCCESS");
+            System.out.println(toStringResult);
+        }
+
+        // testing dimension()
+        int dimensionAnswer = 3;
+        int dimensionResult = toStringBoard.dimension();
+        if (dimensionResult != dimensionAnswer) {
+            System.out.println("dimension() test FAILED");
+            System.out.printf("got: %s instead of: %s", dimensionResult, dimensionAnswer);
+        }
+        else {
+            System.out.println("dimension() test SUCCESS");
+        }
+
+        // testing hamming()
+        int[][] hammingInput = {{8, 1, 3}, {4, 0, 2}, {7, 6, 5}};
+        Board hammingBoard = new Board(hammingInput);
+        int hammingAnswer = 5;
+        int hammingResult = hammingBoard.hamming();
+        if (hammingAnswer != hammingResult) {
+            System.out.println("hamming() test FAILED");
+            System.out.printf("got: %s instead of: %s", hammingResult, hammingAnswer);
+        }
+        else {
+            System.out.println("hamming() test SUCCESS");
+        }
+
+        // testing manhattan()
+        Board manhattanBoard = hammingBoard;
+        int manhattanAnswer = 10;
+        int manhattanResult = hammingBoard.manhattan();
+        if (manhattanAnswer != manhattanResult) {
+            System.out.println("manhattan() test FAILED");
+            System.out.printf("got: %s instead of: %s\n", manhattanResult, manhattanAnswer);
+        }
+        else {
+            System.out.println("manhattan() test SUCCESS");
+        }
+
+        // testing equals()
+        Board hammingBoardEqual = new Board(hammingInput);
+        Board hammingBoardNonEqual = new Board(toStringInput);
+        boolean testTrueEquality = manhattanBoard.equals(hammingBoard);
+        boolean testEqualityByValues = hammingBoardEqual.equals(hammingBoard);
+        boolean testUnequalBoards = !hammingBoardNonEqual.equals(hammingBoard);
+        if (!(testUnequalBoards && testEqualityByValues && testTrueEquality)) {
+            System.out.println("equals() test FAILED");
+        }
+        else {
+            System.out.println("equals() test SUCCESS");
+        }
 
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
