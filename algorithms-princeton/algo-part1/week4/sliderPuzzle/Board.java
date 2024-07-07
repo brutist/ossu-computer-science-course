@@ -1,5 +1,4 @@
 import edu.princeton.cs.algs4.Queue;
-
 import java.util.Arrays;
 
 public class Board {
