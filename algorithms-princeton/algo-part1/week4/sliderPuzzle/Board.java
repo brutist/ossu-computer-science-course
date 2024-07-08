@@ -9,7 +9,9 @@ public class Board {
     //  in row-major order
     private final int[] tiles;
     private final int N;
-    private final int blankIndex;                   // primitive for memory save
+    private final int blankIndex;
+    private final int twinIndexA;
+    private final int twinIndexB;
     private final int hammingDist;
     private final int manhattanDist;
 
@@ -75,6 +77,21 @@ public class Board {
         hammingDist = hammingScore;
         this.manhattanDist = manhattanDist;
         this.blankIndex = blankIndex;
+
+        // produce a twin by getting two random indexes and swapping the elements in those indexes
+        // randomly choose two indexes using knuth's method
+        int k = 0;  // index A
+        int j = 0;  // index B
+        int p = 1;
+        for (int i = 0; i < this.tiles.length; i++) {
+            double probA = StdRandom.uniformDouble();
+            double probB = StdRandom.uniformDouble();
+            if (probA < 1 / (double) p && i != this.blankIndex)     k = i;
+            if (probB < 1 / (double) p && i != this.blankIndex)     j = i;
+            if (i != this.blankIndex)   p++;
+        }
+        twinIndexA = k;
+        twinIndexB = j;
     }
 
     // string representation of this board
@@ -133,16 +150,17 @@ public class Board {
     // all neighboring boards
     public Iterable<Board> neighbors() {
         Queue<Board> q = new Queue<>();
+        // add neighbors of board to the queue
         neighbors(q);
         return q;
     }
 
     private void neighbors(Queue<Board> q) {
-        // move blank up
         int rowEmpty = blankIndex / N;
         int colEmpty = blankIndex % N;
+        // move blank up
         if (rowEmpty > 0) {
-            q.enqueue(produceNeighbor(rowEmpty, colEmpty, 0, colEmpty));
+            q.enqueue(produceNeighbor(rowEmpty, colEmpty, rowEmpty - 1, colEmpty));
         }
         // move blank down
         if (rowEmpty < N - 1) {
@@ -179,14 +197,10 @@ public class Board {
     // a board that is obtained by exchanging any pair of tiles
     // pick randomly two adjacent tiles to swap, can't pick the blank tile
     public Board twin() {
-        int randIndex = StdRandom.uniformInt(tiles.length);
-        while (randIndex == 0 || randIndex - 1 == blankIndex || randIndex == blankIndex) {
-            randIndex = StdRandom.uniformInt(tiles.length);
-        }
-        int a = randIndex / N;
-        int b = randIndex % N;
-        int c = (randIndex - 1) / N;
-        int d = (randIndex - 1) % N;
+        int a = twinIndexA / N;
+        int b = twinIndexA % N;
+        int c = twinIndexB / N;
+        int d = twinIndexB % N;
         return produceNeighbor(a, b, c, d);
     }
 
@@ -257,27 +271,27 @@ public class Board {
         }
 
         // testing neighbors() visually
-        int[][] neighborsInput1 = {{0,1,3},{4,2,5},{7,8,6}};    // 2 neighbors
-        int[][] Answer1a = {{4,1,3},{0,2,5},{7,8,6}};  // move down
-        int[][] Answer1b = {{1,0,3},{4,2,5},{7,8,6}};  // move left
+        int[][] neighborsInput1 = {{0, 1, 3}, {4, 2, 5},{7, 8, 6}};     // 2 neighbors
+        int[][] Answer1a = {{4, 1, 3}, {0, 2, 5}, {7, 8, 6}};           // move down
+        int[][] Answer1b = {{1, 0, 3}, {4, 2, 5}, {7, 8, 6}};           // move left
         Queue<Board> neighborsAnswers1 = new Queue<>();
         neighborsAnswers1.enqueue(new Board(Answer1a));
         neighborsAnswers1.enqueue(new Board(Answer1b));
 
-        int[][] neighborsInput2 = {{1,0,3},{4,2,5},{7,8,6}};    // 3 neighbors
-        int[][] Answer2a = {{1,2,3},{4,0,5},{7,8,6}};           // move down
-        int[][] Answer2b = {{0,1,3},{4,2,5},{7,8,6}};           // move left
-        int[][] Answer2c = {{1,3,0},{4,2,5},{7,8,6}};           // move right
+        int[][] neighborsInput2 = {{1, 0, 3}, {4, 2, 5}, {7, 8, 6}};    // 3 neighbors
+        int[][] Answer2a = {{1, 2, 3}, {4, 0, 5}, {7, 8, 6}};           // move down
+        int[][] Answer2b = {{0, 1, 3}, {4, 2, 5}, {7, 8, 6}};           // move left
+        int[][] Answer2c = {{1, 3, 0}, {4, 2, 5}, {7, 8, 6}};           // move right
         Queue<Board> neighborsAnswers2 = new Queue<>();
         neighborsAnswers2.enqueue(new Board(Answer2a));
         neighborsAnswers2.enqueue(new Board(Answer2b));
         neighborsAnswers2.enqueue(new Board(Answer2c));
 
-        int[][] neighborsInput3 = {{8,1,3},{4,0,2},{7,6,5}};    // 4 neighbors
-        int[][] Answer3a = {{8,0,3},{4,1,2},{7,6,5}};           // move up
-        int[][] Answer3b = {{8,1,3},{4,6,2},{7,0,5}};           // move down
-        int[][] Answer3c = {{8,1,3},{0,4,2},{7,6,5}};           // move right
-        int[][] Answer3d = {{8,1,3},{4,2,0},{7,6,5}};           // move left
+        int[][] neighborsInput3 = {{8, 1, 3}, {4, 0, 2}, {7, 6, 5}};    // 4 neighbors
+        int[][] Answer3a = {{8, 0, 3}, {4, 1, 2}, {7, 6, 5}};           // move up
+        int[][] Answer3b = {{8, 1, 3}, {4, 6, 2}, {7, 0, 5}};           // move down
+        int[][] Answer3c = {{8, 1, 3}, {0, 4, 2}, {7, 6, 5}};           // move right
+        int[][] Answer3d = {{8, 1, 3}, {4, 2, 0}, {7, 6, 5}};           // move left
         Queue<Board> neighborsAnswers3 = new Queue<>();
         neighborsAnswers3.enqueue(new Board(Answer3a));
         neighborsAnswers3.enqueue(new Board(Answer3b));

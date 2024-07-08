@@ -1,4 +1,7 @@
-import edu.princeton.cs.algs4.*;
+import edu.princeton.cs.algs4.MinPQ;
+import edu.princeton.cs.algs4.Stack;
+import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.In;
 import java.util.Comparator;
 
 
@@ -39,13 +42,13 @@ public class Solver {
 
         // init for initial node, manhattan and hamming PQ the given board
         SearchNode initialNode = new SearchNode(initial, null, 0);
-        MinPQ<SearchNode> initialPQ = new MinPQ<>(new ManhattanPriority()); // using manhattan priority
+        MinPQ<SearchNode> initialPQ = new MinPQ<>(new HammingPriority()); // using manhattan priority
         initialPQ.insert(initialNode);
 
         // init for twin node, manhattan and hamming PQ the twin board
         Board twin = initial.twin();
         SearchNode twinNode = new SearchNode(twin, null, 0);
-        MinPQ<SearchNode> twinPQ = new MinPQ<>(new ManhattanPriority());  // using manhattan priority
+        MinPQ<SearchNode> twinPQ = new MinPQ<>(new HammingPriority());  // using manhattan priority
         twinPQ.insert(twinNode);
 
         // while goal has not been reached for both PQs
