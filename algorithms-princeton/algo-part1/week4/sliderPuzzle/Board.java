@@ -79,16 +79,13 @@ public class Board {
         this.blankIndex = blankIndex;
 
         // produce a twin by getting two random indexes and swapping the elements in those indexes
-        // randomly choose two indexes using knuth's method
-        int k = 0;  // index A
-        int j = 0;  // index B
-        int p = 1;
+        // just the first indexes that is not a blank index
+        int k = this.blankIndex;
+        int j = this.blankIndex;
         for (int i = 0; i < this.tiles.length; i++) {
-            double probA = StdRandom.uniformDouble();
-            double probB = StdRandom.uniformDouble();
-            if (probA < 1 / (double) p && i != this.blankIndex)     k = i;
-            if (probB < 1 / (double) p && i != this.blankIndex)     j = i;
-            if (i != this.blankIndex)   p++;
+            if (k == this.blankIndex && i != this.blankIndex)               k = i;
+            else if (j == this.blankIndex && i != this.blankIndex)          j = i;
+            else if (j != this.blankIndex && j != k)                        break;
         }
         twinIndexA = k;
         twinIndexB = j;
