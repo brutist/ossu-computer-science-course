@@ -180,13 +180,13 @@ public class Board {
     // pick randomly two adjacent tiles to swap, can't pick the blank tile
     public Board twin() {
         int randIndex = StdRandom.uniformInt(tiles.length);
-        while (randIndex == 0 || randIndex - 1 == blankIndex) {
+        while (randIndex == 0 || randIndex - 1 == blankIndex || randIndex == blankIndex) {
             randIndex = StdRandom.uniformInt(tiles.length);
         }
         int a = randIndex / N;
         int b = randIndex % N;
-        int c = randIndex - 1 / N;
-        int d = randIndex - 1 % N;
+        int c = (randIndex - 1) / N;
+        int d = (randIndex - 1) % N;
         return produceNeighbor(a, b, c, d);
     }
 

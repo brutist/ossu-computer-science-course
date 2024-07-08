@@ -1,11 +1,9 @@
-import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.MinPQ;
-import edu.princeton.cs.algs4.Queue;
-import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.*;
 import java.util.Comparator;
 
 
 public class Solver {
+    private final SearchNode solutionNode;
 
     private static class SearchNode {
         private final Board board;
@@ -39,55 +37,70 @@ public class Solver {
     public Solver(Board initial) {
         if (initial == null)    throw new IllegalArgumentException("constructor does not take null");
 
-        // instantiate the min-priority queue, moves done queue
-        MinPQ<SearchNode> manhattanPQ = new MinPQ<>(new ManhattanPriority());
-        MinPQ<SearchNode> hammingPQ = new MinPQ<>(new HammingPriority());
-
-        // initial board, 0 moves, null previous search node
+        // init for initial node, manhattan and hamming PQ the given board
         SearchNode initialNode = new SearchNode(initial, null, 0);
-        manhattanPQ.insert(initialNode);
-        hammingPQ.insert(initialNode);
+        MinPQ<SearchNode> initialPQ = new MinPQ<>(new ManhattanPriority()); // using manhattan priority
+        initialPQ.insert(initialNode);
 
-        while (!hammingPQ.min().board.isGoal() || !manhattanPQ.min().board.isGoal()) {
-            // delete the minimums
-            SearchNode manhattanMinNode = manhattanPQ.delMin();
-            SearchNode hammingMinNode = hammingPQ.delMin();
+        // init for twin node, manhattan and hamming PQ the twin board
+        Board twin = initial.twin();
+        SearchNode twinNode = new SearchNode(twin, null, 0);
+        MinPQ<SearchNode> twinPQ = new MinPQ<>(new ManhattanPriority());  // using manhattan priority
+        twinPQ.insert(twinNode);
 
-            // insert all valid neighbors for manhattan function
-            for (Board b : manhattanMinNode.board.neighbors()) {
-                // avoid inserting the move that is the same as the board of the previous search node
-                if (b != manhattanMinNode.previousNode.board) {
-                    manhattanPQ.insert(new SearchNode(b, manhattanMinNode, manhattanMinNode.moves + 1));
+        // while goal has not been reached for both PQs
+        while (true) {
+            // adding valid neighbors of the original node
+            SearchNode i = initialPQ.delMin();
+            if (i.board.isGoal()) {
+                solutionNode = i;
+                break;
+            }
+            for (Board b : i.board.neighbors()) {
+                if (i.previousNode == null || !b.equals(i.previousNode.board)) {
+                    initialPQ.insert(new SearchNode(b, i, i.moves + 1));
                 }
             }
 
-            // insert all valid neighbors for hamming function
-            for (Board b : hammingMinNode.board.neighbors()) {
-                // avoid inserting the move that is the same as the board of the previous search node
-                if (b != hammingMinNode.previousNode.board) {
-                    hammingPQ.insert(new SearchNode(b, hammingMinNode, hammingMinNode.moves + 1));
+            // adding valid neighbors of the twin node
+            SearchNode t = twinPQ.delMin();
+            if (t.board.isGoal()) {
+                solutionNode = null;
+                break;
+            }
+            for (Board b : t.board.neighbors()) {
+                if (t.previousNode == null || !b.equals(t.previousNode.board)) {
+                    twinPQ.insert(new SearchNode(b, t, t.moves + 1));
                 }
             }
         }
-
-
     }
 
     // is the initial board solvable? (see below)
     public boolean isSolvable() {
-        return false;
+        return solutionNode != null;
     }
 
     // min number of moves to solve initial board; -1 if unsolvable
     public int moves() {
         if (!isSolvable())  return -1;
-        return 0;
+        return solutionNode.moves;
     }
 
     // sequence of boards with the shortest solution; null if unsolvable
     public Iterable<Board> solution() {
-        if (!isSolvable())      return null;
-        return new Queue<>();
+        if (isSolvable()) {
+            Stack<Board> stack = new Stack<>();
+            SearchNode node = solutionNode;
+
+            while (node != null) {
+                stack.push(node.board);
+                node = node.previousNode;
+            }
+            return stack;
+        }
+        // null if not solvable
+        return null;
     }
 
     // test client (see below)
