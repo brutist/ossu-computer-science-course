@@ -1,5 +1,4 @@
 import edu.princeton.cs.algs4.Queue;
-import org.jetbrains.annotations.NotNull;
 
 public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 
@@ -173,7 +172,7 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         root = deleteMax(root);
     }
 
-    private Node deleteMax(@NotNull Node x) {
+    private Node deleteMax(Node x) {
         if (x.right == null)    return x.left;
         // update the count as well
         x.right = deleteMax(x.right);

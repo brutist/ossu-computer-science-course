@@ -1,4 +1,6 @@
 import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.StdRandom;
+
 import java.util.Arrays;
 
 public class Board {
@@ -156,7 +158,7 @@ public class Board {
         }
     }
 
-    // produce a new int[][] by swapping the elements in the specified rows and columns([a,b],[c,d])
+    // produce a new board by swapping the elements in the specified rows and columns([a,b],[c,d]) of this board
     private Board produceNeighbor(int a, int b, int c, int d) {
         int[][] neighbor = new int[N][N];
         for (int i = 0; i < tiles.length; i++) {
@@ -175,8 +177,17 @@ public class Board {
     }
 
     // a board that is obtained by exchanging any pair of tiles
+    // pick randomly two adjacent tiles to swap, can't pick the blank tile
     public Board twin() {
-        return this;
+        int randIndex = StdRandom.uniformInt(tiles.length);
+        while (randIndex == 0 || randIndex - 1 == blankIndex) {
+            randIndex = StdRandom.uniformInt(tiles.length);
+        }
+        int a = randIndex / N;
+        int b = randIndex % N;
+        int c = randIndex - 1 / N;
+        int d = randIndex - 1 % N;
+        return produceNeighbor(a, b, c, d);
     }
 
     // unit testing (not graded)
