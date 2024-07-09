@@ -1,7 +1,7 @@
 # ignore .idea paths
 **/.idea
 **/out
-**/lift
+**/.lift
 *.iml
 **/out
 *.vscode
