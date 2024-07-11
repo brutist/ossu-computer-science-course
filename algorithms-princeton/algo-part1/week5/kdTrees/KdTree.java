@@ -101,8 +101,15 @@ public class KdTree {
 
     // a nearest neighbor in the set to point p; null if the set is empty
     public Point2D nearest(Point2D p) {
+        if (p == null)  throw new IllegalArgumentException("cannot call nearest on null arguments");
+        else if (root == null) return null;
+
+        Node node = root;
+        double dist = Double.POSITIVE_INFINITY;
 
     }
+
+    private Node nearest()
 
     // unit testing of the methods (optional)
     public static void main(String[] args) {
