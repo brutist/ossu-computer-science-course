@@ -1,7 +1,6 @@
 import edu.princeton.cs.algs4.Point2D;
+import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.RectHV;
-
-import java.awt.*;
 
 public class KdTree {
     private Node root;          // root node of tree
@@ -40,6 +39,7 @@ public class KdTree {
     // add the point to the set (if it is not already in the set)
     public void insert(Point2D p) {
         if (p == null)  return;
+
         double[] key = {p.x(), p.y()};
         root = insert(root, key, 0);
         size++;
@@ -53,7 +53,8 @@ public class KdTree {
         if (cmp < 0)        node.lb = insert(node.lb, key, level + 1);
         else if (cmp > 0)   node.rt = insert(node.rt, key, level + 1);
 
-        // there is supposed to be no equal position to the key because calls to this are checked with contains()
+        // just return this node if there is a node containing the same position, do not add because
+        //      this is a SET of points (no duplicates)
         return node;
     }
 
@@ -91,13 +92,18 @@ public class KdTree {
 
     // all points that are inside the rectangle (or on the boundary)
     public Iterable<Point2D> range(RectHV rect) {
+        Queue<Point2D> q = new Queue<>();
 
+
+
+        return q;
     }
 
     // a nearest neighbor in the set to point p; null if the set is empty
     public Point2D nearest(Point2D p) {
 
     }
+
     // unit testing of the methods (optional)
     public static void main(String[] args) {
 
