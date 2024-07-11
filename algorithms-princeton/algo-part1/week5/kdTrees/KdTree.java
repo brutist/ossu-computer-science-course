@@ -1,16 +1,24 @@
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 
+import java.awt.*;
+
 public class KdTree {
-    private Node root;
-    private int size;
+    private Node root;          // root node of tree
+    private int size;           // size of tree
+    private final int D = 2;    // no. of dimensions
 
     // the nodes of the kdTree
     private static class Node {
-        private Point2D p;      // the point
-        private RectHV rect;    // the axis-aligned rectangle corresponding to this node
-        private Node lb;        // the left/bottom subtree
-        private Node rt;        // the right/top subtree
+        private final Point2D p;    // the point
+        private RectHV rect;        // the axis-aligned rectangle corresponding to this node
+        private Node lb;            // the left/bottom subtree
+        private Node rt;            // the right/top subtree
+
+        public Node(Point2D point) {
+            p = point;
+            // TODO figure out how to calculate rect???
+        }
     }
 
     // construct an empty set of points
@@ -31,13 +39,38 @@ public class KdTree {
 
     // add the point to the set (if it is not already in the set)
     public void insert(Point2D p) {
-        if (contains(p))    return;
+        if (p == null)  return;
+        double[] key = {p.x(), p.y()};
+        root = insert(root, key, 0);
+        size++;
+    }
 
+    private Node insert(Node node, double[] key, int level) {
+        if (node == null)  return new Node(new Point2D(key[0], key[1]));
+
+        double[] nodePos = {node.p.x(), node.p.y()};
+        int cmp = Double.compare(key[level % D], nodePos[level % D]);
+        if (cmp < 0)        node.lb = insert(node.lb, key, level + 1);
+        else if (cmp > 0)   node.rt = insert(node.rt, key, level + 1);
+
+        // there is supposed to be no equal position to the key because calls to this are checked with contains()
+        return node;
     }
 
     // does the set contain point p?
     public boolean contains(Point2D p) {
+        double[] pos = {p.x(), p.y()};
+        return contains(root, pos,0) != null;
+    }
 
+    private Node contains(Node node, double[] key, int level) {
+        if (node == null)  return null;
+
+        double[] nodePos = {node.p.x(), node.p.y()};
+        int cmp = Double.compare(key[level % D], nodePos[level % D]);
+        if (cmp == 0) return node;
+        else if (cmp > 0)  return contains(node.rt, key, level + 1);
+        else return contains(node.lb, key, level + 1);
     }
 
     // draw all points to standard draw
