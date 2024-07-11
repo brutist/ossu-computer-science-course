@@ -65,13 +65,14 @@ public class KdTree {
     }
 
     private Node contains(Node node, double[] key, int level) {
-        if (node == null)  return null;
+        if (node == null)   return null;
 
+        // simplify whether x or y-comparison
         double[] nodePos = {node.p.x(), node.p.y()};
         int cmp = Double.compare(key[level % D], nodePos[level % D]);
-        if (cmp == 0) return node;
-        else if (cmp > 0)  return contains(node.rt, key, level + 1);
-        else return contains(node.lb, key, level + 1);
+        if (cmp == 0)       return node;
+        else if (cmp > 0)   return contains(node.rt, key, level + 1);
+        else                return contains(node.lb, key, level + 1);
     }
 
     // draw all points to standard draw
@@ -92,27 +93,95 @@ public class KdTree {
 
     // all points that are inside the rectangle (or on the boundary)
     public Iterable<Point2D> range(RectHV rect) {
+        if (rect == null)   throw new IllegalArgumentException("cannot call range with null args");
+
         Queue<Point2D> q = new Queue<>();
-
-
-
+        range(q, root, rect, 0);
         return q;
+    }
+
+    private void range(Queue<Point2D> q, Node node, RectHV rect, int level) {
+        if (node == null)   return;
+
+        double[] key = {node.p.x(), node.p.y()};
+        double[] maxRect = {rect.xmax(), rect.ymax()};
+        double[] minRect = {rect.xmin(), rect.ymin()};
+        int d = level % D;    // discriminator
+        if (rect.contains(node.p)) {
+            q.enqueue(node.p);
+            // recursively search left and right if the line is within the rectangle
+            range(q, node.lb, rect, level + 1);
+            range(q, node.rt, rect, level + 1);
+        }
+        else if (key[d] > maxRect[d]) {
+            // recursively search right if key could only be in right partition
+            range(q, node.rt, rect, level + 1);
+        }
+        else if (key[d] < minRect[d]) {
+            // recursively search left if key could only be in left partition
+            range(q, node.lb, rect, level + 1);
+        }
     }
 
     // a nearest neighbor in the set to point p; null if the set is empty
     public Point2D nearest(Point2D p) {
         if (p == null)  throw new IllegalArgumentException("cannot call nearest on null arguments");
-        else if (root == null) return null;
 
-        Node node = root;
-        double dist = Double.POSITIVE_INFINITY;
-
+        // start at the root and point at root is also the nearest point
+        return nearest(p, root, root.p, 0);
     }
 
-    private Node nearest()
+    private Point2D nearest(Point2D query, Node node, Point2D nearest, int level) {
+        if (node == null)   return nearest;
+
+        double[] nodePos = {node.p.x(), node.p.y()};
+        double[] nearestPos = {nearest.x(), nearest.y()};
+        double[] queryPos = {query.x(), query.y()};
+        int d = level % D;  // discriminator
+
+        if (node.p.distanceSquaredTo(query) < nearest.distanceSquaredTo(query)) {
+            // if the nearest is to the left of the current nearest and the previous nearest then
+            //      search only the left of the current nearest
+            if (nodePos[d] < nearestPos[d])         nearest = nearest(query, node.lb, node.p, level + 1);
+            // if the nearest is to the right of the current nearest and the previous nearest then
+            //      search only the right of the current nearest
+            else if (nodePos[d] > nearestPos[d])    nearest = nearest(query, node.rt, node.p, level + 1);
+        }
+        else {
+            if (nodePos[d] < nearestPos[d])     nearest = nearest()
+        }
+
+        return nearest;
+    }
 
     // unit testing of the methods (optional)
     public static void main(String[] args) {
 
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
