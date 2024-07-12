@@ -10,12 +10,13 @@ public class KdTree {
     // the nodes of the kdTree
     private static class Node {
         private final Point2D p;    // the point
-        private RectHV rect;        // the axis-aligned rectangle corresponding to this node
+        private final RectHV rect;  // the axis-aligned rectangle corresponding to this node
         private Node lb;            // the left/bottom subtree
         private Node rt;            // the right/top subtree
 
-        public Node(Point2D point) {
+        public Node(Point2D point, RectHV rect) {
             p = point;
+            this.rect = rect;
             // TODO figure out how to calculate rect???
         }
     }
@@ -41,17 +42,26 @@ public class KdTree {
         if (p == null)  return;
 
         double[] key = {p.x(), p.y()};
-        root = insert(root, key, 0);
+        RectHV rect = new RectHV(0, 0, 1, 1);  // algs4 representation of a unit rectangle
+        root = insert(root, key, 0, rect);
         size++;
     }
 
-    private Node insert(Node node, double[] key, int level) {
-        if (node == null)  return new Node(new Point2D(key[0], key[1]));
+    private Node insert(Node node, double[] key, int level, RectHV rect) {
+        if (node == null)  return new Node(new Point2D(key[0], key[1]), rect);
 
         double[] nodePos = {node.p.x(), node.p.y()};
-        int cmp = Double.compare(key[level % D], nodePos[level % D]);
-        if (cmp < 0)        node.lb = insert(node.lb, key, level + 1);
-        else if (cmp > 0)   node.rt = insert(node.rt, key, level + 1);
+        int d = level % D;
+        int cmp = Double.compare(key[d], nodePos[d]);
+        RectHV nodeRect;
+        if (cmp < 0) {
+            nodeRect = new RectHV(node.rect.xmin(), node.rect.ymin(), nodePos[d], key[(level + 1) % D]);
+            node.lb = insert(node.lb, key, level + 1, nodeRect);
+        }
+        else if (cmp > 0)   {
+            nodeRect = new RectHV(nodePos[d], key[(level + 1) % D], node.rect.xmax(), node.rect.ymax());
+            node.rt = insert(node.rt, key, level + 1, nodeRect);
+        }
 
         // just return this node if there is a node containing the same position, do not add because
         //      this is a SET of points (no duplicates)
@@ -61,7 +71,7 @@ public class KdTree {
     // does the set contain point p?
     public boolean contains(Point2D p) {
         double[] pos = {p.x(), p.y()};
-        return contains(root, pos,0) != null;
+        return contains(root, pos, 0) != null;
     }
 
     private Node contains(Node node, double[] key, int level) {
@@ -154,14 +164,17 @@ public class KdTree {
         // no need to check farther subtree if there is a closer point in the closer subtree
         if (closer != null && closer.distanceSquaredTo(query) < champion.distanceSquaredTo(query))
             champion = closer;
-        // look at the farther subtree if there was no closer points in the closer subtree
-        else if (queryPos[d] < nodePos[d])
+        // look at the farther subtree if the closest point discovered so far is farther than
+        //  the query point and the rectangle corresponding to the node
+        boolean rightNodeCloser = champion.distanceSquaredTo(query) > node.rt.rect.distanceSquaredTo(query);
+        boolean leftNodeCloser = champion.distanceSquaredTo(query) > node.lb.rect.distanceSquaredTo(query);
+        if (rightNodeCloser && queryPos[d] < nodePos[d])
             champion = nearest(query, node.rt, champion, level + 1);
-        else if (queryPos[d] > nodePos[d])
+        else if (leftNodeCloser && queryPos[d] > nodePos[d])
             champion = nearest(query, node.lb, champion, level + 1);
 
         return champion;
-        // TODO Im not running trees yet.
+        // TODO Im not pruning trees yet.
     }
 
     // unit testing of the methods (optional)
