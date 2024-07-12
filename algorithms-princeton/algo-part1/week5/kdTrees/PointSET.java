@@ -60,7 +60,7 @@ public class PointSET {
         Point2D champ = null;
         for (Point2D that : pointSet) {
             // pick the nearest to p
-            if (champ == null || champ.distanceTo(p) > that.distanceTo(p)) {
+            if (champ == null || champ.distanceSquaredTo(p) > that.distanceSquaredTo(p)) {
                 champ = that;
             }
         }
