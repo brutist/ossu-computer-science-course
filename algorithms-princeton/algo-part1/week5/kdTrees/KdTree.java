@@ -131,27 +131,35 @@ public class KdTree {
         return nearest(p, root, root.p, 0);
     }
 
-    private Point2D nearest(Point2D query, Node node, Point2D nearest, int level) {
-        if (node == null)   return nearest;
+    private Point2D nearest(Point2D query, Node node, Point2D champion, int level) {
+        if (node == null)   return champion;
 
+        // there is a point equal to the query
+        if (query.equals(node.p))   return node.p;
+
+        // check for more complicated cases
         double[] nodePos = {node.p.x(), node.p.y()};
-        double[] nearestPos = {nearest.x(), nearest.y()};
+        double[] nearestPos = {champion.x(), champion.y()};
         double[] queryPos = {query.x(), query.y()};
         int d = level % D;  // discriminator
 
-        if (node.p.distanceSquaredTo(query) < nearest.distanceSquaredTo(query)) {
-            // if the nearest is to the left of the current nearest and the previous nearest then
-            //      search only the left of the current nearest
-            if (nodePos[d] < nearestPos[d])         nearest = nearest(query, node.lb, node.p, level + 1);
-            // if the nearest is to the right of the current nearest and the previous nearest then
-            //      search only the right of the current nearest
-            else if (nodePos[d] > nearestPos[d])    nearest = nearest(query, node.rt, node.p, level + 1);
+        if (node.p.distanceSquaredTo(query) < champion.distanceSquaredTo(query)) {
+            Point2D closer = null;
+            // check the closer subtree first, if there is a much nearer node in the closer subtree
+            // there is no need to check the farther subtree
+            if (queryPos[d] < nodePos[d])
+                closer = nearest(query, node.lb, champion, level + 1);
+
+            if (closer != null && !champion.equals(closer))
+                champion = nearest(query, node.rt, closer, level + 1);
         }
         else {
-            if (nodePos[d] < nearestPos[d])     nearest = nearest()
+            // search left
+            if (queryPos[d] < nodePos[d])           champion = nearest(query, node.lb, champion, level + 1);
+            // search right
+            else if (queryPos[d] > nodePos[d])      champion = nearest(query, node.rt, champion, level+ 1);
         }
-
-        return nearest;
+        return champion;
     }
 
     // unit testing of the methods (optional)
