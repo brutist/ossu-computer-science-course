@@ -55,11 +55,12 @@ public class KdTree {
         int cmp = Double.compare(key[d], nodePos[d]);
         RectHV nodeRect;
         if (cmp < 0) {
-            nodeRect = new RectHV(node.rect.xmin(), node.rect.ymin(), nodePos[d], key[(level + 1) % D]);
+            nodeRect = new RectHV(node.rect.xmin(), node.rect.ymin(), nodePos[(level + 1) % D], key[d]);
+            //  TODO figure out how to make the fucking node rectangle.
             node.lb = insert(node.lb, key, level + 1, nodeRect);
         }
-        else if (cmp > 0)   {
-            nodeRect = new RectHV(nodePos[d], key[(level + 1) % D], node.rect.xmax(), node.rect.ymax());
+        else if (cmp > 0) {
+            // TODO
             node.rt = insert(node.rt, key, level + 1, nodeRect);
         }
 
