@@ -139,25 +139,31 @@ public class KdTree {
 
         // check for more complicated cases
         double[] nodePos = {node.p.x(), node.p.y()};
-        double[] nearestPos = {champion.x(), champion.y()};
         double[] queryPos = {query.x(), query.y()};
         int d = level % D;  // discriminator
 
         if (node.p.distanceSquaredTo(query) < champion.distanceSquaredTo(query)) {
-            Point2D closer = null;
+            Point2D closer;
             // check the closer subtree first, if there is a much nearer node in the closer subtree
             // there is no need to check the farther subtree
-            if (queryPos[d] < nodePos[d])
-                closer = nearest(query, node.lb, champion, level + 1);
+            if (queryPos[d] < nodePos[d])   closer = nearest(query, node.lb, node.p, level + 1);
+            else                            closer = nearest(query, node.rt, node.p, level + 1);
 
-            if (closer != null && !champion.equals(closer))
-                champion = nearest(query, node.rt, closer, level + 1);
+            // no need to check farther subtree if there is a closer point in the closer subtree
+            if (closer != null && closer.distanceSquaredTo(query) < champion.distanceSquaredTo(query))
+                champion = closer;
+            else if (queryPos[d] < nodePos[d])
+                champion = nearest(query, node.rt, node.p, level + 1);
+            else if (queryPos[d] >= nodePos[d])
+                champion = nearest(query, node.lb, node.p, level + 1);
         }
         else {
             // search left
-            if (queryPos[d] < nodePos[d])           champion = nearest(query, node.lb, champion, level + 1);
-            // search right
-            else if (queryPos[d] > nodePos[d])      champion = nearest(query, node.rt, champion, level+ 1);
+            if (queryPos[d] < nodePos[d])// search right
+                champion = nearest(query, node.lb, champion, level + 1);
+                // search right
+            else
+                champion = nearest(query, node.rt, champion, level+ 1);
         }
         return champion;
     }
@@ -167,28 +173,6 @@ public class KdTree {
 
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
