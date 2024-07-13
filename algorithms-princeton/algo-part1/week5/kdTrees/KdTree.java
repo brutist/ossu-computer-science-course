@@ -1,6 +1,7 @@
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.RectHV;
+import edu.princeton.cs.algs4.StdDraw;
 
 public class KdTree {
     private Node root;          // root node of tree
@@ -55,12 +56,11 @@ public class KdTree {
         int cmp = Double.compare(key[d], nodePos[d]);
         RectHV nodeRect;
         if (cmp < 0) {
-            nodeRect = new RectHV(node.rect.xmin(), node.rect.ymin(), nodePos[(level + 1) % D], key[d]);
-            //  TODO figure out how to make the fucking node rectangle.
+            nodeRect = new RectHV(node.rect.xmin(), node.rect.ymin(), nodePos[d], node.rect.ymax());
             node.lb = insert(node.lb, key, level + 1, nodeRect);
         }
         else if (cmp > 0) {
-            // TODO
+            nodeRect = new RectHV(nodePos[d], node.rect.ymin(), node.rect.xmax(), node.rect.ymax());
             node.rt = insert(node.rt, key, level + 1, nodeRect);
         }
 
@@ -88,18 +88,36 @@ public class KdTree {
 
     // draw all points to standard draw
     public void draw() {
-        draw(root);
+        draw(root, 0);
     }
 
     // TODO must draw the red/blue subdivisions as well
-    private void draw(Node node) {
+    private void draw(Node node, int level) {
         if (node == null)   return;
-        // draw the node
+
+        boolean vertical = level % D == 0;
+        boolean horizontal = level % D == 1;
+
+        // draw the subdivisions
+        StdDraw.setPenRadius();
+        if (vertical) {
+            StdDraw.setPenColor(StdDraw.RED);
+            StdDraw.line(node.p.x(), node.rect.ymin(), node.p.x(), node.rect.ymax());
+        }
+        if (horizontal) {
+            StdDraw.setPenColor(StdDraw.BLUE);
+            StdDraw.line(node.rect.xmin(), node.p.y(), node.rect.xmax(), node.p.y());
+        }
+        // draw the point
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.setPenRadius(0.01);
         node.p.draw();
+        node.rect.draw();
+
         // draw the left/bottom node
-        draw(node.lb);
+        draw(node.lb, level + 1);
         // draw the right/top node
-        draw(node.rt);
+        draw(node.rt, level + 1);
     }
 
     // all points that are inside the rectangle (or on the boundary)
@@ -118,7 +136,6 @@ public class KdTree {
         double[] maxRect = {rect.xmax(), rect.ymax()};
         double[] minRect = {rect.xmin(), rect.ymin()};
         int d = level % D;    // discriminator
-        //TODO define what is rect, this critical to calculating if a point is inside the rect
         if (rect.contains(node.p)) {
             q.enqueue(node.p);
             // recursively search left and right if the line is within the rectangle
@@ -158,24 +175,24 @@ public class KdTree {
         if (node.p.distanceSquaredTo(query) < champion.distanceSquaredTo(query)) {
             champion = node.p;
         }
-
+        // check the closer subtree first
         if (queryPos[d] < nodePos[d])   closer = nearest(query, node.lb, champion, level + 1);
         else                            closer = nearest(query, node.rt, champion, level + 1);
 
-        // no need to check farther subtree if there is a closer point in the closer subtree
+        // no need to check farther subtree if there is a closer point is closer on all possible points
+        //    in the farther subtree
         if (closer != null && closer.distanceSquaredTo(query) < champion.distanceSquaredTo(query))
             champion = closer;
         // look at the farther subtree if the closest point discovered so far is farther than
         //  the query point and the rectangle corresponding to the node
-        boolean rightNodeCloser = champion.distanceSquaredTo(query) > node.rt.rect.distanceSquaredTo(query);
-        boolean leftNodeCloser = champion.distanceSquaredTo(query) > node.lb.rect.distanceSquaredTo(query);
-        if (rightNodeCloser && queryPos[d] < nodePos[d])
-            champion = nearest(query, node.rt, champion, level + 1);
-        else if (leftNodeCloser && queryPos[d] > nodePos[d])
-            champion = nearest(query, node.lb, champion, level + 1);
+        if (node.rt != null && node.rt.rect.distanceSquaredTo(query) < champion.distanceSquaredTo(query)) {
+            if (queryPos[d] < nodePos[d])       champion = nearest(query, node.rt, champion, level + 1);
+        }
+        else if (node.lb != null && node.lb.rect.distanceSquaredTo(query) < champion.distanceSquaredTo(query)) {
+            if (queryPos[d] > nodePos[d])       champion = nearest(query, node.lb, champion, level + 1);
+        }
 
         return champion;
-        // TODO Im not pruning trees yet.
     }
 
     // unit testing of the methods (optional)
