@@ -20,6 +20,7 @@ public class TopologicalSort {
         for (int w : G.adj(v))
             if (!visited[w])    dfs(G, w);
 
+        // when done doing dfs on a particular vertex, add it to the ordering
         reversePost.push(v);
     }
 
