@@ -1,14 +1,15 @@
 import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.DirectedCycle;
 import edu.princeton.cs.algs4.In;
 
-import java.util.Arrays;
 import java.util.TreeMap;
 
 public class WordNet {
     private final Digraph wordNet;                          // synset graph
-    private final TreeMap<String, Integer> synsetWords;     // noun-id pair
+    private final TreeMap<String, Integer> nounSet;         // noun-id pair
     private final TreeMap<String, Integer> synsets;         // synset-id pair
     private final int V;                                    // no. of vertices
+    private final SAP sap;                                  // shortest ancestral path
 
     // constructor takes the name of the two input files
     public WordNet(String synsets, String hypernyms) {
@@ -16,7 +17,7 @@ public class WordNet {
             throw new IllegalArgumentException("cannot have null arguments inSynsets WordNet constructor");
 
         // instantiate the instance variables
-        synsetWords = new TreeMap<>();
+        nounSet = new TreeMap<>();
         this.synsets = new TreeMap<>();
         int max = 0;
 
@@ -30,7 +31,7 @@ public class WordNet {
 
             // keep track of the nouns inSynsets the synset and its id
             for (String noun : nouns) {
-                synsetWords.put(noun, id);
+                nounSet.put(noun, id);
             }
             // keep track of the synsets
             this.synsets.put(synset, id);
@@ -51,11 +52,17 @@ public class WordNet {
                 wordNet.addEdge(v, w);
             }
         }
+
+        // instantiate the shortest ancestor path
+        DirectedCycle checkCycle = new DirectedCycle(wordNet);
+        if (checkCycle.hasCycle()) throw new IllegalArgumentException("SAP cannot process cyclic graphs");
+        sap = new SAP(wordNet);
+
     }
 
     // returns all WordNet nouns
     public Iterable<String> nouns() {
-        return synsetWords.keySet();
+        return nounSet.keySet();
     }
 
     // is the word a WordNet noun?
@@ -63,7 +70,7 @@ public class WordNet {
         if (word == null)
             throw new IllegalArgumentException("isNoun() cannot accept null args");
 
-        return synsetWords.containsKey(word);
+        return nounSet.containsKey(word);
     }
 
     // distance between nounA and nounB (defined below)
@@ -73,6 +80,9 @@ public class WordNet {
         if (!isNoun(nounA) || !isNoun(nounB))
             throw new IllegalArgumentException("distance() args should be WordNet nouns");
 
+        int v = nounSet.get(nounA);
+        int w = nounSet.get(nounB);
+        return sap.length(v, w);
     }
 
     // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
