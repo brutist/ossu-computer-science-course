@@ -79,7 +79,21 @@ public class SAP {
         checkVertices(v);
         checkVertices(w);
 
+        int UNREACHABLE = -1;
+        int[] vs = iterableToArray(v);
+        int[] ws = iterableToArray(w);
+        int shortestLength = UNREACHABLE;
 
+        for (int i : vs) {
+            for (int j : ws) {
+                int length = length(i, j);
+
+                if (shortestLength == UNREACHABLE || length < shortestLength)
+                    shortestLength = length;
+            }
+        }
+
+        return shortestLength;
     }
 
     // a common ancestor that participates in the shortest ancestral path; -1 if no such path
@@ -87,7 +101,24 @@ public class SAP {
         checkVertices(v);
         checkVertices(w);
 
+        int UNREACHABLE = -1;
+        int[] vs = iterableToArray(v);
+        int[] ws = iterableToArray(w);
+        int shortestLength = UNREACHABLE;
+        int shortestAncestor = UNREACHABLE;
 
+        for (int i : vs) {
+            for (int j : ws) {
+                int length = length(i, j);
+
+                if (shortestLength == UNREACHABLE || length < shortestLength) {
+                    shortestLength = length;
+                    shortestAncestor = ancestor(i, j);
+                }
+            }
+        }
+
+        return  shortestAncestor;
     }
 
     // returns a queue of vertices that is the shortest path from the root to vertex v
@@ -111,6 +142,18 @@ public class SAP {
             if (v == null)
                 throw new IllegalArgumentException("vertices should not contain null items");
         }
+    }
+
+    private int[] iterableToArray(Iterable<Integer> vertices) {
+        ArrayDeque<Integer> aq = new ArrayDeque<>();
+        for (Integer v : vertices)
+            aq.addLast(v);
+
+        int[] verticesArray = new int[aq.size()];
+        for (int i = 0; i < aq.size(); i++)
+            verticesArray[i] = aq.removeFirst();
+
+        return verticesArray;
     }
 
     // do unit testing of this class
