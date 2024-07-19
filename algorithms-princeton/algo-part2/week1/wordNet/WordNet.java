@@ -7,8 +7,7 @@ import java.util.TreeMap;
 public class WordNet {
     private final Digraph wordNet;                          // synset graph
     private final TreeMap<String, Integer> nounSet;         // noun-id pair
-    private final TreeMap<String, Integer> synsets;         // synset-id pair
-    private final int V;                                    // no. of vertices
+    private final String[] synsets;                         // synset with ith index
     private final SAP sap;                                  // shortest ancestral path
 
     // constructor takes the name of the two input files
@@ -18,7 +17,6 @@ public class WordNet {
 
         // instantiate the instance variables
         nounSet = new TreeMap<>();
-        this.synsets = new TreeMap<>();
         int max = 0;
 
         // synsets stream
@@ -33,16 +31,24 @@ public class WordNet {
             for (String noun : nouns) {
                 nounSet.put(noun, id);
             }
-            // keep track of the synsets
-            this.synsets.put(synset, id);
-
             //keep track of the largest id, also the maximum vertex number
             if (!inSynsets.hasNextLine()) max = id;
         }
 
+        // create an array of synset, with index as id
+        this.synsets = new String[max];
+        In inSynsets2 = new In(synsets);
+        while (inSynsets2.hasNextLine()) {
+            String[] line = inSynsets.readLine().split(",", 2);  // synset[0] is id, synset[1] is the synset words
+            int id = Integer.parseInt(line[0]);
+            String synset =  line[1];
+
+            // synset with index as id
+            this.synsets[id] = synset;
+        }
+
         // create the digraph
-        this.V = max;
-        wordNet = new Digraph(V);
+        wordNet = new Digraph(max);
         In inConnections = new In(hypernyms);
         while (inConnections.hasNextLine()) {
             String[] line = inConnections.readLine().split(",");
@@ -57,7 +63,6 @@ public class WordNet {
         DirectedCycle checkCycle = new DirectedCycle(wordNet);
         if (checkCycle.hasCycle()) throw new IllegalArgumentException("SAP cannot process cyclic graphs");
         sap = new SAP(wordNet);
-
     }
 
     // returns all WordNet nouns
@@ -80,9 +85,9 @@ public class WordNet {
         if (!isNoun(nounA) || !isNoun(nounB))
             throw new IllegalArgumentException("distance() args should be WordNet nouns");
 
-        int v = nounSet.get(nounA);
-        int w = nounSet.get(nounB);
-        return sap.length(v, w);
+        int dist = sap.length(nounSet.get(nounA), nounSet.get(nounB));
+        assert(dist >= 0);
+        return dist;
     }
 
     // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
@@ -93,7 +98,11 @@ public class WordNet {
         if (!isNoun(nounA) || !isNoun(nounB))
             throw new IllegalArgumentException("sap() args should be WordNet nouns");
 
+        int a = sap.ancestor(nounSet.get(nounA), nounSet.get(nounB));
 
+        // since the wordNet should be a DAG, call to ancestor will not get -1;
+        assert(a >= 0);
+        return synsets[a];
     }
 
     // do unit testing of this class
