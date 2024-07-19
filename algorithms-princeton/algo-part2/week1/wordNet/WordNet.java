@@ -1,11 +1,10 @@
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.DirectedCycle;
 import edu.princeton.cs.algs4.In;
-
 import java.util.TreeMap;
 
 public class WordNet {
-    private final Digraph wordNet;                          // synset graph
+    // this assumes that no synset contains equal nouns
     private final TreeMap<String, Integer> nounSet;         // noun-id pair
     private final String[] synsets;                         // synset with ith index
     private final SAP sap;                                  // shortest ancestral path
@@ -48,7 +47,7 @@ public class WordNet {
         }
 
         // create the digraph
-        wordNet = new Digraph(max);
+        Digraph wordNet = new Digraph(max);
         In inConnections = new In(hypernyms);
         while (inConnections.hasNextLine()) {
             String[] line = inConnections.readLine().split(",");
@@ -61,7 +60,8 @@ public class WordNet {
 
         // instantiate the shortest ancestor path
         DirectedCycle checkCycle = new DirectedCycle(wordNet);
-        if (checkCycle.hasCycle()) throw new IllegalArgumentException("SAP cannot process cyclic graphs");
+        if (checkCycle.hasCycle())
+            throw new IllegalArgumentException("SAP cannot process cyclic graphs");
         sap = new SAP(wordNet);
     }
 
