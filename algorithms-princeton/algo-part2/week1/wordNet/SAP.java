@@ -1,28 +1,38 @@
-import edu.princeton.cs.algs4.*;
+import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.Digraph;
-
 import java.util.ArrayDeque;
 
 public class SAP {
-    private final BreadthFirstDirectedPaths bfsRootPaths;
-    private final int root;                                               // root of the DAG
-    private final int V;                                                  // max vertex
+    private final BreadthFirstDirectedPaths bfsRootPaths;             // bfs path from root
+    private final BreadthFirstDirectedPaths bfsAllVertices;           // bfs path from all vertices
+    private final int root;                                           // root of the DAG
+    private final int V;                                              // max vertex
+    private final Digraph Graph;
 
     // constructor takes a digraph (not necessarily a DAG)
     public SAP(Digraph G) {
         if (G == null)  throw new IllegalArgumentException("SAP cannot process null args");
 
-        this.V = G.V();
+        // create a deep copy of the mutable digraph
+        G = new Digraph(G);
+        Graph = G;
+
         // pick a root, if the graph is a DAG, picks THE root
         int r = 0;
+        this.V = Graph.V();
+        ArrayDeque<Integer> allVertices = new ArrayDeque<>();
         for (int i = 0; i < this.V; i++) {
-            if (G.indegree(i) == 0) {
+            if (Graph.outdegree(i) == 0) {
                 r = i;
-                break;
             }
+            allVertices.addLast(i);
         }
         root = r;
-        bfsRootPaths = new BreadthFirstDirectedPaths(G, root);
+        bfsRootPaths = new BreadthFirstDirectedPaths(Graph, root);
+        bfsAllVertices = new BreadthFirstDirectedPaths(Graph, allVertices);
     }
 
     // length of shortest ancestral path between v and w; -1 if no such path
@@ -79,21 +89,10 @@ public class SAP {
         checkVertices(v);
         checkVertices(w);
 
-        int UNREACHABLE = -1;
-        int[] vs = iterableToArray(v);
-        int[] ws = iterableToArray(w);
-        int shortestLength = UNREACHABLE;
 
-        for (int i : vs) {
-            for (int j : ws) {
-                int length = length(i, j);
 
-                if (shortestLength == UNREACHABLE || length < shortestLength)
-                    shortestLength = length;
-            }
-        }
 
-        return shortestLength;
+
     }
 
     // a common ancestor that participates in the shortest ancestral path; -1 if no such path
@@ -102,13 +101,11 @@ public class SAP {
         checkVertices(w);
 
         int UNREACHABLE = -1;
-        int[] vs = iterableToArray(v);
-        int[] ws = iterableToArray(w);
         int shortestLength = UNREACHABLE;
         int shortestAncestor = UNREACHABLE;
 
-        for (int i : vs) {
-            for (int j : ws) {
+        for (int i : v) {
+            for (int j : w) {
                 int length = length(i, j);
 
                 if (shortestLength == UNREACHABLE || length < shortestLength) {
@@ -117,7 +114,6 @@ public class SAP {
                 }
             }
         }
-
         return  shortestAncestor;
     }
 
@@ -141,19 +137,8 @@ public class SAP {
         for (Integer v : vertices) {
             if (v == null)
                 throw new IllegalArgumentException("vertices should not contain null items");
+            checkVertex(v);
         }
-    }
-
-    private int[] iterableToArray(Iterable<Integer> vertices) {
-        ArrayDeque<Integer> aq = new ArrayDeque<>();
-        for (Integer v : vertices)
-            aq.addLast(v);
-
-        int[] verticesArray = new int[aq.size()];
-        for (int i = 0; i < aq.size(); i++)
-            verticesArray[i] = aq.removeFirst();
-
-        return verticesArray;
     }
 
     // do unit testing of this class
