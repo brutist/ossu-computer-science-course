@@ -86,6 +86,9 @@ public class SAP {
         checkVertices(v);
         checkVertices(w);
 
+        if (!v.iterator().hasNext() || !w.iterator().hasNext())
+            return emptyKey;
+
         // create the shortest paths of the sets
         BreadthFirstDirectedPaths pathsV = new BreadthFirstDirectedPaths(Graph, v);
         BreadthFirstDirectedPaths pathsW = new BreadthFirstDirectedPaths(Graph, w);

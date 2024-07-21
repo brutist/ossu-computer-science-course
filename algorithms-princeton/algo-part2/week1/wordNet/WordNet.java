@@ -1,6 +1,8 @@
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.DirectedCycle;
+import edu.princeton.cs.algs4.Graph;
 import edu.princeton.cs.algs4.In;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeMap;
 
@@ -17,6 +19,7 @@ public class WordNet {
 
         // instantiate the instance variables
         nounSet = new TreeMap<>();
+        ArrayList<String> synonyms = new ArrayList<>();
         int max = 0;
 
         // synsets stream
@@ -40,22 +43,15 @@ public class WordNet {
                 ids.add(id);
                 nounSet.put(noun, ids);
             }
+            // keep track of the synonyms
+            synonyms.add(synset);
+
             //keep track of the largest id, also the maximum vertex number
             if (!inSynsets.hasNextLine()) max = id;
         }
 
-        // create an array of synset, with index as id
-        this.synsets = new String[max + 1];
-        In inSynsets2 = new In(synsets);
-        while (inSynsets2.hasNextLine()) {
-            // synset[0] is id, synset[1] is the synset words
-            String[] line = inSynsets2.readLine().split(",", 2);
-            int id = Integer.parseInt(line[0]);
-            String synset =  line[1];
-
-            // synset with index as id
-            this.synsets[id] = synset;
-        }
+        // create the synset array
+        this.synsets = synonyms.toArray(new String[0]);
 
         // create the digraph
         Digraph wordNet = new Digraph(max + 1);
@@ -69,10 +65,19 @@ public class WordNet {
             }
         }
 
-        // instantiate the shortest ancestor path
+        // check for cycles
         DirectedCycle checkCycle = new DirectedCycle(wordNet);
         if (checkCycle.hasCycle())
             throw new IllegalArgumentException("SAP cannot process cyclic graphs");
+        // check if the dag is rooted
+        boolean rootedDAG = false;
+        for (int i = 0; i < wordNet.V(); i++) {
+            if (wordNet.outdegree(i) == 0)
+                rootedDAG = true;
+        }
+        if (!rootedDAG) throw new IllegalArgumentException("SAP can only process rooted DAGs");
+
+        // instantiate the shortest ancestor path
         sap = new SAP(wordNet);
     }
 
