@@ -2,15 +2,31 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 
 public class Outcast {
-
+    WordNet wordNet;
     // constructor takes a WordNet object
     public Outcast(WordNet wordnet) {
-
+        this.wordNet = wordnet;
     }
 
     // given an array of WordNet nouns, return an outcast
     public String outcast(String[] nouns) {
+        String outcast = "";
+        int maxDist = 0;
 
+        for (int i = 0; i < nouns.length; i++) {
+            int di = 0;
+            for (int j = 0; j < nouns.length; j++) {
+                if (i == j) continue;
+
+                di += wordNet.distance(nouns[i], nouns[j]);
+            }
+
+            if (maxDist < di) {
+                maxDist = di;
+                outcast = nouns[i];
+            }
+        }
+        return outcast;
     }
 
     // see test client below

@@ -1,13 +1,14 @@
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.DirectedCycle;
 import edu.princeton.cs.algs4.In;
+import java.util.HashSet;
 import java.util.TreeMap;
 
 public class WordNet {
     // this assumes that no synset contains equal nouns
-    private final TreeMap<String, Integer> nounSet;         // noun-id pair
-    private final String[] synsets;                         // synset with ith index
-    private final SAP sap;                                  // shortest ancestral path
+    private final TreeMap<String, HashSet<Integer>> nounSet;    // noun-id pair
+    private final String[] synsets;                             // synset with ith index
+    private final SAP sap;                                      // shortest ancestral path
 
     // constructor takes the name of the two input files
     public WordNet(String synsets, String hypernyms) {
@@ -26,19 +27,24 @@ public class WordNet {
             String synset =  line[1];
             String[] nouns = synset.split(" ");
 
-            // keep track of the nouns inSynsets the synset and its id
+            // keep track of the nouns inSynsets the synset and its ids
             for (String noun : nouns) {
-                nounSet.put(noun, id);
+                HashSet<Integer> ids = new HashSet<>();
+                if (nounSet.containsKey(noun)) {
+                    ids = nounSet.get(noun);
+                }
+                ids.add(id);
+                nounSet.put(noun, ids);
             }
             //keep track of the largest id, also the maximum vertex number
             if (!inSynsets.hasNextLine()) max = id;
         }
 
         // create an array of synset, with index as id
-        this.synsets = new String[max];
+        this.synsets = new String[max + 1];
         In inSynsets2 = new In(synsets);
         while (inSynsets2.hasNextLine()) {
-            String[] line = inSynsets.readLine().split(",", 2);  // synset[0] is id, synset[1] is the synset words
+            String[] line = inSynsets2.readLine().split(",", 2);  // synset[0] is id, synset[1] is the synset words
             int id = Integer.parseInt(line[0]);
             String synset =  line[1];
 
@@ -85,9 +91,9 @@ public class WordNet {
         if (!isNoun(nounA) || !isNoun(nounB))
             throw new IllegalArgumentException("distance() args should be WordNet nouns");
 
-        int dist = sap.length(nounSet.get(nounA), nounSet.get(nounB));
-        assert(dist >= 0);
-        return dist;
+        HashSet<Integer> A = nounSet.get(nounA);        // A <set of synsets in which nounA appears>
+        HashSet<Integer> B = nounSet.get(nounB);        // B <set of synsets in which nounB appears>
+        return sap.length(A, B);
     }
 
     // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
@@ -98,10 +104,11 @@ public class WordNet {
         if (!isNoun(nounA) || !isNoun(nounB))
             throw new IllegalArgumentException("sap() args should be WordNet nouns");
 
-        int a = sap.ancestor(nounSet.get(nounA), nounSet.get(nounB));
-        // since the wordNet should be a DAG, call to ancestor will always yield a valid vertex;
-        assert(a >= 0);
-        return synsets[a];
+        HashSet<Integer> A = nounSet.get(nounA);        // A <set of synsets in which nounA appears>
+        HashSet<Integer> B = nounSet.get(nounB);        // B <set of synsets in which nounB appears>
+        // find the synset id that is the common ancestor of the words in A and B
+        int s = sap.ancestor(A, B);
+        return synsets[s];
     }
 
     // do unit testing of this class

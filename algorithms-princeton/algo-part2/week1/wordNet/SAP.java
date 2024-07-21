@@ -4,10 +4,12 @@ import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.Digraph;
 import java.util.HashMap;
+import java.util.HashSet;
+
 
 public class SAP {
-    private final Digraph Graph;            // the digraph
-    private HashMap<Long, int[]> cache;     // key-{length, ancestor} pair
+    private final Digraph Graph;                    // the digraph
+    private final HashMap<Long, int[]> cache;       // key-{length, ancestor} pair
 
     // constructor takes a digraph (not necessarily a DAG)
     public SAP(Digraph G) {
@@ -32,14 +34,14 @@ public class SAP {
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
-        int[] lengthAndAncestor = sap(v, w);
-        return lengthAndAncestor[0];    // returns the length
+        long key = sap(v, w);
+        return cache.get(key)[0];       // returns the length
     }
 
     // a common ancestor that participates in the shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
-        int[] lengthAndAncestor = sap(v, w);
-        return lengthAndAncestor[1];    // returns the ancestor
+        long key = sap(v, w);
+        return cache.get(key)[1];       // returns the ancestor
     }
 
     // caches the shortest ancestral length and the ancestor of given vertices,
@@ -77,7 +79,7 @@ public class SAP {
 
     // a little different from the other sap method, not really the most elegant solution
     //      but it is more performant than if we need to figure out the sources
-    private int[] sap(Iterable<Integer> v, Iterable<Integer> w) {
+    private long sap(Iterable<Integer> v, Iterable<Integer> w) {
         checkVertices(v);
         checkVertices(w);
 
@@ -89,17 +91,31 @@ public class SAP {
         //  the vertices in v and w that produced it
         int sapDist = -1;
         int sapAncestor = -1;
+        int sourceV = Integer.MAX_VALUE;
+        int sourceW = Integer.MAX_VALUE;
         for (int i = 0; i < Graph.V(); i++) {
             boolean initialDist = sapDist == -1;
             boolean reachable = pathsV.hasPathTo(i) && pathsW.hasPathTo(i);
+            if (initialDist) {
+                sourceV = getFirst(pathsV.pathTo(i));
+                sourceW = getFirst(pathsW.pathTo(i));
+            }
+
             if (reachable && (initialDist || pathsV.distTo(i) + pathsW.distTo(i) < sapDist)) {
                 sapDist = pathsV.distTo(i) + pathsW.distTo(i);
                 sapAncestor = i;
+                sourceV = getFirst(pathsV.pathTo(i));
+                sourceW = getFirst(pathsW.pathTo(i));
             }
+
         }
         // there is a way to identify the vertex v and w that produces this path by picking the first
         //   vertex in the pathTo, but it would slow down the code, so I decided against it
-        return new int[] {sapDist, sapAncestor};
+        // add to cache then return the key
+        long key = produceKey(sourceV, sourceW);
+        int[] value = {sapDist, sapAncestor};
+        cache.put(key, value);
+        return key;
     }
 
     // use a cantor pairing function to obtain a unique number for each pairing of v and w
@@ -112,7 +128,7 @@ public class SAP {
 
     // throws an error if the given vertex is outside the graph vertex range
     private void checkVertex(int v) {
-        if (v < 0 || v > Graph.V())
+        if (v < 0 || v >= Graph.V())
             throw new IllegalArgumentException("vertex given is outside the Graph's range");
     }
 
@@ -129,14 +145,26 @@ public class SAP {
         }
     }
 
+    private int getFirst(Iterable<Integer> v) {
+        return v.iterator().next();
+    }
+
     // do unit testing of this class
     public static void main(String[] args) {
         In in = new In(args[0]);
         Digraph G = new Digraph(in);
         SAP sap = new SAP(G);
         while (!StdIn.isEmpty()) {
-            int v = StdIn.readInt();
-            int w = StdIn.readInt();
+            HashSet<Integer> v = new HashSet<>();
+            for (int i = 0; i < 3; i++) {
+                v.add(StdIn.readInt());
+            }
+
+            HashSet<Integer> w = new HashSet<>();
+            for (int i = 0; i < 3; i++) {
+                w.add(StdIn.readInt());
+            }
+
             int length   = sap.length(v, w);
             int ancestor = sap.ancestor(v, w);
             StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
