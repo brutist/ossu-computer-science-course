@@ -3,140 +3,128 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.Digraph;
-import java.util.ArrayDeque;
+import java.util.HashMap;
 
 public class SAP {
-    private final BreadthFirstDirectedPaths bfsRootPaths;             // bfs path from root
-    private final BreadthFirstDirectedPaths bfsAllVertices;           // bfs path from all vertices
-    private final int root;                                           // root of the DAG
-    private final int V;                                              // max vertex
-    private final Digraph Graph;
+    private final Digraph Graph;            // the digraph
+    private HashMap<Long, int[]> cache;     // key-{length, ancestor} pair
 
     // constructor takes a digraph (not necessarily a DAG)
     public SAP(Digraph G) {
         if (G == null)  throw new IllegalArgumentException("SAP cannot process null args");
 
         // create a deep copy of the mutable digraph
-        G = new Digraph(G);
-        Graph = G;
-
-        // pick a root, if the graph is a DAG, picks THE root
-        int r = 0;
-        this.V = Graph.V();
-        ArrayDeque<Integer> allVertices = new ArrayDeque<>();
-        for (int i = 0; i < this.V; i++) {
-            if (Graph.outdegree(i) == 0) {
-                r = i;
-            }
-            allVertices.addLast(i);
-        }
-        root = r;
-        bfsRootPaths = new BreadthFirstDirectedPaths(Graph, root);
-        bfsAllVertices = new BreadthFirstDirectedPaths(Graph, allVertices);
+        Graph = new Digraph(G);
+        cache = new HashMap<>();
     }
 
     // length of shortest ancestral path between v and w; -1 if no such path
     public int length(int v, int w) {
-        checkVertex(v);
-        checkVertex(w);
-
-        int length = 0;
-        int UNREACHABLE = -1;
-        Integer closestCommonAncestor = ancestor(v, w);
-
-        if (closestCommonAncestor != UNREACHABLE) {
-            ArrayDeque<Integer> rootToV = pathToV(v);
-            ArrayDeque<Integer> rootToW = pathToV(w);
-
-            // remove all vertices in path from the root until closest ancestor of v
-            while (!closestCommonAncestor.equals(rootToV.removeLast())) {
-                length++;
-            }
-            // remove all vertices in path from the root until closest ancestor of w
-            while (!closestCommonAncestor.equals(rootToW.removeLast())) {
-                length++;
-            }
-        }
-        else {
-            length = UNREACHABLE;
-        }
-
-        return length;
+        long key = sap(v, w);
+        return cache.get(key)[0];       // returns the length
     }
 
     // a common ancestor of v and w that participates in the shortest ancestral path; -1 if no such path
     public int ancestor(int v, int w) {
-        checkVertex(v);
-        checkVertex(w);
-
-        int closestCommonAncestor = -1;
-        ArrayDeque<Integer> rootToV = pathToV(v);
-        ArrayDeque<Integer> rootToW = pathToV(w);
-
-        // the closest common ancestor to v and w is the last similar vertex on the shortest path
-        //  of source to v and source to w
-        while (!(rootToV.isEmpty() || rootToW.isEmpty()) &&
-                 rootToV.peekFirst().equals(rootToW.peekFirst())) {
-            closestCommonAncestor = rootToV.removeFirst();
-            rootToW.removeFirst();
-        }
-
-        return closestCommonAncestor;
+        long key = sap(v, w);
+        return cache.get(key)[1];       // returns the ancestor
     }
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
-        checkVertices(v);
-        checkVertices(w);
-
-
-
-
-
+        int[] lengthAndAncestor = sap(v, w);
+        return lengthAndAncestor[0];    // returns the length
     }
 
     // a common ancestor that participates in the shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
+        int[] lengthAndAncestor = sap(v, w);
+        return lengthAndAncestor[1];    // returns the ancestor
+    }
+
+    // caches the shortest ancestral length and the ancestor of given vertices,
+    //      returns the key for the given vertices
+    private long sap(int v, int w) {
+        checkVertex(v);
+        checkVertex(w);
+
+        // check if there is work to do
+        long key = produceKey(v, w);
+        if (cache.containsKey(key))
+            return key;
+
+        // create the shortest paths with given vertices as sources
+        BreadthFirstDirectedPaths pathsV = new BreadthFirstDirectedPaths(Graph, v);
+        BreadthFirstDirectedPaths pathsW = new BreadthFirstDirectedPaths(Graph, w);
+
+        // search for the shortest ancestral length and ancestor
+        int sapDist = -1;
+        int sapAncestor = -1;
+        for (int i = 0; i < Graph.V(); i++) {
+            boolean initialDist = sapDist == -1;
+            boolean reachable = pathsV.hasPathTo(i) && pathsW.hasPathTo(i);
+            if (reachable && (initialDist || pathsV.distTo(i) + pathsW.distTo(i) < sapDist)) {
+                sapDist = pathsV.distTo(i) + pathsW.distTo(i);
+                sapAncestor = i;
+            }
+        }
+
+        // add to cache then return the key
+        int[] value = {sapDist, sapAncestor};
+        cache.put(key, value);
+        return key;
+    }
+
+    // a little different from the other sap method, not really the most elegant solution
+    //      but it is more performant than if we need to figure out the sources
+    private int[] sap(Iterable<Integer> v, Iterable<Integer> w) {
         checkVertices(v);
         checkVertices(w);
 
-        int UNREACHABLE = -1;
-        int shortestLength = UNREACHABLE;
-        int shortestAncestor = UNREACHABLE;
+        // create the shortest paths of the sets
+        BreadthFirstDirectedPaths pathsV = new BreadthFirstDirectedPaths(Graph, v);
+        BreadthFirstDirectedPaths pathsW = new BreadthFirstDirectedPaths(Graph, w);
 
-        for (int i : v) {
-            for (int j : w) {
-                int length = length(i, j);
-
-                if (shortestLength == UNREACHABLE || length < shortestLength) {
-                    shortestLength = length;
-                    shortestAncestor = ancestor(i, j);
-                }
+        // search for the shortest ancestral length, common ancestor and
+        //  the vertices in v and w that produced it
+        int sapDist = -1;
+        int sapAncestor = -1;
+        for (int i = 0; i < Graph.V(); i++) {
+            boolean initialDist = sapDist == -1;
+            boolean reachable = pathsV.hasPathTo(i) && pathsW.hasPathTo(i);
+            if (reachable && (initialDist || pathsV.distTo(i) + pathsW.distTo(i) < sapDist)) {
+                sapDist = pathsV.distTo(i) + pathsW.distTo(i);
+                sapAncestor = i;
             }
         }
-        return  shortestAncestor;
+        // there is a way to identify the vertex v and w that produces this path but picking the first
+        //   vertex in the pathTo, but it would slow down the code, so I decided against it
+        return new int[] {sapDist, sapAncestor};
     }
 
-    // returns a queue of vertices that is the shortest path from the root to vertex v
-    private ArrayDeque<Integer> pathToV(int v) {
-        ArrayDeque<Integer> q = new ArrayDeque<>();
-        if (bfsRootPaths.hasPathTo(v)) {
-            for (Integer w : bfsRootPaths.pathTo(v))
-                q.addFirst(w);
-        }
-        return q;
+    // use a cantor pairing function to obtain a unique number for each pairing of v and w
+    //  the key produced is similar for inputs <v, w> and <w, v>
+    private long produceKey(int v, int w) {
+        int min = Integer.min(v, w);
+        int max = Integer.max(v, w);
+        return (((long) (min + max) * (min + max + 1) / 2) + max);
     }
 
     // throws an error if the given vertex is outside the graph vertex range
     private void checkVertex(int v) {
-        if (v < 0 || v > V)
+        if (v < 0 || v > Graph.V())
             throw new IllegalArgumentException("vertex given is outside the Graph's range");
     }
 
     private void checkVertices(Iterable<Integer> vertices) {
+        if (vertices == null)
+            throw new IllegalArgumentException("iterable should not be null");
+
         for (Integer v : vertices) {
+            // check for nulls
             if (v == null)
                 throw new IllegalArgumentException("vertices should not contain null items");
+            // check if the value is within range
             checkVertex(v);
         }
     }
