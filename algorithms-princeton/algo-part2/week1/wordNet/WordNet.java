@@ -22,16 +22,20 @@ public class WordNet {
         // synsets stream
         In inSynsets = new In(synsets);
         while (inSynsets.hasNextLine()) {
-            String[] line = inSynsets.readLine().split(",", 2);  // synset[0] is id, synset[1] is the synset words
+            // synset[0] is id, synset[1] is the synset words
+            String[] line = inSynsets.readLine().split(",");
             int id = Integer.parseInt(line[0]);
             String synset =  line[1];
             String[] nouns = synset.split(" ");
 
             // keep track of the nouns inSynsets the synset and its ids
             for (String noun : nouns) {
-                HashSet<Integer> ids = new HashSet<>();
+                HashSet<Integer> ids;
                 if (nounSet.containsKey(noun)) {
                     ids = nounSet.get(noun);
+                }
+                else {
+                    ids = new HashSet<>();
                 }
                 ids.add(id);
                 nounSet.put(noun, ids);
@@ -44,7 +48,8 @@ public class WordNet {
         this.synsets = new String[max + 1];
         In inSynsets2 = new In(synsets);
         while (inSynsets2.hasNextLine()) {
-            String[] line = inSynsets2.readLine().split(",", 2);  // synset[0] is id, synset[1] is the synset words
+            // synset[0] is id, synset[1] is the synset words
+            String[] line = inSynsets2.readLine().split(",", 2);
             int id = Integer.parseInt(line[0]);
             String synset =  line[1];
 
@@ -53,7 +58,7 @@ public class WordNet {
         }
 
         // create the digraph
-        Digraph wordNet = new Digraph(max);
+        Digraph wordNet = new Digraph(max + 1);
         In inConnections = new In(hypernyms);
         while (inConnections.hasNextLine()) {
             String[] line = inConnections.readLine().split(",");
@@ -89,7 +94,8 @@ public class WordNet {
         if (nounA == null || nounB == null)
             throw new IllegalArgumentException("distance() cannot accept null args");
         if (!isNoun(nounA) || !isNoun(nounB))
-            throw new IllegalArgumentException("distance() args should be WordNet nouns");
+            throw new IllegalArgumentException
+                    (String.format("distance() args '%s', '%s' should be WordNet nouns", nounA, nounB));
 
         HashSet<Integer> A = nounSet.get(nounA);        // A <set of synsets in which nounA appears>
         HashSet<Integer> B = nounSet.get(nounB);        // B <set of synsets in which nounB appears>

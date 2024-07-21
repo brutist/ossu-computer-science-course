@@ -10,6 +10,7 @@ import java.util.HashSet;
 public class SAP {
     private final Digraph Graph;                    // the digraph
     private final HashMap<Long, int[]> cache;       // key-{length, ancestor} pair
+    private final Long emptyKey = (long) -1;
 
     // constructor takes a digraph (not necessarily a DAG)
     public SAP(Digraph G) {
@@ -18,6 +19,8 @@ public class SAP {
         // create a deep copy of the mutable digraph
         Graph = new Digraph(G);
         cache = new HashMap<>();
+        Long empty = (long) -1;
+        cache.put(empty, new int[] {-1, -1});
     }
 
     // length of shortest ancestral path between v and w; -1 if no such path
@@ -96,21 +99,17 @@ public class SAP {
         for (int i = 0; i < Graph.V(); i++) {
             boolean initialDist = sapDist == -1;
             boolean reachable = pathsV.hasPathTo(i) && pathsW.hasPathTo(i);
-            if (initialDist) {
-                sourceV = getFirst(pathsV.pathTo(i));
-                sourceW = getFirst(pathsW.pathTo(i));
-            }
 
             if (reachable && (initialDist || pathsV.distTo(i) + pathsW.distTo(i) < sapDist)) {
                 sapDist = pathsV.distTo(i) + pathsW.distTo(i);
                 sapAncestor = i;
-                sourceV = getFirst(pathsV.pathTo(i));
-                sourceW = getFirst(pathsW.pathTo(i));
+                sourceV = pathsV.pathTo(i).iterator().next();
+                sourceW = pathsW.pathTo(i).iterator().next();
             }
-
         }
-        // there is a way to identify the vertex v and w that produces this path by picking the first
-        //   vertex in the pathTo, but it would slow down the code, so I decided against it
+
+        // no ancestral paths for all pairs in v and w
+        if (sapDist == -1)  return emptyKey;
         // add to cache then return the key
         long key = produceKey(sourceV, sourceW);
         int[] value = {sapDist, sapAncestor};
@@ -143,10 +142,6 @@ public class SAP {
             // check if the value is within range
             checkVertex(v);
         }
-    }
-
-    private int getFirst(Iterable<Integer> v) {
-        return v.iterator().next();
     }
 
     // do unit testing of this class
