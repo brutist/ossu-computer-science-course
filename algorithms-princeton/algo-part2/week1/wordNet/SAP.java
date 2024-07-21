@@ -97,7 +97,7 @@ public class SAP {
                 sapAncestor = i;
             }
         }
-        // there is a way to identify the vertex v and w that produces this path but picking the first
+        // there is a way to identify the vertex v and w that produces this path by picking the first
         //   vertex in the pathTo, but it would slow down the code, so I decided against it
         return new int[] {sapDist, sapAncestor};
     }

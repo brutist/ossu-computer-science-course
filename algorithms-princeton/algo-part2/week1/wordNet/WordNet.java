@@ -99,8 +99,7 @@ public class WordNet {
             throw new IllegalArgumentException("sap() args should be WordNet nouns");
 
         int a = sap.ancestor(nounSet.get(nounA), nounSet.get(nounB));
-
-        // since the wordNet should be a DAG, call to ancestor will not get -1;
+        // since the wordNet should be a DAG, call to ancestor will always yield a valid vertex;
         assert(a >= 0);
         return synsets[a];
     }
