@@ -72,6 +72,8 @@ public class WordNet {
         // check if the dag is rooted
         boolean rootedDAG = false;
         for (int i = 0; i < wordNet.V(); i++) {
+            if (rootedDAG && wordNet.outdegree(i) == 0)
+                throw new IllegalArgumentException("SAP can only process one-root DAGs");
             if (wordNet.outdegree(i) == 0)
                 rootedDAG = true;
         }
