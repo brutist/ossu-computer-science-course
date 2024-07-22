@@ -1,5 +1,4 @@
 import edu.princeton.cs.algs4.Bag;
-
 import java.util.ArrayDeque;
 
 public class EdgeWeightedGraph {
@@ -34,5 +33,9 @@ public class EdgeWeightedGraph {
                 e.addLast(edge);
         }
         return e;
+    }
+
+    public int V() {
+        return this.V;
     }
 }
