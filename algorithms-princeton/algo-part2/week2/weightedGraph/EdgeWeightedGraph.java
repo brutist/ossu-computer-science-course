@@ -1,5 +1,7 @@
 import edu.princeton.cs.algs4.Bag;
 
+import java.util.ArrayDeque;
+
 public class EdgeWeightedGraph {
         private final int V;        // no of vertices
         private Bag<Edge>[] vertices;
@@ -23,5 +25,14 @@ public class EdgeWeightedGraph {
 
     public Iterable<Edge> adj(int v) {
         return vertices[v];
+    }
+
+    public Iterable<Edge> edges() {
+        ArrayDeque<Edge> e = new ArrayDeque<>();
+        for (int i = 0; i < V; i++) {
+            for (Edge edge : vertices[i])
+                e.addLast(edge);
+        }
+        return e;
     }
 }
