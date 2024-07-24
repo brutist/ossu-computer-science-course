@@ -41,21 +41,18 @@ public class SeamCarver {
         int c = picture.getRGB(col, row - 1);       // top pixel
         int d = picture.getRGB(col, row + 1);       // bottom pixel
 
+        return Math.sqrt(calculateDiff(a, b) + calculateDiff(c, d));
+    }
+
+    private int calculateDiff(int a, int b) {
         int aRed = (a >> 16) & 0xFF, aGreen = (a >> 8) & 0xFF, aBlue = a & 0xFF;
         int bRed = (b >> 16) & 0xFF, bGreen = (b >> 8) & 0xFF, bBlue = b & 0xFF;
-        int cRed = (c >> 16) & 0xFF, cGreen = (c >> 8) & 0xFF, cBlue = c & 0xFF;
-        int dRed = (d >> 16) & 0xFF, dGreen = (d >> 8) & 0xFF, dBlue = d & 0xFF;
 
         int xRed = (aRed - bRed);
         int xGreen = (aGreen - bGreen);
         int xBlue = (aBlue - bBlue);
-        int yRed = (cRed - dRed);
-        int yGreen = (cGreen - dGreen);
-        int yBlue = (cBlue - dBlue);
 
-        int centralDiffX = (xRed * xRed) + (xBlue * xBlue) + (xGreen * xGreen);
-        int centralDiffY = (yRed * yRed) + (yBlue * yBlue) + (yGreen * yGreen);
-        return Math.sqrt(centralDiffX + centralDiffY);
+        return (xRed * xRed) + (xBlue * xBlue) + (xGreen * xGreen);
     }
 
     // sequence of indices for vertical seam
