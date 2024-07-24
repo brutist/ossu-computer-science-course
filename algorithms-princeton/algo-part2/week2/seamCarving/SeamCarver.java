@@ -16,7 +16,7 @@ public class SeamCarver {
 
     // current picture
     public Picture picture() {
-        return picture;
+        return new Picture(picture);
     }
 
     // width of current picture
@@ -37,17 +37,22 @@ public class SeamCarver {
         if (x == 0 || x == picture.width())     return 1000.0;
         if (y == 0 || y == picture.height())    return 1000.0;
 
-        Color a = picture.get(x - 1, y);       // left-side pixel
-        Color b = picture.get(x + 1, y);       // right-side pixel
-        Color c = picture.get(x, y + 1);      // top pixel
-        Color d = picture.get(x, y - 1);      // bottom pixel
+        int a = picture.getRGB(x - 1, y);       // left-side pixel
+        int b = picture.getRGB(x + 1, y);       // right-side pixel
+        int c = picture.getRGB(x, y + 1);      // top pixel
+        int d = picture.getRGB(x, y - 1);      // bottom pixel
 
-        int xRed = (a.getRed() - b.getRed());
-        int xBlue = (a.getBlue() - b.getBlue());
-        int xGreen = (a.getGreen() - b.getGreen());
-        int yRed = (c.getRed() - d.getRed());
-        int yBlue = (c.getBlue() - d.getBlue());
-        int yGreen = (c.getGreen() - d.getGreen());
+        int aRed = (a >> 16) & 0xFF, aGreen = (a >> 8) & 0xFF, aBlue = a & 0xFF;
+        int bRed = (b >> 16) & 0xFF, bGreen = (b >> 8) & 0xFF, bBlue = b & 0xFF;
+        int cRed = (c >> 16) & 0xFF, cGreen = (c >> 8) & 0xFF, cBlue = c & 0xFF;
+        int dRed = (d >> 16) & 0xFF, dGreen = (d >> 8) & 0xFF, dBlue = d & 0xFF;
+
+        int xRed = (aRed - bRed);
+        int xGreen = (aGreen - bGreen);
+        int xBlue = (aBlue - bBlue);
+        int yRed = (cRed - dRed);
+        int yGreen = (cGreen - dGreen);
+        int yBlue = (cBlue - dBlue);
 
         int centralDiffX = (xRed * xRed) + (xBlue * xBlue) + (xGreen * xGreen);
         int centralDiffY = (yRed * yRed) + (yBlue * yBlue) + (yGreen * yGreen);
@@ -59,14 +64,11 @@ public class SeamCarver {
         int totalPixels = width() * height();
         int[] pixelTo = new int[totalPixels];
         double[] distTo = new double[totalPixels];
-        for (int i = 0; i < totalPixels; i++) {
-            if (i < width())    distTo[i] = 0.0;
-            // all other pixels are initially infinitely far
-            else                distTo[i] = Double.POSITIVE_INFINITY;
-        }
+        for (int i = width(); i < totalPixels; i++)
+            distTo[i] = Double.POSITIVE_INFINITY;
 
-        // find the shortest path from virtual top to the bottom row
-        for (int i = 0; i < totalPixels; i++) {
+        // find the shortest path from top to bottom
+        for (int i = 0; i < totalPixels - width(); i++) {
             int row = i / width(), col = i % width();
             // relax edges below this one
             for (int to : bottomPixels(row, col))
@@ -104,8 +106,39 @@ public class SeamCarver {
 
     // sequence of indices for horizontal seam
     public int[] findHorizontalSeam() {
-        // virtual top - connected to all first row pixels, virtual bottom - connected to all last row pixels
-        double[] virtualDistTo = {0.0, Double.POSITIVE_INFINITY};   // [virtual top, virtual bottom]
+        int totalPixels = width() * height();
+        int[] pixelTo = new int[totalPixels];
+        double[] distTo = new double[totalPixels];
+        for (int i = width(); i < totalPixels; i++)
+            distTo[i] = Double.POSITIVE_INFINITY;
+
+        // find the shortest path from right to left columns
+        for (int i = 0; i < totalPixels; i++) {
+            int row = i / width(), col = i % width();
+            // relax edges below this one
+            for (int to : rightPixels(row, col))
+                relax(pixelTo, distTo, row, col, to);
+        }
+
+        // find the bottom row pixel that has the lowest distance from the top row
+        double minDist = Double.POSITIVE_INFINITY;
+        int lastPixelIndex = 0;
+        for (int br = (ijToIndex(height() - 1, 0)); br < totalPixels; br++) {
+            if (distTo[br] < minDist) {
+                minDist = distTo[br];
+                lastPixelIndex = br;
+            }
+        }
+
+        // create the seam, by tracing parent link of pixel to
+        int[] horizontalSeam = new int[height()];
+        int pixelIndex = lastPixelIndex;
+        for (int i = horizontalSeam.length - 1; i >= 0; i--) {
+            horizontalSeam[i] = pixelIndex / width();
+            pixelIndex = pixelTo[pixelIndex];
+        }
+
+        return horizontalSeam;
     }
 
     // remove horizontal seam from current picture
@@ -113,7 +146,6 @@ public class SeamCarver {
         validateSeam(seam);
         if (picture.width() <= 1)
             throw new IllegalArgumentException("cannot horizontally resize image with width of 1");
-
 
     }
 
@@ -130,7 +162,7 @@ public class SeamCarver {
         ArrayDeque<Integer> adj = new ArrayDeque<>();
         if (row == height() - 1)    return adj;
         if (col > 0)                adj.add(ijToIndex(row + 1, col - 1));
-        if (col < width())          adj.add(ijToIndex(row + 1, col + 1));
+        if (col < width() - 1)      adj.add(ijToIndex(row + 1, col + 1));
         adj.add(ijToIndex(row + 1, col));
 
         return adj;
@@ -141,7 +173,7 @@ public class SeamCarver {
         ArrayDeque<Integer> adj = new ArrayDeque<>();
         if (col == width() - 1)     return adj;
         if (row > 0)                adj.add(ijToIndex(row - 1, col + 1));
-        if (row < height())         adj.add(ijToIndex(row + 1, col + 1));
+        if (row < height() - 1)     adj.add(ijToIndex(row + 1, col + 1));
         adj.add(ijToIndex(row, col + 1));
 
         return adj;
@@ -166,11 +198,11 @@ public class SeamCarver {
     }
 
     private void validatePixelPosition(int x, int y) {
-        String message = "x is out of bounds: '%d' must be within 0 - '%d' ";
+        String message = "%s is out of bounds: '%d' must be within 0 - '%d' ";
         if (x < 0 || x >= picture.width())
-            throw new IllegalArgumentException(String.format(message, x, picture.width()));
+            throw new IllegalArgumentException(String.format(message, "x",x, picture.width() - 1));
         if (y < 0 || y >= picture.height())
-            throw new IllegalArgumentException(String.format(message, x, picture.height()));
+            throw new IllegalArgumentException(String.format(message, "y",y, picture.height() - 1));
     }
 
 
