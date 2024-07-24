@@ -9,6 +9,7 @@
 */.gitignore
 **/data
 **/__pycache__
+**/*.class
 
 ### IntelliJ IDEA ###
 out/
