@@ -1,31 +1,45 @@
 import edu.princeton.cs.algs4.Picture;
-
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SeamCarver {
-    private Picture picture;
+    private HashMap<Integer, Integer> pixels;   // key: pixel positionIndex val: RGB int representation
+    private ArrayList<int[]> horizontalSeams;   // list of horizontal seams to be removed
+    private ArrayList<int[]> verticalSeams;     // list of vertical seams to be removed
+    private int width;
+    private int height;
 
     // create a seam carver object based on the given picture
     public SeamCarver(Picture picture) {
         if (picture == null)
             throw new IllegalArgumentException("cannot have null args in SeamCarver constructor");
 
-        this.picture = new Picture(picture);
+        width = picture.width();
+        height = picture.height();
+        pixels = new HashMap<>();
+        for (int ij = 0; ij < (width * height); ij++) {
+            int row = ij / width, col = ij % width;
+            pixels.put(ij, picture.getRGB(col, row));
+        }
     }
 
     // current picture
     public Picture picture() {
-        return new Picture(picture);
+        Picture pic = new Picture(width, height);
+
+        // TODO decide the data structure used for picture first
+        return pic;
     }
 
     // width of current picture
     public int width() {
-        return picture.width();
+        return width;
     }
 
     // height of current picture
     public int height() {
-        return picture.height();
+        return height;
     }
 
     // energy of pixel at column x and row y
@@ -33,13 +47,13 @@ public class SeamCarver {
         validatePixelPosition(col, row);
 
         // energy of pixel at border is 1000
-        if (col == 0 || col == picture.width() - 1)     return 1000.0;
-        if (row == 0 || row == picture.height() - 1)    return 1000.0;
+        if (col == 0 || col == width - 1)     return 1000.0;
+        if (row == 0 || row == height - 1)    return 1000.0;
 
-        int a = picture.getRGB(col - 1, row);       // left-side pixel
-        int b = picture.getRGB(col + 1, row);       // right-side pixel
-        int c = picture.getRGB(col, row - 1);       // top pixel
-        int d = picture.getRGB(col, row + 1);       // bottom pixel
+        int a = pixels.get(ijToIndex(col - 1, row));       // left-side pixel
+        int b = pixels.get(ijToIndex(col + 1, row));       // right-side pixel
+        int c = pixels.get(ijToIndex(col, row - 1));       // top pixel
+        int d = pixels.get(ijToIndex(col, row + 1));       // bottom pixel
 
         return Math.sqrt(calculateDiff(a, b) + calculateDiff(c, d));
     }
@@ -57,27 +71,25 @@ public class SeamCarver {
 
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {
-        int totalPixels = width() * height();
+        int totalPixels = width * height;
         int[] pixelTo = new int[totalPixels];
         double[] distTo = new double[totalPixels];
         for (int i = width(); i < totalPixels; i++)
             distTo[i] = Double.POSITIVE_INFINITY;
 
         // find the shortest path from top to bottom
+        double minDist = Double.POSITIVE_INFINITY;
+        int lastPixelIndex = 0;
         for (int i = 0; i < totalPixels; i++) {
             int row = i / width(), col = i % width();
             // relax edges below this one
             for (int to : bottomPixels(col, row))
                 relax(pixelTo, distTo, col, row, to);
-        }
 
-        // find the bottom row pixel that has the lowest distance from the top row
-        double minDist = Double.POSITIVE_INFINITY;
-        int lastPixelIndex = 0;
-        for (int br = (ijToIndex(0, height() - 1)); br < totalPixels; br++) {
-            if (distTo[br] < minDist) {
-                minDist = distTo[br];
-                lastPixelIndex = br;
+            // find the bottom row pixel that has the lowest distance from the top row
+            if (row == height - 1 && distTo[i] < minDist) {
+                minDist = distTo[i];
+                lastPixelIndex = i;
             }
         }
 
@@ -102,22 +114,22 @@ public class SeamCarver {
             if (i % width() != 0)
                 distTo[i] = Double.POSITIVE_INFINITY;
 
+
         // find the shortest path from left to right
-        for (int col = 0; col < width(); col++) {
-            for (int row = 0; row < height(); row++) {
+        double minDist = Double.POSITIVE_INFINITY;
+        int lastPixelIndex = 0;
+        for (int col = 0; col < width; col++) {
+            for (int row = 0; row < height; row++) {
                 // relax edges at the right of this one
                 for (int to : rightPixels(col, row))
                     relax(pixelTo, distTo, col, row, to);
-            }
-        }
 
-        // find the left-most pixel index that has the least distance
-        double minDist = Double.POSITIVE_INFINITY;
-        int lastPixelIndex = 0;
-        for (int lr = width() - 1; lr < totalPixels; lr += width()) {
-            if (distTo[lr] < minDist) {
-                minDist = distTo[lr];
-                lastPixelIndex = lr;
+                // find the left-most pixel index that has the least distance
+                int lr = ijToIndex(col, row);
+                if (col == width - 1 && distTo[lr] < minDist) {
+                    minDist = distTo[lr];
+                    lastPixelIndex = lr;
+                }
             }
         }
 
@@ -135,17 +147,19 @@ public class SeamCarver {
     // remove horizontal seam from current picture
     public void removeHorizontalSeam(int[] seam) {
         validateSeam(seam);
-        if (picture.width() <= 1)
+        if (width <= 1)
             throw new IllegalArgumentException("cannot horizontally resize image with width of 1");
 
+        horizontalSeams.add(seam);
     }
 
     // remove vertical seam from current picture
     public void removeVerticalSeam(int[] seam) {
         validateSeam(seam);
-        if (picture.height() <= 1)
+        if (height <= 1)
             throw new IllegalArgumentException("cannot vertically resize image with height of 1");
 
+        verticalSeams.add(seam);
     }
 
     private void relax(int[] pixelTo, double[] distTo, int col, int row, int to) {
@@ -201,10 +215,10 @@ public class SeamCarver {
 
     private void validatePixelPosition(int col, int row) {
         String message = "%s is out of bounds: '%d' must be within 0 - '%d' ";
-        if (col < 0 || col >= picture.width())
-            throw new IllegalArgumentException(String.format(message, "x", col, picture.width() - 1));
-        if (row < 0 || row >= picture.height())
-            throw new IllegalArgumentException(String.format(message, "y", row, picture.height() - 1));
+        if (col < 0 || col >= width)
+            throw new IllegalArgumentException(String.format(message, "x", col, width - 1));
+        if (row < 0 || row >= height)
+            throw new IllegalArgumentException(String.format(message, "y", row, height - 1));
     }
 
 
