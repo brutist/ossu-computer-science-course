@@ -1,6 +1,7 @@
 import edu.princeton.cs.algs4.Picture;
+
+import java.io.File;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 
 public class SeamCarver {
     private int[][] pixelColors;
@@ -15,9 +16,9 @@ public class SeamCarver {
         width = picture.width();
         height = picture.height();
 
-        pixelColors = new int[width][height];
+        pixelColors = new int[height][width];
         for (int row = 0; row < height; row++) {
-            for (int col = 0; col < height; col++) {
+            for (int col = 0; col < width; col++) {
                 pixelColors[row][col] = picture.getRGB(col, row);
             }
         }
@@ -52,10 +53,10 @@ public class SeamCarver {
         if (col == 0 || col == width - 1)     return 1000.0;
         if (row == 0 || row == height - 1)    return 1000.0;
 
-        int a = pixelColors[col - 1][row];       // left-side pixel
-        int b = pixelColors[col + 1][row];       // right-side pixel
-        int c = pixelColors[col][row - 1];       // top pixel
-        int d = pixelColors[col][row + 1];       // bottom pixel
+        int a = pixelColors[row][col - 1];       // left-side pixel
+        int b = pixelColors[row][col + 1];       // right-side pixel
+        int c = pixelColors[row - 1][col];       // top pixel
+        int d = pixelColors[row + 1][col];       // bottom pixel
 
         return Math.sqrt(calculateDiff(a, b) + calculateDiff(c, d));
     }
@@ -159,20 +160,40 @@ public class SeamCarver {
 
     // remove horizontal seam from current picture
     public void removeHorizontalSeam(int[] seam) {
-        validateSeam(seam);
-        if (width <= 1)
-            throw new IllegalArgumentException("cannot horizontally resize image with width of 1");
+        validateSeam(seam, width, height);
+        if (height <= 1)
+            throw new IllegalArgumentException("cannot horizontally resize image with height of 1");
 
-
+        height--;
+        int[][] newPixelColors = new int[height][width];
+        for (int col = 0; col < width; col++) {
+            int rowToRemove = seam[col];
+            for (int row = 0; row < height; row++) {
+                if (rowToRemove <= row)         newPixelColors[row][col] = pixelColors[row + 1][col];
+                else                            newPixelColors[row][col] = pixelColors[row][col];
+            }
+        }
+        pixelColors = newPixelColors;
     }
 
     // remove vertical seam from current picture
     public void removeVerticalSeam(int[] seam) {
-        validateSeam(seam);
-        if (height <= 1)
-            throw new IllegalArgumentException("cannot vertically resize image with height of 1");
+        validateSeam(seam, height, width);
+        if (width <= 1)
+            throw new IllegalArgumentException("cannot vertically resize image with width of 1");
 
-
+        // index i is the row and seam[i] is the column,
+        // this corresponds to the pixel to be deleted
+        width--;
+        int[][] newPixelColors = new int[height][width];
+        for (int row = 0; row < height; row++) {
+            int colToRemove = seam[row];
+            for (int col = 0; col < width; col++) {
+                if (colToRemove <= col)         newPixelColors[row][col] = pixelColors[row][col + 1];
+                else                            newPixelColors[row][col] = pixelColors[row][col];
+            }
+        }
+        pixelColors = newPixelColors;
     }
 
     private void relax(int[] pixelTo, double[] distTo, double[] energyOf, int col, int row, int to) {
@@ -211,15 +232,26 @@ public class SeamCarver {
         return (row * width()) + col;
     }
 
-    private void validateSeam(int[] seam) {
+    private void validateSeam(int[] seam, int validSeamItems, int boundary) {
         if (seam == null)
             throw new IllegalArgumentException("cannot have null args in removeHorizontalSeam");
+
+        if (seam.length != validSeamItems)
+            throw new IllegalArgumentException("invalid seam length");
+
+        String outOfRangeMessage = "seam entry %d is outside the prescribed range: 0 to %d";
+        if (seam[seam.length - 1] < 0 || seam[seam.length - 1] >= boundary) {
+            throw new IllegalArgumentException(String.format(outOfRangeMessage, seam.length - 1, boundary - 1));
+        }
 
         for (int i = 1; i < seam.length; i++) {
             double difference = seam[i] - seam[i - 1];
             if (Math.abs(difference) > 1) {
-                String message = "adjacent pixel difference in a seam should be at most 1 pixel";
-                throw new IllegalArgumentException(message);
+                String tooMuchDiffMessage = "adjacent pixel difference in a seam should be at most 1 pixel";
+                throw new IllegalArgumentException(tooMuchDiffMessage);
+            }
+            if (seam[i - 1] < 0 || seam[i - 1] >= boundary) {
+                throw new IllegalArgumentException(String.format(outOfRangeMessage, i - 1, boundary - 1));
             }
         }
     }
@@ -235,6 +267,8 @@ public class SeamCarver {
 
     //  unit testing (optional)
     public static void main(String[] args) {
-
+        SeamCarver sc = new SeamCarver(new Picture(10,10));
+        int[] invalidSeam = { 8, 7, 6, 7, 7, 8, 7, 8, 9, 10 };
+        sc.removeVerticalSeam(invalidSeam);
     }
 }
