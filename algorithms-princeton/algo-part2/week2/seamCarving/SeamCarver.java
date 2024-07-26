@@ -1,12 +1,9 @@
 import edu.princeton.cs.algs4.Picture;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class SeamCarver {
-    private HashMap<Integer, Integer> pixels;   // key: pixel positionIndex val: RGB int representation
-    private ArrayList<int[]> horizontalSeams;   // list of horizontal seams to be removed
-    private ArrayList<int[]> verticalSeams;     // list of vertical seams to be removed
+    private int[][] pixelColors;
     private int width;
     private int height;
 
@@ -17,18 +14,23 @@ public class SeamCarver {
 
         width = picture.width();
         height = picture.height();
-        pixels = new HashMap<>();
-        for (int ij = 0; ij < (width * height); ij++) {
-            int row = ij / width, col = ij % width;
-            pixels.put(ij, picture.getRGB(col, row));
+
+        pixelColors = new int[width][height];
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < height; col++) {
+                pixelColors[row][col] = picture.getRGB(col, row);
+            }
         }
     }
 
     // current picture
     public Picture picture() {
         Picture pic = new Picture(width, height);
-
-        // TODO decide the data structure used for picture first
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                pic.setRGB(col , row, pixelColors[row][col]);
+            }
+        }
         return pic;
     }
 
@@ -50,10 +52,10 @@ public class SeamCarver {
         if (col == 0 || col == width - 1)     return 1000.0;
         if (row == 0 || row == height - 1)    return 1000.0;
 
-        int a = pixels.get(ijToIndex(col - 1, row));       // left-side pixel
-        int b = pixels.get(ijToIndex(col + 1, row));       // right-side pixel
-        int c = pixels.get(ijToIndex(col, row - 1));       // top pixel
-        int d = pixels.get(ijToIndex(col, row + 1));       // bottom pixel
+        int a = pixelColors[col - 1][row];       // left-side pixel
+        int b = pixelColors[col + 1][row];       // right-side pixel
+        int c = pixelColors[col][row - 1];       // top pixel
+        int d = pixelColors[col][row + 1];       // bottom pixel
 
         return Math.sqrt(calculateDiff(a, b) + calculateDiff(c, d));
     }
@@ -161,8 +163,7 @@ public class SeamCarver {
         if (width <= 1)
             throw new IllegalArgumentException("cannot horizontally resize image with width of 1");
 
-        horizontalSeams.add(seam);
-        width--;
+
     }
 
     // remove vertical seam from current picture
@@ -171,8 +172,7 @@ public class SeamCarver {
         if (height <= 1)
             throw new IllegalArgumentException("cannot vertically resize image with height of 1");
 
-        verticalSeams.add(seam);
-        height--;
+
     }
 
     private void relax(int[] pixelTo, double[] distTo, double[] energyOf, int col, int row, int to) {
