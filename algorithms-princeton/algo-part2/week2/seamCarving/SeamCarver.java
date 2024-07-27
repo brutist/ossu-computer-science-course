@@ -1,6 +1,4 @@
 import edu.princeton.cs.algs4.Picture;
-
-import java.io.File;
 import java.util.ArrayDeque;
 
 public class SeamCarver {
