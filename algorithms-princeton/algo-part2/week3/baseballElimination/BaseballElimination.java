@@ -1,3 +1,5 @@
+import edu.princeton.cs.algs4.In;
+
 import java.util.HashSet;
 
 public class BaseballElimination {
@@ -5,7 +7,29 @@ public class BaseballElimination {
 
     // create a baseball division from given filename in format specified below
     public BaseballElimination(String filename) {
+        In in = new In(filename);
 
+        int N = in.readInt();
+        // 'i' represents the index
+        String[] names = new String[N]; // team names for every i
+        int[] w = new int[N];           // win record for every i
+        int[] l = new int[N];           // loss record for every i
+        int[] r = new int[N];           // remaining games for every i
+        int[][] g = new int[N][N];      // games left of i with j
+
+        int i = 0;
+        while (!in.isEmpty()) {
+            String line = in.readLine();
+            String[] attributes = line.split(" ");
+            names[i]    = attributes[0];
+            w[i]        = Integer.parseInt(attributes[1]);
+            l[i]        = Integer.parseInt(attributes[2]);
+            r[i]        = Integer.parseInt(attributes[3]);
+
+            for (int k = 4; k < attributes.length; k++) {
+                g[i][k - 4] = Integer.parseInt(attributes[k]);
+            }
+        }
     }
 
     // number of teams
