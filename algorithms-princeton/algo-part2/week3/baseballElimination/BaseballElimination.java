@@ -135,26 +135,21 @@ public class BaseballElimination {
         int source = n + k;
         int sink = source + 1;
 
-        int gameVertex = n;
+        int gameVertex = n - 1;
         FlowNetwork flowNetwork = new FlowNetwork(n + k + 2);
         double maxCapacity = 0.0;
         // represents all the i-j pairs that has been added to the flowNetwork
         HashSet<Integer> pairings = new HashSet<>();
         int idWin = w[id] + r[id];
         for (int i = 0; i < g.length; i++) {
-            if (i == id) {
-                gameVertex++;
-                continue;
-            }
-
+            gameVertex++;
+            if (i == id)        continue;
             // connect team vertex to the sink except the id
             flowNetwork.addEdge(new FlowEdge(i, sink, Math.max(0.0, idWin - w[i])));
 
             for (int j = 0; j < g[i].length; j++) {
-                if (j == id) {
-                    gameVertex++;
-                    continue;
-                }
+                gameVertex++;
+                if (j == id)    continue;
                 // don't add the games that team id plays,
                 //  because we assume that team id wins all of those games
                 int cantorPair = cantorPairing(i, j);
@@ -169,7 +164,6 @@ public class BaseballElimination {
                     maxCapacity += g[i][j];
                     pairings.add(cantorPair);
                 }
-                gameVertex++;
             }
         }
         FordFulkerson ff = new FordFulkerson(flowNetwork, source, sink);
