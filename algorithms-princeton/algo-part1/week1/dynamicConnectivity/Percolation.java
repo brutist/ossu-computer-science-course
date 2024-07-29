@@ -184,7 +184,7 @@ public class Percolation {
             }
         }
         if (testPassed == rows.length) {
-            System.out.printf("Catch Exception Test %d completed:\n", i + 1);
+            System.out.printf("Catch Exception KeyIndexCounting %d completed:\n", i + 1);
         }
 
         // manual checking
