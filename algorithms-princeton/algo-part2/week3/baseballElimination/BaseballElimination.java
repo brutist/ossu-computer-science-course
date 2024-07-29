@@ -2,6 +2,7 @@ import edu.princeton.cs.algs4.FlowEdge;
 import edu.princeton.cs.algs4.FlowNetwork;
 import edu.princeton.cs.algs4.FordFulkerson;
 import edu.princeton.cs.algs4.In;
+
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,7 +14,7 @@ public class BaseballElimination {
     private final int[] l;                            // loss record for every i
     private final int[] r;                            // remaining games for every i
     private final int[][] g;                          // games left of i with j
-    private String[] names;                           // team name of for each i
+    private final String[] names;                     // team name of for each i
 
     private static class Pair {
         private final double maxCapacity;
@@ -23,11 +24,9 @@ public class BaseballElimination {
             maxCapacity = max;
             this.ff = ff;
         }
-
         public double max() {
             return maxCapacity;
         }
-
         public FordFulkerson maxFlow() {
             return ff;
         }
@@ -106,10 +105,10 @@ public class BaseballElimination {
         validateTeam(team);
 
         // calculate if trivially eliminated
-        //if (triviallyEliminated(team))  return true;
+        ArrayDeque<String> trivialCertificate = triviallyEliminatedCertificate(team);
+        if (!trivialCertificate.isEmpty())  return true;
 
         int id = teams.get(team);
-        int maxPossibleWin = w[id] + r[id];
         // create a flow-network and solve max-flow using ford-fulkerson
 
         Pair pair = createMaxFlowPair(id);
@@ -143,16 +142,23 @@ public class BaseballElimination {
         HashSet<Integer> pairings = new HashSet<>();
         int idWin = w[id] + r[id];
         for (int i = 0; i < g.length; i++) {
-            if (i != id) {
-                // connect team vertex to the sink except the id
-                flowNetwork.addEdge(new FlowEdge(i, sink, Math.max(0.0, idWin - w[i])));
+            if (i == id) {
+                gameVertex++;
+                continue;
             }
 
+            // connect team vertex to the sink except the id
+            flowNetwork.addEdge(new FlowEdge(i, sink, Math.max(0.0, idWin - w[i])));
+
             for (int j = 0; j < g[i].length; j++) {
+                if (j == id) {
+                    gameVertex++;
+                    continue;
+                }
                 // don't add the games that team id plays,
                 //  because we assume that team id wins all of those games
                 int cantorPair = cantorPairing(i, j);
-                if (i != id && j != id && i != j && (!pairings.contains(cantorPair)))     {
+                if (i != j && (!pairings.contains(cantorPair)))     {
                     // connect the source vertex to the game vertex
                     flowNetwork.addEdge(new FlowEdge(source, gameVertex, g[i][j]));
                     // connect the game vertex to the team vertex
@@ -177,22 +183,27 @@ public class BaseballElimination {
     }
 
     // assumes team has been validated
-    private boolean triviallyEliminated(String team) {
+    private ArrayDeque<String> triviallyEliminatedCertificate(String team) {
         int id = teams.get(team);
         // if at least one team has a larger win than this teams possible maximum win
         //  then this team is eliminated
+        ArrayDeque<String> deque = new ArrayDeque<>();
         int maxPossibleWin = w[id] + r[id];
         for (int i = 0; i < w.length; i++) {
             if (i != id && maxPossibleWin < w[i]) {
-                return true;
+                deque.addLast(names[i]);
             }
         }
-        return false;
+        return deque;
     }
 
     // subset R of teams that eliminates given team; null if not eliminated
     public Iterable<String> certificateOfElimination(String team) {
         validateTeam(team);
+
+        // calculate if trivially eliminated
+        ArrayDeque<String> trivialCertificate = triviallyEliminatedCertificate(team);
+        if (!trivialCertificate.isEmpty())  return trivialCertificate;
 
         int id = teams.get(team);
         Pair maxFlowPair = createMaxFlowPair(id);
@@ -220,8 +231,6 @@ public class BaseballElimination {
     }
 
     private void validateTeams(String teamA, String teamB) {
-        if (teamA.equals(teamB))
-            throw new IllegalArgumentException("given teams are the same");
         validateTeam(teamA);
         validateTeam(teamB);
     }
