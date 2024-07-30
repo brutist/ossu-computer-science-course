@@ -31,7 +31,7 @@ public class KeyIndexCounting {
         for (int i = 0; i < N; i++)
             aux[count[toSort[i]]++] = toSort[i];
 
-        System.arraycopy(aux, 0, toSort, 0, N);
+        toSort = aux;
     }
 
     public static void main(String[] args) {
