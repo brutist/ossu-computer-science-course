@@ -53,20 +53,23 @@ public class KMP {
     }
 
     public static void main(String[] args) {
-        // comparing bruteforce method and KMP
+        // comparing bruteforce method, KMP and Boyer-Moore
         String randomLongText = KMP.randomString(100);
         KMP kmp = new KMP(randomLongText);
         BruteforceSearch bf = new BruteforceSearch(randomLongText);
+        BoyerMoore bm = new BoyerMoore(randomLongText);
 
         int testCounter = 0;
-        String failedMessage = "TEST %d FAILED: bruteforce (%d)  KMP (%d) with pattern %s \n";
+        String failedMessage = "TEST %d FAILED: bruteforce (%d)  KMP (%d)  BM (%d) with pattern %s \n";
         String successMessage = "TEST %d -> %d SUCCESS\n";
         while (true) {
             String pattern = KMP.randomString(4);
             int kmpResult = kmp.search(pattern);
             int bruteResult = bf.search(pattern);
-            if (kmpResult != bruteResult) {
-                System.out.printf(failedMessage, testCounter, bruteResult, kmpResult, pattern);
+            int boyerResult = bm.search(pattern);
+
+            if (kmpResult != bruteResult || boyerResult != kmpResult) {
+                System.out.printf(failedMessage, testCounter, bruteResult, kmpResult, boyerResult, pattern);
                 System.out.print(randomLongText);
                 break;
             }
