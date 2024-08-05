@@ -3,9 +3,7 @@ import edu.princeton.cs.algs4.StdOut;
 import java.util.HashSet;
 
 public class BoggleSolver {
-    private static final int[] scores = {0, 0, 0, 1, 1, 2, 3, 5};   // 8-letter or more gains 11 points
-    private static final int maximumScore = 11;
-    private static final int maximumScoreLength = 8;
+    private static final int[] scores = {0, 0, 0, 1, 1, 2, 3, 5, 11, 11, 11, 11, 11, 11, 11, 11, 11};
     private final WordTrie dictionary;
 
     // Initializes the data structure using the given array of strings as the dictionary.
@@ -34,10 +32,7 @@ public class BoggleSolver {
     // Returns the score of the given word if it is in the dictionary, zero otherwise.
     // (You can assume the word contains only the uppercase letters A through Z.)
     public int scoreOf(String word) {
-        if (dictionary.containsWord(word))  {
-            if (word.length() < maximumScoreLength)     return scores[word.length()];
-            else                                        return maximumScore;
-        }
+        if (dictionary.containsWord(word))  return scores[word.length()];
         else                                return 0;
     }
 
@@ -45,17 +40,12 @@ public class BoggleSolver {
         In in = new In(args[0]);
         String[] dictionary = in.readAllStrings();
         BoggleSolver solver = new BoggleSolver(dictionary);
-
-        for (int i = 1; i < args.length; i++) {
-            BoggleBoard board = new BoggleBoard(args[i]);
-            int score = 0;
-            for (String word : solver.getAllValidWords(board)) {
-                //StdOut.println(word);
-                score += solver.scoreOf(word);
-            }
-            StdOut.printf("Filename '%s'    Score = %d\n", args[i], score);
+        BoggleBoard board = new BoggleBoard(args[1]);
+        int score = 0;
+        for (String word : solver.getAllValidWords(board)) {
+            StdOut.println(word);
+            score += solver.scoreOf(word);
         }
-
-
+        StdOut.println("Score = " + score);
     }
 }
