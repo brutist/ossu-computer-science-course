@@ -1,6 +1,8 @@
+import java.util.ArrayDeque;
+
 public class WordTrie{
     private static final int R = 26;            // only uppercase letters
-    private Node root = new Node();
+    private Node root = new Node();             // root node
     private static final int adjuster = 65;     // puts 'A' at index 0 of the trie
 
     private static class Node {
@@ -15,7 +17,10 @@ public class WordTrie{
     private Node put(Node x, String key, int d) {
         // create a new node if this is a new longer key
         if (x == null)              x = new Node();
-        if (d == key.length())      return x;
+        if (d == key.length()) {
+            x.isWord = true;
+            return x;
+        }
 
 
         // calculate the index of the char at d
@@ -35,7 +40,7 @@ public class WordTrie{
         else            return x.isWord;
     }
 
-    // get the value associated with the key in the trie
+    // get the node associated with the key in the trie
     private Node get(Node x, String key, int d) {
         if (x == null)              return null;
         if (key.length() == d) {
@@ -45,5 +50,23 @@ public class WordTrie{
 
         char c = key.charAt(d);
         return get(x.next[c - adjuster], key, d + 1);
+    }
+
+    public Iterable<String> allWords() {
+        ArrayDeque<String> words = new ArrayDeque<>();
+        collect(root, new StringBuilder(), words);
+        return words;
+    }
+
+    private void collect(Node x, StringBuilder word, ArrayDeque<String> results) {
+        if (x == null)  return;
+        if (x.isWord)   results.addLast(word.toString());
+
+        for (char c = 0; c < R; c++) {
+            char letter = (char) ((int) c + adjuster);
+            word.append(letter);
+            collect(x.next[c], word, results);
+            word.deleteCharAt(word.length() - 1);
+        }
     }
 }
