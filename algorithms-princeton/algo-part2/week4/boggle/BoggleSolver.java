@@ -1,6 +1,8 @@
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 
+import java.util.ArrayDeque;
+
 public class BoggleSolver {
     private static final int[] scores = {0, 0, 0, 1, 1, 2, 3, 5, 11, 11, 11, 11, 11, 11, 11, 11, 11};
     private final WordTrie dictionary;
@@ -20,13 +22,13 @@ public class BoggleSolver {
         int totalTiles = height * width;
 
         // identify the valid paths from and to all vertices (just simple paths)
+        ArrayDeque<String> validWords = new ArrayDeque<>();
         WordFinder wordFinder = new WordFinder(board, dictionary);
         for (int i = 0; i < totalTiles; i++)
             for (int j = 0; j < totalTiles; j++)
-                if (i != j)   wordFinder.addValidPaths(i,j);
+                if (i != j)     validWords.addAll(wordFinder.findValidWord(i,j));
 
-
-        return wordFinder.getValidWords();
+        return validWords;
     }
 
     // Returns the score of the given word if it is in the dictionary, zero otherwise.

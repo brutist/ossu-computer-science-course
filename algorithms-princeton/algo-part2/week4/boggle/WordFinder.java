@@ -2,18 +2,16 @@ import java.util.ArrayDeque;
 import java.util.HashMap;
 
 public class WordFinder {
-    private boolean[] visited;
     private final WordTrie dictionary;
     private final BoggleBoard board;
+    private final int totalTiles;
     private final HashMap<Integer, ArrayDeque<Integer>> adjacentTiles;
-    private ArrayDeque<ArrayDeque<Integer>> validPaths;
+    private ArrayDeque<String> validWords;
 
     public WordFinder(BoggleBoard board, WordTrie dictionary) {
-        int totalTiles = board.rows() * board.cols();
+        totalTiles = board.rows() * board.cols();
         this.board = board;
         this.dictionary = dictionary;
-        validPaths = new ArrayDeque<>();
-        visited = new boolean[totalTiles];
 
         // precompute the adjacent tiles of all tiles in the board
         adjacentTiles = new HashMap<>();
@@ -21,35 +19,35 @@ public class WordFinder {
             adjacentTiles.put(i, adjacentTiles(i));
     }
 
-    public Iterable<String> getValidWords() {
-        ArrayDeque<String> validWords = new ArrayDeque<>();
+    // returns an iterable of all the valid words from tile i to tile j of the board
+    public ArrayDeque<String> findValidWord(int i, int j) {
+        validWords = new ArrayDeque<>();        // reset the paths found
 
-        for (ArrayDeque<Integer> path : validPaths) {
-            String word = pathToWord(path);
-            if (dictionary.containsWord(word))
-                validWords.addLast(word);
-        }
+        // dfs from vertex u to vertex v to search all valid paths
+        boolean[] visited = new boolean[totalTiles];
+        ArrayDeque<Integer> path = new ArrayDeque<>();
+        DFS(i, j, path, visited);
+
         return validWords;
     }
+
 
     // identify the valid paths that satisfy the following constrains
     //  - a simple path between index u and v (which corresponds to a tile in the board)
     //  - a path of index corresponding to a word in the dictionary
     //      (prune search if the current path is not a prefix of any word in the dictionary)
-    public void addValidPaths(int u, int v) {
-        // dfs from vertex u to vertex v to search all valid paths
-        ArrayDeque<Integer> path = new ArrayDeque<>();
-        DFS(u, v, path);
-    }
-
-    private void DFS(int u, int v, ArrayDeque<Integer> path) {
+    private void DFS(int u, int v, ArrayDeque<Integer> path, boolean[] visited) {
         if (visited[u]) return;
 
         visited[u] = true;
         path.addLast(u);
 
         if (u == v) {
-            validPaths.addLast(path);
+            String word = pathToWord(path);
+            if (dictionary.containsWord(word))  {
+                validWords.addLast(word);
+            }
+
             visited[u] = false;
             path.removeLast();
             return;
@@ -61,13 +59,12 @@ public class WordFinder {
             String prefix = pathToWord(pathCopy);
             // avoid reusing the letter and do not do dfs on paths that don't form prefix of a valid word
             if (next != u && dictionary.wordPrefix(prefix))
-                DFS(next, v, path);
+                DFS(next, v, path, visited);
         }
 
         path.removeLast();
         visited[u] = false;
     }
-
 
     //  precompute this for every tile, there is no need to calculate again
     private ArrayDeque<Integer> adjacentTiles(int u) {
@@ -94,7 +91,6 @@ public class WordFinder {
 
         return adj;
     }
-
 
     private String pathToWord(Iterable<Integer> path) {
         StringBuilder word = new StringBuilder();

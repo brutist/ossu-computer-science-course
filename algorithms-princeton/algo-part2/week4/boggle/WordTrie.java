@@ -36,8 +36,8 @@ public class WordTrie{
 
     public boolean containsWord(String key) {
         Node x = get(root, key, 0);
-        if (x == null)  return false;
-        else            return x.isWord;
+        if (x == null)     return false;
+        else               return x.isWord;
     }
 
     // get the node associated with the key in the trie
