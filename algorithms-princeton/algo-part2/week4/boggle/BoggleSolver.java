@@ -55,7 +55,6 @@ public class BoggleSolver {
             BoggleBoard board = new BoggleBoard(args[i]);
             int score = 0;
             for (String word : solver.getAllValidWords(board)) {
-                //StdOut.println(word);
                 score += solver.scoreOf(word);
             }
             StdOut.printf("Filename '%s'    Score = %d\n", args[i], score);

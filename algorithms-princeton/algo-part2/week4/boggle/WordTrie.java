@@ -1,9 +1,11 @@
 import java.util.ArrayDeque;
+import java.util.HashSet;
 
 public class WordTrie{
     private static final int R = 26;                    // only uppercase letters
     private Node root = new Node();                     // root node
     private static final int adjuster = 65;             // puts 'A' at index 0 of the trie
+    private final HashSet<String> queriedWords = new HashSet<>();     // words found so far;
 
     private static class Node {
         private boolean isWord;                  // true if the path to this Node is a word in the trie
@@ -22,7 +24,6 @@ public class WordTrie{
             return x;
         }
 
-
         // calculate the index of the char at d
         char c = key.charAt(d);     // apparently chars are implicitly converted to int
         x.next[c - adjuster] = put(x.next[c - adjuster], key, d + 1);
@@ -35,9 +36,12 @@ public class WordTrie{
     }
 
     public boolean containsWord(String key) {
+        if (queriedWords.contains(key))     return true;
+
         Node x = get(root, key, 0);
-        if (x == null)     return false;
-        else               return x.isWord;
+        if (x == null || !x.isWord)      return false;
+        queriedWords.add(key);
+        return true;
     }
 
     // get the node associated with the key in the trie

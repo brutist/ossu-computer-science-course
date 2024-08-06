@@ -23,12 +23,12 @@ public class WordFinder {
 
     // returns an iterable of all the valid words from tile i to tile j of the board
     public HashSet<String> findValidWord(int i, int j) {
-        validWords = new HashSet<>();        // reset the paths found
+        validWords = new HashSet<>();        // reset the words found
 
         // dfs from vertex u to vertex v to search all valid paths
         boolean[] visited = new boolean[totalTiles];
         ArrayDeque<Integer> path = new ArrayDeque<>();
-        DFS(i, j, path, visited);
+        DFS(i, j, path, new StringBuilder(), visited);
 
         return validWords;
     }
@@ -38,35 +38,38 @@ public class WordFinder {
     //  - a simple path between index u and v (which corresponds to a tile in the board)
     //  - a path of index corresponding to a word in the dictionary
     //      (prune search if the current path is not a prefix of any word in the dictionary)
-    private void DFS(int u, int v, ArrayDeque<Integer> path, boolean[] visited) {
+    private void DFS(int u, int v, ArrayDeque<Integer> path, StringBuilder word, boolean[] visited) {
         if (visited[u]) return;
 
         visited[u] = true;
         path.addLast(u);
+        pathToWord(word, u, true);
 
         if (u == v) {
-            String word = pathToWord(path);
-            if (word.length() >= minimumWordLength && dictionary.containsWord(word))  {
-                validWords.add(word);
+            String wordString = word.toString();
+            if (word.length() >= minimumWordLength && dictionary.containsWord(wordString))  {
+                validWords.add(wordString);
             }
 
             visited[u] = false;
-            path.removeLast();
+            int k = path.removeLast();
+            pathToWord(word, k, false);
             return;
         }
 
         for (int next : adjacentTiles.get(u)) {
-            path.addLast(next);
-            String prefix = pathToWord(path);
-            path.removeLast();
+            pathToWord(word, next, true);
+            String prefix = word.toString();
+            pathToWord(word, next, false);
             // do not do dfs on paths that
             //      don't form prefix of a valid word
             //      paths that may contain duplicates
             if (next != u && !visited[next] && dictionary.wordPrefix(prefix))
-                DFS(next, v, path, visited);
+                DFS(next, v, path, word,visited);
         }
 
-        path.removeLast();
+        int x = path.removeLast();
+        pathToWord(word, x, false);
         visited[u] = false;
     }
 
@@ -96,17 +99,19 @@ public class WordFinder {
         return adj;
     }
 
-    private String pathToWord(Iterable<Integer> path) {
-        StringBuilder word = new StringBuilder();
-        for (int i : path) {
-            int row = i / board.cols();
-            int col = i % board.cols();
+    private void pathToWord(StringBuilder word, int i, boolean addLetter) {
+        int row = i / board.cols();
+        int col = i % board.cols();
+        char c = board.getLetter(row, col);
 
-            char c = board.getLetter(row, col);
+        if (addLetter) {
             word.append(c);
-            if (c == 'Q')
-                word.append('U');
+            if (c == 'Q')   word.append('U');
         }
-        return word.toString();
+
+        else {
+            word.deleteCharAt(word.length() - 1);
+            if (c == 'Q')   word.deleteCharAt(word.length() - 1);
+        }
     }
 }
