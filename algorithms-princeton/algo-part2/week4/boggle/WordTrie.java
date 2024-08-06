@@ -2,10 +2,11 @@ import java.util.ArrayDeque;
 import java.util.HashSet;
 
 public class WordTrie{
-    private static final int R = 26;                    // only uppercase letters
-    private Node root = new Node();                     // root node
-    private static final int adjuster = 65;             // puts 'A' at index 0 of the trie
-    private final HashSet<String> queriedWords = new HashSet<>();     // words found so far;
+    private static final int R = 26;                                // only uppercase letters
+    private Node root = new Node();                                 // root node
+    private static final int adjuster = 65;                         // puts 'A' at index 0 of the trie
+    private final HashSet<String> queriedWords = new HashSet<>();   // words found so far;
+    private final HashSet<String> queriedPrefix = new HashSet<>();  // prefix found so fat;
 
     private static class Node {
         private boolean isWord;                  // true if the path to this Node is a word in the trie
@@ -31,8 +32,12 @@ public class WordTrie{
     }
 
     public boolean wordPrefix(String key) {
+        if (queriedPrefix.contains(key))    return true;
+
         Node x = get(root, key, 0);
-        return x != null;
+        if (x == null)      return false;
+        queriedPrefix.add(key);
+        return true;
     }
 
     public boolean containsWord(String key) {

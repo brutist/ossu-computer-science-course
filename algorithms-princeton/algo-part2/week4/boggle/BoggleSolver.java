@@ -25,10 +25,10 @@ public class BoggleSolver {
         // calculate the valid words produced from one tile to another,
         //  accumulate as you iterate through all pairs of tiles
         HashSet<String> validWords = new HashSet<>();
-        WordFinder wordFinder = new WordFinder(board, dictionary);
+        WordFinder wordFinder = new WordFinder(board);
         for (int i = 0; i < totalTiles; i++)
             for (int j = 0; j < totalTiles; j++)
-                if (i != j)     validWords.addAll(wordFinder.findValidWord(i,j));
+                if (i != j)     validWords.addAll(wordFinder.findValidWord(i,j, dictionary));
 
         return validWords;
     }
