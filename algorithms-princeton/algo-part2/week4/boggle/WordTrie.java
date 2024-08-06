@@ -1,9 +1,9 @@
 import java.util.ArrayDeque;
 
 public class WordTrie{
-    private static final int R = 26;            // only uppercase letters
-    private Node root = new Node();             // root node
-    private static final int adjuster = 65;     // puts 'A' at index 0 of the trie
+    private static final int R = 26;                    // only uppercase letters
+    private Node root = new Node();                     // root node
+    private static final int adjuster = 65;             // puts 'A' at index 0 of the trie
 
     private static class Node {
         private boolean isWord;                  // true if the path to this Node is a word in the trie

@@ -1,12 +1,13 @@
 import java.util.ArrayDeque;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class WordFinder {
     private final WordTrie dictionary;
     private final BoggleBoard board;
     private final int totalTiles;
     private final HashMap<Integer, ArrayDeque<Integer>> adjacentTiles;
-    private ArrayDeque<String> validWords;
+    private HashSet<String> validWords;
     private static final int minimumWordLength = 3;
 
     public WordFinder(BoggleBoard board, WordTrie dictionary) {
@@ -21,8 +22,8 @@ public class WordFinder {
     }
 
     // returns an iterable of all the valid words from tile i to tile j of the board
-    public ArrayDeque<String> findValidWord(int i, int j) {
-        validWords = new ArrayDeque<>();        // reset the paths found
+    public HashSet<String> findValidWord(int i, int j) {
+        validWords = new HashSet<>();        // reset the paths found
 
         // dfs from vertex u to vertex v to search all valid paths
         boolean[] visited = new boolean[totalTiles];
@@ -45,8 +46,8 @@ public class WordFinder {
 
         if (u == v) {
             String word = pathToWord(path);
-            if (dictionary.containsWord(word) && word.length() >= minimumWordLength)  {
-                validWords.addLast(word);
+            if (word.length() >= minimumWordLength && dictionary.containsWord(word))  {
+                validWords.add(word);
             }
 
             visited[u] = false;
@@ -55,11 +56,13 @@ public class WordFinder {
         }
 
         for (int next : adjacentTiles.get(u)) {
-            ArrayDeque<Integer> pathCopy = path.clone();
-            pathCopy.addLast(next);
-            String prefix = pathToWord(pathCopy);
-            // avoid reusing the letter and do not do dfs on paths that don't form prefix of a valid word
-            if (next != u && dictionary.wordPrefix(prefix))
+            path.addLast(next);
+            String prefix = pathToWord(path);
+            path.removeLast();
+            // do not do dfs on paths that
+            //      don't form prefix of a valid word
+            //      paths that may contain duplicates
+            if (next != u && !visited[next] && dictionary.wordPrefix(prefix))
                 DFS(next, v, path, visited);
         }
 

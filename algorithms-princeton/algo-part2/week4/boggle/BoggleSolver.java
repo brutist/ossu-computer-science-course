@@ -1,5 +1,7 @@
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.Stopwatch;
+
 import java.util.HashSet;
 
 public class BoggleSolver {
@@ -38,10 +40,13 @@ public class BoggleSolver {
             if (word.length() < maximumScoreLength)     return scores[word.length()];
             else                                        return maximumScore;
         }
-        else                                return 0;
+
+        return 0;
     }
 
     public static void main(String[] args) {
+        Stopwatch stopwatch = new Stopwatch();
+
         In in = new In(args[0]);
         String[] dictionary = in.readAllStrings();
         BoggleSolver solver = new BoggleSolver(dictionary);
@@ -56,6 +61,6 @@ public class BoggleSolver {
             StdOut.printf("Filename '%s'    Score = %d\n", args[i], score);
         }
 
-
+        System.out.printf("Total Time: %f\n", stopwatch.elapsedTime());
     }
 }

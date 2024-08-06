@@ -221,7 +221,7 @@ public class BoggleBoard {
         StdOut.println();
 
         // initialize a 4-by-4 board from a file
-        String filename = "board-quinquevalencies.txt";
+        String filename = "data/board-quinquevalencies.txt";
         StdOut.println("4-by-4 board from file " + filename + ":");
         BoggleBoard board4 = new BoggleBoard(filename);
         StdOut.println(board4);
