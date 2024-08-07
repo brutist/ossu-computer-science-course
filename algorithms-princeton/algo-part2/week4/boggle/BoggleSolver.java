@@ -32,11 +32,6 @@ public class BoggleSolver {
         return x;
     }
 
-    public boolean wordPrefix(String key) {
-        Node x = get(root, key, 0);
-        return x != null;
-    }
-
     public boolean containsWord(String key) {
         Node x = get(root, key, 0);
         return x != null && x.word != null;
@@ -104,19 +99,18 @@ public class BoggleSolver {
     //  - a path of index corresponding to a word in the dictionary
     //      (prune search if the current path is not a prefix of any word in the dictionary)
     private void DFS(Node node, int u, int v, boolean[] visited, HashSet<String> validWords) {
-        if (visited[u]) return;
+        char C = board.getLetter(u / board.cols(), u % board.cols());
+        if (visited[u] || node == null) return;
 
         visited[u] = true;
 
-        char C = board.getLetter(u / board.cols(), u % board.cols());
-        node = node.next[C - 'A'];
-        if (C == 'Q' && curNode.next['U' - 'A'] != null)    curNode = curNode.next['U' - 'A'];
-        else                                                return;
+        Node curNode = node.next[C - 'A'];
+        if (C == 'Q' && curNode != null)  curNode = curNode.next['U' - 'A'];
 
-        if (u == v && curNode.next[C - 'A'] != null && curWord != null) {
+        if (u == v && curNode != null && curNode.word != null) {
             int minimumWordLength = 3;      // for a boggle game
-            if (curWord.length() >= minimumWordLength) {
-                validWords.add(curWord);
+            if (curNode.word.length() >= minimumWordLength) {
+                validWords.add(curNode.word);
             }
         }
 
@@ -125,9 +119,10 @@ public class BoggleSolver {
                 // do not do dfs on paths that
                 //      don't form prefix of a valid word and paths that contain duplicates
                 char N = board.getLetter(next / board.cols(), next % board.cols());
-                Node nextNode = node.next[N - 'A'];
-                if (N == 'Q' && nextNode.next['U' - 'A'] != null)   nextNode = nextNode.next['U' - 'A'];
-                else                                                continue;
+                if (curNode == null)    continue;
+                Node nextNode = curNode.next[N - 'A'];
+                if (N == 'Q' && nextNode != null)   nextNode = nextNode.next['U' - 'A'];
+
                 if (!visited[next]) {
                     DFS(nextNode, next, v, visited, validWords);
                 }
