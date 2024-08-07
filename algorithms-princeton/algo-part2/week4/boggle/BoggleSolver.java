@@ -5,8 +5,8 @@ import edu.princeton.cs.algs4.Stopwatch;
 import java.util.HashSet;
 
 public class BoggleSolver {
-    private BoggleBoard board;
     private Bag<Integer>[] adjacentTiles;
+    private BoggleBoard board;
     private Node root = new Node();       // root node
 
     private static class Node {
@@ -75,7 +75,10 @@ public class BoggleSolver {
         // dfs from vertex u to vertex v to search all valid paths, reuse the visited array by resetting
         for (int i = 0; i < totalTiles; i++) {
             for (int j = 0; j < totalTiles; j++) {
-                if (i != j)     DFS(i, j, new StringBuilder(), visited, validWords);
+                if (i != j) {
+                    char I = board.getLetter(i / board.cols(), i % board.cols());
+                    DFS(root.next[I - 'A'], i, j, visited, validWords);
+                }
             }
         }
 
@@ -100,20 +103,19 @@ public class BoggleSolver {
     //  - a simple path between index u and v (which corresponds to a tile in the board)
     //  - a path of index corresponding to a word in the dictionary
     //      (prune search if the current path is not a prefix of any word in the dictionary)
-    private void DFS(int u, int v, StringBuilder word, boolean[] visited, HashSet<String> validWords) {
+    private void DFS(Node node, int u, int v, boolean[] visited, HashSet<String> validWords) {
         if (visited[u]) return;
 
         visited[u] = true;
 
-        String curChar;
-        char c = board.getLetter(u / board.cols(), u % board.cols());
-        if (c == 'Q')   curChar = "QU";
-        else            curChar = String.valueOf(c);
-        String curWord = word.append(curChar).toString();
+        char C = board.getLetter(u / board.cols(), u % board.cols());
+        node = node.next[C - 'A'];
+        if (C == 'Q' && curNode.next['U' - 'A'] != null)    curNode = curNode.next['U' - 'A'];
+        else                                                return;
 
-        if (u == v) {
+        if (u == v && curNode.next[C - 'A'] != null && curWord != null) {
             int minimumWordLength = 3;      // for a boggle game
-            if (curWord.length() >= minimumWordLength && containsWord(curWord)) {
+            if (curWord.length() >= minimumWordLength) {
                 validWords.add(curWord);
             }
         }
@@ -122,18 +124,17 @@ public class BoggleSolver {
             for (int next : adjacentTiles[u]) {
                 // do not do dfs on paths that
                 //      don't form prefix of a valid word and paths that contain duplicates
-                char n = board.getLetter(next / board.cols(), next % board.cols());
-                String nextWord = word.toString() + n;
-                if (!visited[next] && wordPrefix(nextWord)) {
-                    DFS(next, v, word, visited, validWords);
+                char N = board.getLetter(next / board.cols(), next % board.cols());
+                Node nextNode = node.next[N - 'A'];
+                if (N == 'Q' && nextNode.next['U' - 'A'] != null)   nextNode = nextNode.next['U' - 'A'];
+                else                                                continue;
+                if (!visited[next]) {
+                    DFS(nextNode, next, v, visited, validWords);
                 }
             }
         }
 
         visited[u] = false;
-        for (int i = 0; i < curChar.length(); i++) {
-            word.deleteCharAt(word.length() - 1);
-        }
     }
 
     //  precompute this for every tile, there is no need to calculate again
