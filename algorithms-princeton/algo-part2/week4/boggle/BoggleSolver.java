@@ -3,6 +3,7 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Stopwatch;
 
+import java.util.ArrayDeque;
 import java.util.HashSet;
 
 public class BoggleSolver {
@@ -113,16 +114,13 @@ public class BoggleSolver {
             if (word.length() >= minimumWordLength)    validWords.add(word);
         }
 
-        else {
-            for (int next : adjacentTiles[u]) {
-                // do not do dfs on paths that
-                //      don't form prefix of a valid word and paths that contain duplicates
-
-                if (!visited[next]) {
-                    char N = board.getLetter(next / board.cols(), next % board.cols());
-                    Node nextNode = getNextNode(node, N);
-                    if (nextNode != null)       DFS(nextNode, next, v, visited, validWords);
-                }
+        for (int next : adjacentTiles[u]) {
+            // do not do dfs on paths that
+            //      don't form prefix of a valid word and paths that contain duplicates
+            if (!visited[next]) {
+                char N = board.getLetter(next / board.cols(), next % board.cols());
+                Node nextNode = getNextNode(node, N);
+                if (nextNode != null)       DFS(nextNode, next, v, visited, validWords);
             }
         }
 
@@ -168,12 +166,21 @@ public class BoggleSolver {
         In in = new In(args[0]);
         String[] dictionary = in.readAllStrings();
         BoggleSolver solver = new BoggleSolver(dictionary);
+        BoggleSolverSlow slowSolver = new BoggleSolverSlow(dictionary);
 
         for (int i = 1; i < args.length; i++) {
             BoggleBoard board = new BoggleBoard(args[i]);
             int score = 0;
+
+            HashSet<String> allWords = new HashSet<>();
+            for (String w : slowSolver.getAllValidWords(board))
+                allWords.add(w);
+
             for (String word : solver.getAllValidWords(board)) {
                 score += solver.scoreOf(word);
+
+                if (!allWords.contains(word))
+                    System.out.printf("Word missed: %s\n", word);
             }
             StdOut.printf("Filename '%s'    Score = %d\n", args[i], score);
         }
