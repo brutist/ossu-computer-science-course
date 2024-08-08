@@ -117,11 +117,11 @@ public class BoggleSolver {
             for (int next : adjacentTiles[u]) {
                 // do not do dfs on paths that
                 //      don't form prefix of a valid word and paths that contain duplicates
+                char N = board.getLetter(next / board.cols(), next % board.cols());
+                Node nextNode = getNextNode(node, N);
 
-                if (!visited[next]) {
-                    char N = board.getLetter(next / board.cols(), next % board.cols());
-                    Node nextNode = getNextNode(node, N);
-                    if (nextNode != null)       DFS(nextNode, next, v, visited, validWords);
+                if (!visited[next] && nextNode != null) {
+                    DFS(nextNode, next, v, visited, validWords);
                 }
             }
         }
