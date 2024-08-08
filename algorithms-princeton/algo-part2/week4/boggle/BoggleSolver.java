@@ -1,13 +1,9 @@
-import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.Stopwatch;
-
-import java.util.LinkedList;
+import java.util.HashSet;
 
 public class BoggleSolver {
     private Integer[][] adjacentTiles;
     private BoggleBoard board;
-    private Node root = new Node();       // root node
+    private Node root = new Node();                 // root node
 
     private static class Node {
         private String word;                        // true if the path to this Node is a word in the trie
@@ -64,13 +60,13 @@ public class BoggleSolver {
         for (int k = 0; k < totalTiles; k++)
             adjacentTiles[k] = adjacentTiles(k);
 
-        LinkedList<String> validWords = new LinkedList<>();
+        HashSet<String> validWords = new HashSet<>();
         boolean[] visited = new boolean[totalTiles];
         // dfs from vertex u to vertex v to search all valid paths, reuse the visited array by resetting
         for (int i = 0; i < totalTiles; i++) {
+            Node N = getNextNode(root, i);
             for (int j = 0; j < totalTiles; j++) {
                 if (i != j) {
-                    Node N = getNextNode(root, i);
                     DFS(N, i, j, visited, validWords);
                 }
             }
@@ -101,7 +97,7 @@ public class BoggleSolver {
     //      possible word for every pair of tiles. The search path that would not be a prefix
     //      of a word will be disregarded since the DFS cannot continue anymore. Backtrack
     //      and find all possible paths
-    private void DFS(Node node, int u, int v, boolean[] visited, LinkedList<String> validWords) {
+    private void DFS(Node node, int u, int v, boolean[] visited, HashSet<String> validWords) {
         if (visited[u]) return;
 
         visited[u] = true;
@@ -158,74 +154,4 @@ public class BoggleSolver {
 
         return adj;
     }
-
-    /*//    Comparing the slower version of BoggleSolver with this optimized one to see
-      //      which words were included or were not supposed to be included.
-
-    public static void main(String[] args) {
-        Stopwatch stopwatch = new Stopwatch();
-
-        In in = new In(args[0]);
-        String[] dictionary = in.readAllStrings();
-        BoggleSolver solver = new BoggleSolver(dictionary);
-        BoggleSolverSlow slowSolver = new BoggleSolverSlow(dictionary);
-
-        for (int i = 1; i < args.length; i++) {
-            BoggleBoard board = new BoggleBoard(args[i]);
-
-            LinkedList<String> allWords = new LinkedList<>();
-            LinkedList<String> wordsFound = new LinkedList<>();
-            for (String w : slowSolver.getAllValidWords(board))
-                allWords.add(w);
-
-            for (String word : solver.getAllValidWords(board))
-                wordsFound.add(word);
-
-            LinkedList<String> missingWords = new LinkedList<>();
-            LinkedList<String> extraWords = new LinkedList<>();
-            int allWordsScore = 0;
-            int wordsFoundScore = 0;
-            for (String w : wordsFound) {
-                wordsFoundScore += solver.scoreOf(w);
-                if (!allWords.contains(w))
-                    extraWords.add(w);
-            }
-
-            for (String w : allWords) {
-                allWordsScore += solver.scoreOf(w);
-                if (!wordsFound.contains(w))
-                    missingWords.add(w);
-            }
-
-            StdOut.printf("Filename '%s'    Score = %d\n", args[i], allWordsScore);
-            StdOut.printf("Solver score '%d' \n", wordsFoundScore);
-            StdOut.printf("Words not found  '%s' \n", missingWords);
-            StdOut.printf("Extra words found  '%s' \n\n", extraWords);
-        }
-
-        System.out.printf("Total Time: %f\n\n", stopwatch.elapsedTime());
-    }                               */
-
-    public static void main(String[] args) {
-        Stopwatch timer = new Stopwatch();
-        In in = new In(args[0]);
-        String[] dictionary = in.readAllStrings();
-
-        BoggleSolver solver = new BoggleSolver(dictionary);
-        int count = 0;
-        while (count < 30000)
-        {
-            BoggleBoard board = new BoggleBoard();
-            solver.getAllValidWords(board);
-            count++;
-        }
-        double time = timer.elapsedTime();
-        double solPerSec = Math.floor(30000 / time * 100) / 100;
-        double ratio = Math.floor(6175.83 / solPerSec * 100) / 100;
-        StdOut.println("Total Time for 30000 random board is " + timer.elapsedTime());
-        StdOut.println("reference solution per second is 6175.83");
-        StdOut.println("student solution per second is " + solPerSec);
-        StdOut.println("reference/student ratio is " + ratio);
-    }
-
 }
