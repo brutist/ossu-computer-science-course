@@ -1,13 +1,11 @@
-import edu.princeton.cs.algs4.Bag;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Stopwatch;
 
-import java.util.ArrayDeque;
-import java.util.HashSet;
+import java.util.LinkedList;
 
 public class BoggleSolver {
-    private Bag<Integer>[] adjacentTiles;
+    private Integer[][] adjacentTiles;
     private BoggleBoard board;
     private Node root = new Node();       // root node
 
@@ -48,7 +46,6 @@ public class BoggleSolver {
         return get(x.next[c - 'A'], key, d + 1);
     }
 
-
     // Initializes the data structure using the given array of strings as the dictionary.
     // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
     public BoggleSolver(String[] dictionary) {
@@ -62,18 +59,19 @@ public class BoggleSolver {
         int totalTiles = board.rows() * board.cols();
 
         // precompute the adjacent tiles of all tiles in the board
-        adjacentTiles = (Bag<Integer>[]) new Bag[totalTiles];
+        int possibleNeighbors = 8;
+        adjacentTiles = new Integer[totalTiles][possibleNeighbors];
         for (int k = 0; k < totalTiles; k++)
             adjacentTiles[k] = adjacentTiles(k);
 
-        HashSet<String> validWords = new HashSet<>();
+        LinkedList<String> validWords = new LinkedList<>();
         boolean[] visited = new boolean[totalTiles];
         // dfs from vertex u to vertex v to search all valid paths, reuse the visited array by resetting
         for (int i = 0; i < totalTiles; i++) {
             for (int j = 0; j < totalTiles; j++) {
                 if (i != j) {
-                    char I = board.getLetter(i / board.cols(), i % board.cols());
-                    DFS(root.next[I - 'A'], i, j, visited, validWords);
+                    Node N = getNextNode(root, i);
+                    DFS(N, i, j, visited, validWords);
                 }
             }
         }
@@ -103,7 +101,7 @@ public class BoggleSolver {
     //      possible word for every pair of tiles. The search path that would not be a prefix
     //      of a word will be disregarded since the DFS cannot continue anymore. Backtrack
     //      and find all possible paths
-    private void DFS(Node node, int u, int v, boolean[] visited, HashSet<String> validWords) {
+    private void DFS(Node node, int u, int v, boolean[] visited, LinkedList<String> validWords) {
         if (visited[u]) return;
 
         visited[u] = true;
@@ -114,20 +112,21 @@ public class BoggleSolver {
             if (word.length() >= minimumWordLength)    validWords.add(word);
         }
 
-        for (int next : adjacentTiles[u]) {
+        for (Integer next : adjacentTiles[u]) {
             // do not do dfs on paths that
             //      don't form prefix of a valid word and paths that contain duplicates
-            if (!visited[next]) {
-                char N = board.getLetter(next / board.cols(), next % board.cols());
-                Node nextNode = getNextNode(node, N);
-                if (nextNode != null)       DFS(nextNode, next, v, visited, validWords);
+            if (next != null && !visited[next]) {   // the next null check for impossible neighbors
+                Node nextNode = getNextNode(node, next);
+                if (nextNode != null)
+                    DFS(nextNode, next, v, visited, validWords);
             }
         }
 
         visited[u] = false;
     }
 
-    private Node getNextNode(Node node, char nextChar) {
+    private Node getNextNode(Node node, int nextTile) {
+        char nextChar = board.getLetter(nextTile / board.cols(), nextTile % board.cols());
         if (node == null)   return null;
         Node nextNode = node.next[nextChar - 'A'];
         if (nextChar == 'Q' && nextNode != null)    nextNode = nextNode.next['U' - 'A'];
@@ -135,30 +134,33 @@ public class BoggleSolver {
     }
 
     //  precompute this for every tile, there is no need to calculate again
-    private Bag<Integer> adjacentTiles(int u) {
-        Bag<Integer> adj = new Bag<>();
+    private Integer[] adjacentTiles(int u) {
+        Integer[] adj = new Integer[8];
 
         int width = board.cols();
         int row = u / width;
         int col = u % width;
 
         if (row > 0) {
-            adj.add(((row - 1) * width) + col);                                     // direct top
-            if (col > 0)            adj.add(((row - 1) * width) + (col - 1));       // top-left
-            if (col + 1 < width)    adj.add(((row - 1) * width) + (col + 1));       // top-right
+            adj[0] = (((row - 1) * width) + col);                                     // direct top
+            if (col > 0)            adj[1] = (((row - 1) * width) + (col - 1));       // top-left
+            if (col + 1 < width)    adj[2] = (((row - 1) * width) + (col + 1));       // top-right
         }
 
-        if (col > 0)                adj.add((row * width) + (col - 1));             // left
-        if (col + 1 < width)        adj.add((row * width) + (col + 1));             // right
+        if (col > 0)                adj[3] = ((row * width) + (col - 1));             // left
+        if (col + 1 < width)        adj[4] = ((row * width) + (col + 1));             // right
 
         if (row + 1 < board.rows()) {
-            adj.add(((row + 1) * width) + col);                                     // direct bottom
-            if (col > 0)            adj.add(((row + 1) * width) + (col - 1));       // bottom-left
-            if (col + 1 < width)    adj.add(((row + 1) * width) + (col + 1));       // bottom-right
+            adj[5] = (((row + 1) * width) + col);                                     // direct bottom
+            if (col > 0)            adj[6] = (((row + 1) * width) + (col - 1));       // bottom-left
+            if (col + 1 < width)    adj[7] = (((row + 1) * width) + (col + 1));       // bottom-right
         }
 
         return adj;
     }
+
+    /*//    Comparing the slower version of BoggleSolver with this optimized one to see
+      //      which words were included or were not supposed to be included.
 
     public static void main(String[] args) {
         Stopwatch stopwatch = new Stopwatch();
@@ -170,21 +172,60 @@ public class BoggleSolver {
 
         for (int i = 1; i < args.length; i++) {
             BoggleBoard board = new BoggleBoard(args[i]);
-            int score = 0;
 
-            HashSet<String> allWords = new HashSet<>();
+            LinkedList<String> allWords = new LinkedList<>();
+            LinkedList<String> wordsFound = new LinkedList<>();
             for (String w : slowSolver.getAllValidWords(board))
                 allWords.add(w);
 
-            for (String word : solver.getAllValidWords(board)) {
-                score += solver.scoreOf(word);
+            for (String word : solver.getAllValidWords(board))
+                wordsFound.add(word);
 
-                if (!allWords.contains(word))
-                    System.out.printf("Word missed: %s\n", word);
+            LinkedList<String> missingWords = new LinkedList<>();
+            LinkedList<String> extraWords = new LinkedList<>();
+            int allWordsScore = 0;
+            int wordsFoundScore = 0;
+            for (String w : wordsFound) {
+                wordsFoundScore += solver.scoreOf(w);
+                if (!allWords.contains(w))
+                    extraWords.add(w);
             }
-            StdOut.printf("Filename '%s'    Score = %d\n", args[i], score);
+
+            for (String w : allWords) {
+                allWordsScore += solver.scoreOf(w);
+                if (!wordsFound.contains(w))
+                    missingWords.add(w);
+            }
+
+            StdOut.printf("Filename '%s'    Score = %d\n", args[i], allWordsScore);
+            StdOut.printf("Solver score '%d' \n", wordsFoundScore);
+            StdOut.printf("Words not found  '%s' \n", missingWords);
+            StdOut.printf("Extra words found  '%s' \n\n", extraWords);
         }
 
-        System.out.printf("Total Time: %f\n", stopwatch.elapsedTime());
+        System.out.printf("Total Time: %f\n\n", stopwatch.elapsedTime());
+    }                               */
+
+    public static void main(String[] args) {
+        Stopwatch timer = new Stopwatch();
+        In in = new In(args[0]);
+        String[] dictionary = in.readAllStrings();
+
+        BoggleSolver solver = new BoggleSolver(dictionary);
+        int count = 0;
+        while (count < 30000)
+        {
+            BoggleBoard board = new BoggleBoard();
+            solver.getAllValidWords(board);
+            count++;
+        }
+        double time = timer.elapsedTime();
+        double solPerSec = Math.floor(30000 / time * 100) / 100;
+        double ratio = Math.floor(6175.83 / solPerSec * 100) / 100;
+        StdOut.println("Total Time for 30000 random board is " + timer.elapsedTime());
+        StdOut.println("reference solution per second is 6175.83");
+        StdOut.println("student solution per second is " + solPerSec);
+        StdOut.println("reference/student ratio is " + ratio);
     }
+
 }
