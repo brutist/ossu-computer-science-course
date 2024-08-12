@@ -1,13 +1,13 @@
 import java.util.Arrays;
 
 public class CircularSuffixArray {
-    private static String word;
+    private final String word;
     private final int[] index;
 
-    private static class CircularSuffix implements Comparable<CircularSuffix> {
+    private class CircularSuffix implements Comparable<CircularSuffix> {
         private final int startIndex;
 
-        public CircularSuffix(String w, int start) {
+        public CircularSuffix(int start) {
             this.startIndex = start;
         }
 
@@ -34,7 +34,7 @@ public class CircularSuffixArray {
         int N = s.length();
         CircularSuffix[] suffixes = new CircularSuffix[N];
         for (int i = 0; i < N; i++)
-            suffixes[i] = new CircularSuffix(s, i);
+            suffixes[i] = new CircularSuffix(i);
 
         // sort the suffixes alphabetically
         Arrays.sort(suffixes);
@@ -43,7 +43,6 @@ public class CircularSuffixArray {
         index = new int[N];
         for (int i = 0; i < N; i++)
             index[i] = suffixes[i].startIndex;
-
     }
 
     // length of s
