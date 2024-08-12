@@ -2,6 +2,7 @@ import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
 
 public class BurrowsWheeler {
+    public static final int R = 256;        // extended ASCII
 
     // apply Burrows-Wheeler transform,
     // reading from standard input and writing to standard output
@@ -33,6 +34,28 @@ public class BurrowsWheeler {
     // apply Burrows-Wheeler inverse transform,
     // reading from standard input and writing to standard output
     public static void inverseTransform() {
+        int first = BinaryStdIn.readInt();        // row index at which the original string appears
+        StringBuilder bwt = new StringBuilder();  // last column of sorted rotation
+        while (!BinaryStdIn.isEmpty())
+            bwt.append(BinaryStdIn.readChar());
+
+        // use key-index counting to get the first column of the sorted rotation
+        // which is just the sorted version of the bwt
+        int N = bwt.length();
+        int[] count = new int[R + 1];
+
+        // count frequencies
+        for (int i = 0; i < N; i++)     count[bwt.charAt(i) + 1]++;
+        // compute the cumulates
+        for (int r = 0; r < R; r++)     count[r + 1] += count[r];
+
+        // create a sorted bwt, which is a reference (index) to the bwt which corresponds to
+        //  an alphabetically sorted bwt
+        char[] bwtSorted = new char[N];
+        for (int i = 0; i < N; i++)
+            bwtSorted[count[bwt.charAt(i)]++] = bwt.charAt(i);
+
+
 
     }
 
@@ -44,3 +67,26 @@ public class BurrowsWheeler {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
