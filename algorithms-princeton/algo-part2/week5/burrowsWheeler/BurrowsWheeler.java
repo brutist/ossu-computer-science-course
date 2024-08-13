@@ -60,8 +60,7 @@ public class BurrowsWheeler {
 
         ArrayDeque<Integer>[] lastCharIndexes = (ArrayDeque<Integer>[]) new ArrayDeque[R];
         for (int i = 0; i < N; i++) {
-            ArrayDeque<Integer> heads = lastCharIndexes[bwt.charAt(i)];
-            if (heads == null) {
+            if (lastCharIndexes[bwt.charAt(i)] == null) {
                 lastCharIndexes[bwt.charAt(i)] = new ArrayDeque<>();
             }
             lastCharIndexes[bwt.charAt(i)].addLast(i);
