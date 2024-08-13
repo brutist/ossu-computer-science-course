@@ -16,8 +16,8 @@ public class CircularSuffixArray {
             while (word.charAt(s) == word.charAt(v)) {
                 s++;
                 v++;
-                if (s > word.length())      s = 0;
-                if (v > word.length())      v = 0;
+                if (s >= word.length())      s = 0;
+                if (v >= word.length())      v = 0;
             }
 
             return word.charAt(s) - word.charAt(v);
