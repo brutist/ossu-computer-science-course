@@ -2,7 +2,6 @@ import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
 
 import java.util.ArrayDeque;
-import java.util.LinkedList;
 
 public class BurrowsWheeler {
     public static final int R = 256;        // extended ASCII
@@ -46,38 +45,34 @@ public class BurrowsWheeler {
         // which is just the sorted version of the bwt
         int N = bwt.length();
         int[] count = new int[R + 1];
-
         // count frequencies
         for (int i = 0; i < N; i++)     count[bwt.charAt(i) + 1]++;
         // compute the cumulates
         for (int r = 0; r < R; r++)     count[r + 1] += count[r];
 
-        // create a sorted bwt, which is a reference (index) to the bwt which corresponds to
-        //  an alphabetically sorted bwt
-        int[] bwtSortedIndex = new int[N];
-        for (int i = 0; i < N; i++)
-            bwtSortedIndex[count[bwt.charAt(i)]++] = i;
-
+        // create a sorted bwt which corresponds to the first column in of the sorted suffixes
+        // also create an array[i] that contains the deque of indexes to bwt that contains character ith.
+        char[] bwtSorted = new char[N];
         ArrayDeque<Integer>[] lastCharIndexes = (ArrayDeque<Integer>[]) new ArrayDeque[R];
         for (int i = 0; i < N; i++) {
-            if (lastCharIndexes[bwt.charAt(i)] == null) {
+            // miserably unreadable for a minor optimization
+            bwtSorted[count[bwt.charAt(i)]++] = bwt.charAt(i);
+
+            if (lastCharIndexes[bwt.charAt(i)] == null)
                 lastCharIndexes[bwt.charAt(i)] = new ArrayDeque<>();
-            }
+
             lastCharIndexes[bwt.charAt(i)].addLast(i);
         }
 
         int[] next = new int[N];
         for (int i = 0; i < N; i++) {
-            next[i] = lastCharIndexes[bwtSortedIndex[i]].removeFirst();
+            next[i] = lastCharIndexes[bwtSorted[i]].removeFirst();
         }
 
-        StringBuilder original = new StringBuilder();
-        for (int i = 0, j = first; i < N; i++) {
-            original.append(bwtSortedIndex[next[j]]);
-            j = next[j];
+        BinaryStdOut.write(bwtSorted[first]);
+        for (int i = 1, j = first; i < N; i++, j = next[j]) {
+            BinaryStdOut.write(bwtSorted[next[j]]);
         }
-
-        BinaryStdOut.write(original.toString());
         BinaryStdOut.close();
     }
 
