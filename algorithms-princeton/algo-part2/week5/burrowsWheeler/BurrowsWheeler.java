@@ -1,6 +1,9 @@
 import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
 
+import java.util.ArrayDeque;
+import java.util.LinkedList;
+
 public class BurrowsWheeler {
     public static final int R = 256;        // extended ASCII
 
@@ -51,12 +54,32 @@ public class BurrowsWheeler {
 
         // create a sorted bwt, which is a reference (index) to the bwt which corresponds to
         //  an alphabetically sorted bwt
-        char[] bwtSorted = new char[N];
+        int[] bwtSortedIndex = new int[N];
         for (int i = 0; i < N; i++)
-            bwtSorted[count[bwt.charAt(i)]++] = bwt.charAt(i);
+            bwtSortedIndex[count[bwt.charAt(i)]++] = i;
 
+        ArrayDeque<Integer>[] lastCharIndexes = (ArrayDeque<Integer>[]) new ArrayDeque[R];
+        for (int i = 0; i < N; i++) {
+            ArrayDeque<Integer> heads = lastCharIndexes[bwt.charAt(i)];
+            if (heads == null) {
+                lastCharIndexes[bwt.charAt(i)] = new ArrayDeque<>();
+            }
+            lastCharIndexes[bwt.charAt(i)].addLast(i);
+        }
 
+        int[] next = new int[N];
+        for (int i = 0; i < N; i++) {
+            next[i] = lastCharIndexes[bwtSortedIndex[i]].removeFirst();
+        }
 
+        StringBuilder original = new StringBuilder();
+        for (int i = 0, j = first; i < N; i++) {
+            original.append(bwtSortedIndex[next[j]]);
+            j = next[j];
+        }
+
+        BinaryStdOut.write(original.toString());
+        BinaryStdOut.close();
     }
 
     // if args[0] is "-", apply Burrows-Wheeler transform
@@ -64,6 +87,9 @@ public class BurrowsWheeler {
     public static void main(String[] args) {
         if (args[0].equals("-")) {
             BurrowsWheeler.transform();
+        }
+        if (args[0].equals("+")) {
+            BurrowsWheeler.inverseTransform();
         }
     }
 }
