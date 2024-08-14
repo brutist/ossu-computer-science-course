@@ -52,12 +52,10 @@ public class MoveToFront {
             }
 
             alphabet[0] = c;    // move to front
-            BinaryStdOut.write(c);
+            BinaryStdOut.write(c, 8);
         }
         BinaryStdOut.close();
     }
-
-
 
     // if args[0] is "-", apply move-to-front encoding
     // if args[0] is "+", apply move-to-front decoding

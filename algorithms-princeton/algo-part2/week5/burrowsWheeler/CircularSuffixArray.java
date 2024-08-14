@@ -13,11 +13,14 @@ public class CircularSuffixArray {
 
         public int compareTo(CircularSuffix that) {
             int s = this.startIndex, v = that.startIndex;
+            int checked = 0;
             while (word.charAt(s) == word.charAt(v)) {
                 s++;
                 v++;
                 if (s >= word.length())      s = 0;
                 if (v >= word.length())      v = 0;
+                checked++;
+                if (checked == word.length())   break;
             }
 
             return word.charAt(s) - word.charAt(v);
@@ -69,5 +72,10 @@ public class CircularSuffixArray {
         CircularSuffixArray csa = new CircularSuffixArray(test);
         for (int i = 0; i < csa.length(); i++)
             System.out.printf("%d  ",csa.index(i));
+
+        String test2 = "*************";
+        CircularSuffixArray csa2 = new CircularSuffixArray(test2);
+        for (int i = 0; i < csa2.length(); i++)
+            System.out.printf("%d  ",csa2.index(i));
     }
 }
