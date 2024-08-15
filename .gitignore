@@ -39,5 +39,10 @@ bin/
 ### VS Code ###
 .vscode/
 
+
+## compiled c++ codes are in binary folder
+**/binary
+
+
 ### Mac OS ###
 .DS_Store
