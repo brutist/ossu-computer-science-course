@@ -9,4 +9,8 @@ int main(int argc, char const *argv[]) {
 
     for (int i : vec)
         std::cout << i << std::endl;
+
+    // this is a reference to the original vec
+    for (const auto& i : vec)
+        std::cout <<  i << std::endl;
 }
