@@ -18,11 +18,11 @@ int64_t MaxPairwiseProduct(const std::vector<int64_t >& numbers) {
 }
 
 int64_t MaxPairwiseProductFast(const std::vector<int64_t>& numbers) {
-    int max = 0;
-    int s_max = 0;
-    for (int i = 0; i < numbers.size(); i++) {
+    unsigned int max = 0;
+    unsigned int s_max = 0;
+    for (unsigned int i = 0; i < numbers.size(); i++) {
         if (numbers[max] < numbers[i]) {
-            int temp = max;
+            unsigned int temp = max;
             max = i;
             s_max = temp;
         }
