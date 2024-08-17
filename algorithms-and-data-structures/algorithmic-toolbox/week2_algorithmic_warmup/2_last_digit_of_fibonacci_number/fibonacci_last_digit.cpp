@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 
 int get_fibonacci_last_digit_naive(int n) {
     if (n <= 1)
@@ -35,12 +36,17 @@ int get_fibonacci_last_digit_fast(int n) {
 
 
 void stress_test_fibonacci_last_digit(int n) {
+    if (n > 50) {
+        throw std::invalid_argument("stress_test_fibonacci_last_digit cannot take args > 200");
+    }
+    
     for (int i = 0; i < n + 1; i++) {
         int naive_answer = get_fibonacci_last_digit_naive(i);
         int fast_answer = get_fibonacci_last_digit_fast(i);
 
         if (naive_answer != fast_answer) {
-            std::cout << "Answer: " << naive_answer << "  Result: " << fast_answer;
+            std::cout << "Fibonacci of :" << i << "Answer: " << naive_answer 
+                        << "  Result: " << fast_answer;
             break;
         }
     }
