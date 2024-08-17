@@ -42,6 +42,7 @@ bin/
 
 ## compiled c++ codes are in binary folder
 **/*binary
+**/*.out
 
 
 ### Mac OS ###
