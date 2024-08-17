@@ -23,7 +23,7 @@ long long fibonacci_naive(int n) {
 }
 
 long long fibonacci_fast(int n) {
-    if (n == 0) return 0;
+    if (n <= 0) return 0;
     if (n == 1) return 1;
 
     // calculate an array of answers
@@ -37,18 +37,7 @@ long long fibonacci_fast(int n) {
     return fib_answers[n];
 }
 
-void test_solution() {
-    assert(fibonacci_fast(3) == 2);
-    assert(fibonacci_fast(10) == 55);
-    for (int n = 0; n < 20; ++n)
-        assert(fibonacci_fast(n) == fibonacci_naive(n));
-}
-
-int main() {
-    int n = 0;
-    std::cout << "Find n Fibonacci: ";
-    std::cin >> n;
-
+void test_solution(int n) {
     for (int i = 0; i < n + 1; i++) {
         long long fast_answer = fibonacci_fast(i);
         long long naive_answer = fibonacci_naive(i);
@@ -60,6 +49,14 @@ int main() {
 
         std::cout << "Fibonacci " <<  i << " = " << fast_answer << "\n";
     }
+}
+
+int main() {
+    int n = 0;
+    std::cin >> n;
+    std::cout << fibonacci_fast(n);
+
+    //test_solution(n);
 
     return 0;
 }
