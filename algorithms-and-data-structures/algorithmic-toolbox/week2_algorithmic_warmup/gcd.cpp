@@ -25,8 +25,8 @@ int stress_test_gcd() {
   srand(time(NULL));
   unsigned test_counter = 0;
   while (true) {
-    int a = std::rand() % 10000;
-    int b = std::rand() % 10000;
+    int a = std::rand() % 20000000;
+    int b = std::rand() % 20000000;
   
     int naive_answer = gcd_naive(a, b);
     int fast_answer = gcd_fast(a, b);
@@ -37,7 +37,7 @@ int stress_test_gcd() {
     }
 
     test_counter++;
-    if (test_counter % 10000) {
+    if (test_counter % 100 == 0) {
       std::cout << "TEST " << test_counter << "  PASSED\n";
     } 
   }
@@ -49,6 +49,6 @@ int main() {
   std::cin >> a >> b;
   std::cout << gcd_fast(a, b) << std::endl;
 
-  //stress_test_gcd();
+  stress_test_gcd();
   return 0;
 }
