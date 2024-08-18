@@ -15,7 +15,7 @@ int gcd_naive(int a, int b) {
 
 // an implementation of Euclid GCD algorithm
 int gcd_fast(int a, int b) {
-  if (b == 0) return a;
+if (b == 0) return a;
 
   int remainder_a = a % b;
   return gcd_fast(b, remainder_a);
