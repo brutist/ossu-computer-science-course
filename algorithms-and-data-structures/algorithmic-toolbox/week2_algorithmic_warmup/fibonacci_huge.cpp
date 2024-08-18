@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 
 long long get_fibonacci_huge_naive(long long n, long long m) {
     if (n <= 1)
@@ -38,7 +39,7 @@ long long get_fibonacci_huge_fast(long long n, long long m) {
 
 int get_pisano_length(long long m) {
 	// special case
-	if (m == 1)	return 0;
+	if (m == 1)	return 1;
 
 	// start at Fibonacci 2 [0, 1, 1]
 	int previous = 1;
@@ -46,7 +47,7 @@ int get_pisano_length(long long m) {
 	int index = 0;
 
 	// pisano period repeats once the Fi % m = 0 and Fi+1 % m = 1
-	while (previous != 0 && current != 1) {
+	while (previous != 0 || current != 1) {
 		int next = (previous + current) % m;
 		previous = current;
 		current = next;
@@ -59,8 +60,31 @@ int get_pisano_length(long long m) {
 void test_pisano_length() {
 	int LIMIT = 100;
 	for (int i = 1; i < LIMIT; i++) {
-		std::cout << "modulo: " << i << " pisano length: " << get_pisano_length(i) << "\n";
+		std::cout << "modulo: " << i << "  pisano length: " << get_pisano_length(i) << "\n";
 	}
+}
+
+void stress_test_get_fibonacci_huge() {
+
+	srand(time(NULL));
+	unsigned int test_counter = 0;
+    while (true) {
+		long long i = rand() % 200;
+		long long m = rand() % i;
+        long long naive_answer = get_fibonacci_huge_naive(i, m);
+        long long fast_answer = get_fibonacci_huge_fast(i, m);
+
+        if (naive_answer != fast_answer) {
+            std::cout << "Fibonacci of :" << i << "  Answer: " << naive_answer 
+                        << "  Result: " << fast_answer << "\n";
+            break;
+        }
+
+		test_counter++;
+		if (test_counter % 100 == 0) {
+			std::cout << "TEST " << test_counter << "  PASSED\n";
+		} 
+    }
 }
 
 int main() {
@@ -68,5 +92,6 @@ int main() {
     std::cin >> n >> m;
     std::cout << get_fibonacci_huge_fast(n, m) << '\n';
 
-	test_pisano_length();
+	//test_pisano_length();
+	stress_test_get_fibonacci_huge();
 }
