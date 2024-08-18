@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <time.h>
+#include "fib.h"
 
 long long get_pisano_length(long long m);
 long long get_fibonacci_huge_naive(long long n, long long m);
