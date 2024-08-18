@@ -1,6 +1,8 @@
 #include <iostream>
 #include <stdexcept>
 
+int get_pisano_length(long long m);
+
 long long get_fibonacci_huge_naive(long long n, long long m) {
     if (n <= 1)
         return n;
@@ -17,23 +19,24 @@ long long get_fibonacci_huge_naive(long long n, long long m) {
     return current % m;
 }
 
-int get_pisano_length(long long m);
 long long get_fibonacci_huge_fast(long long n, long long m) {
     // find the length of the pisano period
 	int pisano_length = get_pisano_length(m);
 
-	// identify the position of the n mod m with respect to the pisano period
-	long long k = n % pisano_length;
+	// identify the position of the n with respect to the pisano period
+	long long k = n % (long long) pisano_length;
 
 	// get the value of the k in the pisano period
 	long long previous = 0;
-	long long current = 1;
-	for (int i = 0; i < k - 1; i++) {
-		long long temp_previous = previous;
-		previous = current;
-		current = (temp_previous + current) % m;
-	}
+    long long current  = 1;
 
+    for (long long i = 0; i < k - 1; ++i) {
+        long long tmp_previous = previous;
+        previous = current;
+        current = ((tmp_previous % m) + (previous % m)) % m;
+		std::cout << " prev: " << previous;
+    }
+	std::cout << "\n";
 	return current;
 }
 
@@ -65,18 +68,17 @@ void test_pisano_length() {
 }
 
 void stress_test_get_fibonacci_huge() {
-
 	srand(time(NULL));
 	unsigned int test_counter = 0;
     while (true) {
-		long long i = rand() % 200;
-		long long m = rand() % i;
+		const long long i = (rand() % 30) + 1;
+		const long long m = (rand() % i + 1);
         long long naive_answer = get_fibonacci_huge_naive(i, m);
         long long fast_answer = get_fibonacci_huge_fast(i, m);
 
         if (naive_answer != fast_answer) {
-            std::cout << "Fibonacci of :" << i << "  Answer: " << naive_answer 
-                        << "  Result: " << fast_answer << "\n";
+            std::cout << "Fibonacci of: " << i << "  m: " << m << "  answer: " << naive_answer 
+                        << "  result: " << fast_answer << "\n";
             break;
         }
 
