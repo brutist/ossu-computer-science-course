@@ -3,7 +3,8 @@
 long long get_fibonacci_partial_sum_naive(long long from, long long to);
 long long get_fibonacci_partial_sum_fast(long long from, long long to);
 int fibonacci_sum_fast(long long n);
-void stress_test_fibonacci_sum();
+void stress_test_get_fibonacci_partial_sum_naive();
+void time_get_fibonacci_partial_sum_naive();
 
 
 int main() {
@@ -11,7 +12,8 @@ int main() {
     std::cin >> from >> to;
     std::cout << get_fibonacci_partial_sum_naive(from, to) << '\n';
 
-    stress_test_fibonacci_sum();
+    //stress_test_get_fibonacci_partial_sum_naive();
+    time_get_fibonacci_partial_sum_naive();
 }
 
 
@@ -80,7 +82,7 @@ int fibonacci_sum_fast(long long n) {
 }
 
 
-void stress_test_fibonacci_sum() {
+void stress_test_get_fibonacci_partial_sum_naive() {
     srand(time(NULL));
     unsigned int test_counter = 0;
     while (true) {
@@ -101,4 +103,20 @@ void stress_test_fibonacci_sum() {
             std::cout << "TEST " << test_counter << "  PASSED\n";
         }
     }
+}
+
+
+void time_get_fibonacci_partial_sum_naive() {
+	const long long max_N = 100000000000000;
+
+    double naive_start_time = (double) clock() / CLOCKS_PER_SEC;
+    get_fibonacci_partial_sum_naive(max_N, max_N);
+    double naive_time_diff = ((double) clock() / CLOCKS_PER_SEC) - naive_start_time;
+
+	double start_time = (double) clock() / CLOCKS_PER_SEC;
+	get_fibonacci_partial_sum_fast(max_N, max_N);
+	double time_diff = ((double) clock() / CLOCKS_PER_SEC) - start_time;
+
+    std::cout << "The time elapsed for naive with max input: " << naive_time_diff << "\n";
+	std::cout << "The time elapsed for fast with max input: " << time_diff << "\n";
 }
