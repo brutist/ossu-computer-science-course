@@ -9,7 +9,7 @@ using namespace std;
 
 bool equal_values(double value1, double value2, double precision);
 double get_optimal_value_naive(int capacity, vector<int> weights, vector<int> values);
-int get_most_weighted_value(vector<int> weights, vector<int> values, vector<int> included);
+int get_most_weighted_value(vector<int> & weights, vector<int> & values, vector<int> & included);
 double get_optimal_value(int capacity, vector<int> weights, vector<int> values);
 void stress_test_get_optimal_value();
 
@@ -96,7 +96,7 @@ double get_optimal_value(int capacity, vector<int> weights, vector<int> values) 
 }
 
 
-int get_most_weighted_value(vector<int> weights, vector<int> values, vector<int> included) {
+int get_most_weighted_value(vector<int> & weights, vector<int> & values, vector<int> & included) {
     int N = weights.size();
     int max_index = -1;      
     for (int i = 0; i < N; i++) {
