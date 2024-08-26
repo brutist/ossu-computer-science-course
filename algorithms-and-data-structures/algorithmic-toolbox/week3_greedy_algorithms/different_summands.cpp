@@ -19,7 +19,7 @@ int main()
 	{
 		std::cout << summands[i] << ' ';
 	}
-
+	cout << "\n";
 	stress_test_optimal_summands();
 }
 
@@ -53,19 +53,15 @@ vector<int> optimal_summands(int n)
 	//			We can use this formula to speed up the algorithm from O(n)
 	//			O(k), in which k is the number of summands. Which would 
 	//			also correspond to the minimum number of summands of n.
-	vector<int> summands;
-	if (n <= 0)	return summands;
-
 	int k = 1;
-	int sum = 0;
-	int next_sum = ((k + 1) * (k + 2)) / 2;
-	while (next_sum < n) {
-		int next_summand = k + 1;
-		next_sum = ((k + 1) * (k + 2)) / 2;
+	vector<int> summands;
+	while (true) {
+		int next_sum = ((k + 1) * (k + 2)) / 2;
 
 		// terminate if the next sum is going to exceed n
 		if (next_sum > n) {
-			summands.push_back(n - sum);
+			int remaining = n - (((k - 1) * k) / 2);
+			summands.push_back(remaining);
 			break;
 		}
 
@@ -73,8 +69,7 @@ vector<int> optimal_summands(int n)
 		//	keep track of the current summand
 		else {
 			summands.push_back(k);
-			sum = (k * (k + 1)) / 2;;
-			k = next_summand;
+			k++;
 		}
 	}
 
@@ -85,7 +80,7 @@ void stress_test_optimal_summands()
 {
 	srand(time(NULL));
 	unsigned int test_counter = 0;
-	int N_LIMIT = 10;
+	int N_LIMIT = 1000000000;
 
 	while (true)
 	{
@@ -96,6 +91,7 @@ void stress_test_optimal_summands()
 
 		if (naive_answer != fast_answer)
 		{
+			cout << "Fast answer: "; 
 			for (int i : fast_answer) {
 				cout << i << " ";
 			}
