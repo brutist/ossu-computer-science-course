@@ -4,26 +4,34 @@
 #include <vector>
 #include <string>
 
-using std::vector;
-using std::string;
+using namespace std;
 
-string largest_number(vector<string> a) {
-  //write your code here
-  std::stringstream ret;
-  for (size_t i = 0; i < a.size(); i++) {
-    ret << a[i];
-  }
-  string result;
-  ret >> result;
-  return result;
-}
+bool concatenate_sort(const string& A, const string& B);
+string largest_number(vector<string> a);
+
 
 int main() {
-  int n;
-  std::cin >> n;
-  vector<string> a(n);
-  for (size_t i = 0; i < a.size(); i++) {
-    std::cin >> a[i];
-  }
-  std::cout << largest_number(a);
+	int n;
+	std::cin >> n;
+	vector<string> a(n);
+	for (size_t i = 0; i < a.size(); i++) {
+		std::cin >> a[i];
+	}
+	std::cout << largest_number(a);
+}
+
+
+string largest_number(vector<string> a) {
+	sort(a.rbegin(), a.rend(), &concatenate_sort);
+
+	string result = "";
+	for (string s : a) {
+		result += s;
+	}
+
+	return result;
+}
+
+bool concatenate_sort(const string& A, const string& B) {
+	return (A + B) < (B + A);
 }
