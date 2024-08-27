@@ -20,63 +20,59 @@
 // fibonacci_fast (and the lines reading the input),
 //    and submit it to the grader.
 
-long long
-fibonacci_naive (int n)
+long long fibonacci_naive(int n)
 {
-  long long k = n;
-  if (k <= 1)
-    return k;
+    long long k = n;
+    if(k <= 1)
+        return k;
 
-  return fibonacci_naive (k - 1) + fibonacci_naive (k - 2);
+    return fibonacci_naive(k - 1) + fibonacci_naive(k - 2);
 }
 
-long long
-fibonacci_fast (int n)
+long long fibonacci_fast(int n)
 {
-  if (n <= 0)
-    return 0;
-  if (n == 1)
-    return 1;
+    if(n <= 0)
+        return 0;
+    if(n == 1)
+        return 1;
 
-  // calculate an array of answers
-  long long fib_answers[n + 1];
-  fib_answers[0] = 0; // instantiate the first 2 values to start
-  fib_answers[1] = 1;
-  for (int i = 2; i < n + 1; i++)
-    {
-      fib_answers[i] = fib_answers[i - 1] + fib_answers[i - 2];
-    }
-
-  return fib_answers[n];
-}
-
-void
-test_solution (int n)
-{
-  for (int i = 0; i < n + 1; i++)
-    {
-      long long fast_answer = fibonacci_fast (i);
-      long long naive_answer = fibonacci_naive (i);
-
-      if (fast_answer != naive_answer)
+    // calculate an array of answers
+    long long fib_answers[n + 1];
+    fib_answers[0] = 0; // instantiate the first 2 values to start
+    fib_answers[1] = 1;
+    for(int i = 2; i < n + 1; i++)
         {
-          std::cout << "Answer: " << naive_answer << " Result: " << fast_answer
-                    << "\n";
-          break;
+            fib_answers[i] = fib_answers[i - 1] + fib_answers[i - 2];
         }
 
-      std::cout << "Fibonacci " << i << " = " << fast_answer << "\n";
-    }
+    return fib_answers[n];
 }
 
-int
-main ()
+void test_solution(int n)
 {
-  int n = 0;
-  std::cin >> n;
-  std::cout << fibonacci_fast (n);
+    for(int i = 0; i < n + 1; i++)
+        {
+            long long fast_answer = fibonacci_fast(i);
+            long long naive_answer = fibonacci_naive(i);
 
-  // test_solution(n);
+            if(fast_answer != naive_answer)
+                {
+                    std::cout << "Answer: " << naive_answer
+                              << " Result: " << fast_answer << "\n";
+                    break;
+                }
 
-  return 0;
+            std::cout << "Fibonacci " << i << " = " << fast_answer << "\n";
+        }
+}
+
+int main()
+{
+    int n = 0;
+    std::cin >> n;
+    std::cout << fibonacci_fast(n);
+
+    // test_solution(n);
+
+    return 0;
 }
