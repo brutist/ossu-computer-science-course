@@ -6,19 +6,21 @@ int get_change_naive(int m) {
 
     int change_sum = 0;
     int num_coins = 0;
-    while(m > change_sum)
-    {
+    while (m > change_sum) {
         int remains = m - change_sum;
 
         num_coins++;
-        if(remains >= denominations[2])
-        { change_sum += denominations[2]; }
+        if (remains >= denominations[2]) {
+            change_sum += denominations[2];
+        }
 
-        else if(remains >= denominations[1])
-        { change_sum += denominations[1]; }
+        else if (remains >= denominations[1]) {
+            change_sum += denominations[1];
+        }
 
-        else
-        { change_sum += denominations[0]; }
+        else {
+            change_sum += denominations[0];
+        }
     }
 
     return num_coins;
@@ -45,22 +47,21 @@ int get_change(int m) {
 void stress_test_get_change() {
     srand(time(NULL));
     unsigned int test_counter = 0;
-    while(true)
-    {
+    while (true) {
         const int m = (rand() % 1000) + 1;
         int naive_answer = get_change_naive(m);
         int fast_answer = get_change(m);
 
-        if(naive_answer != fast_answer)
-        {
+        if (naive_answer != fast_answer) {
             std::cout << "get_change of: " << m << "  answer: " << naive_answer
                       << "  result: " << fast_answer << "\n";
             break;
         }
 
         test_counter++;
-        if(test_counter % 1000 == 0)
-        { std::cout << "TEST " << test_counter << "  PASSED\n"; }
+        if (test_counter % 1000 == 0) {
+            std::cout << "TEST " << test_counter << "  PASSED\n";
+        }
     }
 }
 

@@ -21,10 +21,10 @@ long long get_fibonacci_partial_sum_naive(long long from, long long to) {
     long long current = 0;
     long long next = 1;
 
-    for(long long i = 0; i <= to; ++i)
-    {
-        if(i >= from)
-        { sum += current; }
+    for (long long i = 0; i <= to; ++i) {
+        if (i >= from) {
+            sum += current;
+        }
 
         long long new_current = next;
         next = next + current;
@@ -47,7 +47,7 @@ long long get_fibonacci_partial_sum_fast(long long from, long long to) {
 }
 
 int fibonacci_sum_fast(long long n) {
-    if(n <= 1)
+    if (n <= 1)
         return n;
 
     // Summation of F(n) = F(n + 2) - 1
@@ -59,20 +59,19 @@ int fibonacci_sum_fast(long long n) {
     //  F(n + 2). F(n + 2)'s last digit can be calculated by looking at the
     //  pisano sequence (M = 10).
     int equivalence = n % pisano_ten_length;
-    if(equivalence == 0)
+    if (equivalence == 0)
         equivalence = pisano_ten_length;
 
     int previous = 0;
     int current = 1;
-    for(int i = 0; i <= equivalence; i++)
-    {
+    for (int i = 0; i <= equivalence; i++) {
         int temp_previous = previous;
         previous = current;
         current = (temp_previous + previous) % M;
     }
 
     // wrap around if 0
-    if(current == 0)
+    if (current == 0)
         return 9;
     else
         return current - 1;
@@ -81,15 +80,13 @@ int fibonacci_sum_fast(long long n) {
 void stress_test_get_fibonacci_partial_sum_naive() {
     srand(time(NULL));
     unsigned int test_counter = 0;
-    while(true)
-    {
+    while (true) {
         const long long from = (rand() % 10000000) + 1;
         const long long to = (rand() % 1000000) + 1;
         long long naive_answer = get_fibonacci_partial_sum_naive(from, to);
         long long fast_answer = get_fibonacci_partial_sum_naive(from, to);
 
-        if(naive_answer != fast_answer)
-        {
+        if (naive_answer != fast_answer) {
             std::cout << "Fibonacci from: " << from << " to: " << to
                       << "  answer: " << naive_answer
                       << "  result: " << fast_answer << "\n";
@@ -97,8 +94,9 @@ void stress_test_get_fibonacci_partial_sum_naive() {
         }
 
         test_counter++;
-        if(test_counter % 1000 == 0)
-        { std::cout << "TEST " << test_counter << "  PASSED\n"; }
+        if (test_counter % 1000 == 0) {
+            std::cout << "TEST " << test_counter << "  PASSED\n";
+        }
     }
 }
 
@@ -107,8 +105,8 @@ void time_get_fibonacci_partial_sum_naive() {
 
     double naive_start_time = (double)clock() / CLOCKS_PER_SEC;
     get_fibonacci_partial_sum_naive(max_N, max_N);
-    double naive_time_diff
-        = ((double)clock() / CLOCKS_PER_SEC) - naive_start_time;
+    double naive_time_diff =
+        ((double)clock() / CLOCKS_PER_SEC) - naive_start_time;
 
     double start_time = (double)clock() / CLOCKS_PER_SEC;
     get_fibonacci_partial_sum_fast(max_N, max_N);

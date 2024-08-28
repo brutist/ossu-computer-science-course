@@ -7,12 +7,11 @@
 using namespace std;
 
 bool equal_values(double value1, double value2, double precision);
-double
-get_optimal_value_naive(int capacity, vector<int> weights, vector<int> values);
+double get_optimal_value_naive(int capacity, vector<int> weights,
+                               vector<int> values);
 int get_most_weighted_value(vector<int> &weights, vector<int> &values,
                             vector<int> &included);
-double
-get_optimal_value(int capacity, vector<int> weights, vector<int> values);
+double get_optimal_value(int capacity, vector<int> weights, vector<int> values);
 void stress_test_get_optimal_value();
 
 int main() {
@@ -21,8 +20,9 @@ int main() {
     std::cin >> n >> capacity;
     vector<int> values(n);
     vector<int> weights(n);
-    for(int i = 0; i < n; i++)
-    { std::cin >> values[i] >> weights[i]; }
+    for (int i = 0; i < n; i++) {
+        std::cin >> values[i] >> weights[i];
+    }
 
     double optimal_value = get_optimal_value_naive(capacity, weights, values);
 
@@ -42,14 +42,13 @@ double get_optimal_value_naive(int capacity, vector<int> weights,
     // Approach: Greedily fit the item that has the biggest value per unit.
     //          Repeat the process until knapsack is full or there are no items
     //          left.
-    for(int i = 0; i < N; i++)
-    {
+    for (int i = 0; i < N; i++) {
         // find the index of an item that has the biggest value per unit
         int max = get_most_weighted_value(weights, values, included);
 
         // stop adding items if knapsack is full or ther are no remaining
         // items to add
-        if(total_capacity <= 0 || max < 0)
+        if (total_capacity <= 0 || max < 0)
             break;
 
         double current_max_weight = weights[max];
@@ -66,8 +65,8 @@ double get_optimal_value_naive(int capacity, vector<int> weights,
     return value;
 }
 
-double
-get_optimal_value(int capacity, vector<int> weights, vector<int> values) {
+double get_optimal_value(int capacity, vector<int> weights,
+                         vector<int> values) {
     double value = 0.0;
     double total_capacity = capacity;
 
@@ -80,8 +79,7 @@ get_optimal_value(int capacity, vector<int> weights, vector<int> values) {
     // create a vector of (values per weight, available weight, index)
     vector<tuple<double, double>> values_per_weights;
     values_per_weights.reserve(weights.size());
-    for(unsigned int i = 0; i < weights.size(); i++)
-    {
+    for (unsigned int i = 0; i < weights.size(); i++) {
         double vpu = values[i] / (double)weights[i];
         values_per_weights.push_back(make_tuple(vpu, weights[i]));
     }
@@ -90,9 +88,8 @@ get_optimal_value(int capacity, vector<int> weights, vector<int> values) {
     sort(values_per_weights.rbegin(), values_per_weights.rend());
 
     // go through the sorted items and add as much of the maximal item
-    for(unsigned int i = 0; i < values_per_weights.size(); i++)
-    {
-        if(total_capacity <= 0)
+    for (unsigned int i = 0; i < values_per_weights.size(); i++) {
+        if (total_capacity <= 0)
             break;
 
         tuple<double, double> current_max = values_per_weights[i];
@@ -110,20 +107,20 @@ int get_most_weighted_value(vector<int> &weights, vector<int> &values,
                             vector<int> &included) {
     int N = weights.size();
     int max_index = -1;
-    for(int i = 0; i < N; i++)
-    {
-        if(weights[i] <= 0 || included[i] || i == max_index)
+    for (int i = 0; i < N; i++) {
+        if (weights[i] <= 0 || included[i] || i == max_index)
             continue;
 
-        else if(max_index < 0)
-        { max_index = i; }
+        else if (max_index < 0) {
+            max_index = i;
+        }
 
-        else
-        {
+        else {
             double vpu1 = values[max_index] / (double)weights[max_index];
             double vpu2 = values[i] / (double)weights[i];
-            if(vpu1 < vpu2)
-            { max_index = i; }
+            if (vpu1 < vpu2) {
+                max_index = i;
+            }
         }
     }
 
@@ -142,33 +139,32 @@ void stress_test_get_optimal_value() {
     int WEIGHT_LIMIT = 2000000;
     int VALUE_LIMIT = 2000000;
 
-    while(true)
-    {
+    while (true) {
         const int n = (rand() % N_LIMIT) + 1;
         const int capacity = (rand() % CAPACITY_LIMIT);
         vector<int> weights;
         vector<int> values;
         // instantiate the weights and values
-        for(int i = 0; i < n; i++)
-        {
+        for (int i = 0; i < n; i++) {
             weights.push_back((rand() % WEIGHT_LIMIT) + 1);
             values.push_back((rand() % VALUE_LIMIT) + 1);
         }
 
-        double naive_answer
-            = get_optimal_value_naive(capacity, weights, values);
+        double naive_answer =
+            get_optimal_value_naive(capacity, weights, values);
         double fast_answer = get_optimal_value(capacity, weights, values);
 
-        if(!equal_values(naive_answer, fast_answer, 4))
-        {
+        if (!equal_values(naive_answer, fast_answer, 4)) {
             cout << "weights: ";
-            for(int w : weights)
-            { cout << w << " "; }
+            for (int w : weights) {
+                cout << w << " ";
+            }
             cout << "\n";
 
             cout << "values: ";
-            for(int v : values)
-            { cout << v << " "; }
+            for (int v : values) {
+                cout << v << " ";
+            }
             cout << "\n";
 
             std::cout << "Fractional Knapsack of n: " << n
@@ -180,7 +176,8 @@ void stress_test_get_optimal_value() {
         }
 
         test_counter++;
-        if(test_counter % 1000 == 0)
-        { std::cout << "TEST " << test_counter << "  PASSED\n"; }
+        if (test_counter % 1000 == 0) {
+            std::cout << "TEST " << test_counter << "  PASSED\n";
+        }
     }
 }

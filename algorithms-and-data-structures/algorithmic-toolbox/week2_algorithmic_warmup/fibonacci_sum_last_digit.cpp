@@ -20,15 +20,14 @@ int main() {
 }
 
 int fibonacci_sum_naive(long long n) {
-    if(n <= 1)
+    if (n <= 1)
         return n;
 
     long long previous = 0;
     long long current = 1;
     long long sum = 1;
 
-    for(long long i = 0; i < n - 1; ++i)
-    {
+    for (long long i = 0; i < n - 1; ++i) {
         long long tmp_previous = previous;
         previous = current;
         current = (tmp_previous + current) % 10;
@@ -39,7 +38,7 @@ int fibonacci_sum_naive(long long n) {
 }
 
 int fibonacci_sum_fast(long long n) {
-    if(n <= 1)
+    if (n <= 1)
         return n;
 
     // Summation of F(n) = F(n + 2) - 1
@@ -51,20 +50,19 @@ int fibonacci_sum_fast(long long n) {
     //  F(n + 2). F(n + 2)'s last digit can be calculated by looking at the
     //  pisano sequence (M = 10).
     int equivalence = n % pisano_ten_length;
-    if(equivalence == 0)
+    if (equivalence == 0)
         equivalence = pisano_ten_length;
 
     int previous = 0;
     int current = 1;
-    for(int i = 0; i <= equivalence; i++)
-    {
+    for (int i = 0; i <= equivalence; i++) {
         int temp_previous = previous;
         previous = current;
         current = (temp_previous + previous) % M;
     }
 
     // wrap around if 0
-    if(current == 0)
+    if (current == 0)
         return 9;
     else
         return current - 1;
@@ -73,22 +71,21 @@ int fibonacci_sum_fast(long long n) {
 void stress_test_fibonacci_sum() {
     srand(time(NULL));
     unsigned int test_counter = 0;
-    while(true)
-    {
+    while (true) {
         const long long n = (rand() % 10000000) + 1;
         long long naive_answer = fibonacci_sum_naive(n);
         long long fast_answer = fibonacci_sum_fast(n);
 
-        if(naive_answer != fast_answer)
-        {
+        if (naive_answer != fast_answer) {
             std::cout << "Fibonacci of: " << n << "  answer: " << naive_answer
                       << "  result: " << fast_answer << "\n";
             break;
         }
 
         test_counter++;
-        if(test_counter % 1000 == 0)
-        { std::cout << "TEST " << test_counter << "  PASSED\n"; }
+        if (test_counter % 1000 == 0) {
+            std::cout << "TEST " << test_counter << "  PASSED\n";
+        }
     }
 }
 

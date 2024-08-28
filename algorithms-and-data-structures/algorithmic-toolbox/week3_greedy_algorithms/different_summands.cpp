@@ -13,8 +13,9 @@ int main() {
     std::cin >> n;
     vector<int> summands = optimal_summands(n);
     std::cout << summands.size() << '\n';
-    for(size_t i = 0; i < summands.size(); ++i)
-    { std::cout << summands[i] << ' '; }
+    for (size_t i = 0; i < summands.size(); ++i) {
+        std::cout << summands[i] << ' ';
+    }
     cout << "\n";
     stress_test_optimal_summands();
 }
@@ -29,10 +30,8 @@ vector<int> optimal_summands_naive(int n) {
 
     int curr_prize = 1;
     vector<int> summands;
-    while(n > 0)
-    {
-        if(n - curr_prize < curr_prize + 1)
-        {
+    while (n > 0) {
+        if (n - curr_prize < curr_prize + 1) {
             summands.push_back(n);
             break;
         }
@@ -52,13 +51,11 @@ vector<int> optimal_summands(int n) {
     // Which would also correspond to the minimum number of summands of n.
     int k = 1;
     vector<int> summands;
-    while(true)
-    {
+    while (true) {
         int next_sum = ((k + 1) * (k + 2)) / 2;
 
         // terminate if the next sum is going to exceed n
-        if(next_sum > n)
-        {
+        if (next_sum > n) {
             int remaining = n - (((k - 1) * k) / 2);
             summands.push_back(remaining);
             break;
@@ -66,8 +63,7 @@ vector<int> optimal_summands(int n) {
 
         // keep adding +1 to the summand as long as the next_sum allows it
         //	keep track of the current summand
-        else
-        {
+        else {
             summands.push_back(k);
             k++;
         }
@@ -81,18 +77,17 @@ void stress_test_optimal_summands() {
     unsigned int test_counter = 0;
     int N_LIMIT = 1000000000;
 
-    while(true)
-    {
+    while (true) {
         const int n = (rand() % N_LIMIT) + 1;
 
         vector<int> naive_answer = optimal_summands_naive(n);
         vector<int> fast_answer = optimal_summands(n);
 
-        if(naive_answer != fast_answer)
-        {
+        if (naive_answer != fast_answer) {
             cout << "Fast answer: ";
-            for(int i : fast_answer)
-            { cout << i << " "; }
+            for (int i : fast_answer) {
+                cout << i << " ";
+            }
             cout << "\n";
 
             std::cout << "Optimal Summands of n: " << n
@@ -103,7 +98,8 @@ void stress_test_optimal_summands() {
         }
 
         test_counter++;
-        if(test_counter % 1000 == 0)
-        { std::cout << "TEST " << test_counter << "  PASSED\n"; }
+        if (test_counter % 1000 == 0) {
+            std::cout << "TEST " << test_counter << "  PASSED\n";
+        }
     }
 }

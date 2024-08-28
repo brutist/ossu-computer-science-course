@@ -21,8 +21,9 @@ int main() {
     std::cin >> n;
     vector<int> x(n);
     vector<int> y(n);
-    for(size_t i = 0; i < n; i++)
-    { std::cin >> x[i] >> y[i]; }
+    for (size_t i = 0; i < n; i++) {
+        std::cin >> x[i] >> y[i];
+    }
     std::cout << std::fixed;
     std::cout << std::setprecision(9) << minimal_distance(x, y) << "\n";
 }
