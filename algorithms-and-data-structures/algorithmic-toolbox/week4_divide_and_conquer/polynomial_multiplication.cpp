@@ -3,7 +3,7 @@
 
 using namespace std;
 
-vector<int> poly_mult(vector<int> A, vector<int> B, int n) {
+vector<int> poly_mult_naive(vector<int> A, vector<int> B, int n) {
     int product_size = (2 * n) - 1;
     vector<int> product(product_size, 0);
 
@@ -26,7 +26,7 @@ int main() {
         cin >> A[i] >> B[i];
     }
 
-    for (int i : poly_mult(A, B, n)) {
+    for (int i : poly_mult_naive(A, B, n)) {
         cout << i << " ";
     }
 
