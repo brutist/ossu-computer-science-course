@@ -4,12 +4,24 @@
 
 using std::vector;
 
-int get_majority_element(vector<int> &a, int left, int right) {
-    if (left == right)
-        return -1;
-    if (left + 1 == right)
-        return a[left];
-    // write your code here
+// return the majority element in the vector (strictly > (n/2))
+int get_majority_element_naive(vector<int> &a) {
+    int n = a.size();
+    for (int i = 0; i < n; i++) {
+        int current_element = a[i];
+        int count = 0;
+
+        for (int j = 0; j < n; j++) {
+            if (a[j] == current_element) {
+                count++;
+            }
+
+            if (count > (n / 2)) {
+                return current_element;
+            }
+        }
+    }
+
     return -1;
 }
 
@@ -20,5 +32,5 @@ int main() {
     for (size_t i = 0; i < a.size(); ++i) {
         std::cin >> a[i];
     }
-    std::cout << (get_majority_element(a, 0, a.size()) != -1) << '\n';
+    std::cout << (get_majority_element_naive(a) != -1) << '\n';
 }
