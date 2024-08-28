@@ -1,7 +1,8 @@
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
-int main() {
+int main()
+{
     int n = 200000;
     srand(time(NULL));
 
@@ -11,9 +12,10 @@ int main() {
     fn << n << "\n";
 
     // writer to the file
-    for (int i = 0; i < n; i++) {
-        fn << std::rand() << " ";
-    }
+    for(int i = 0; i < n; i++)
+        {
+            fn << std::rand() << " ";
+        }
 
     fn.close();
 
