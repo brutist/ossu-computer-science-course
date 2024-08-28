@@ -20,8 +20,7 @@
 // fibonacci_fast (and the lines reading the input),
 //    and submit it to the grader.
 
-long long fibonacci_naive(int n)
-{
+long long fibonacci_naive(int n) {
     long long k = n;
     if(k <= 1)
         return k;
@@ -29,8 +28,7 @@ long long fibonacci_naive(int n)
     return fibonacci_naive(k - 1) + fibonacci_naive(k - 2);
 }
 
-long long fibonacci_fast(int n)
-{
+long long fibonacci_fast(int n) {
     if(n <= 0)
         return 0;
     if(n == 1)
@@ -41,33 +39,29 @@ long long fibonacci_fast(int n)
     fib_answers[0] = 0; // instantiate the first 2 values to start
     fib_answers[1] = 1;
     for(int i = 2; i < n + 1; i++)
-        {
-            fib_answers[i] = fib_answers[i - 1] + fib_answers[i - 2];
-        }
+    { fib_answers[i] = fib_answers[i - 1] + fib_answers[i - 2]; }
 
     return fib_answers[n];
 }
 
-void test_solution(int n)
-{
+void test_solution(int n) {
     for(int i = 0; i < n + 1; i++)
+    {
+        long long fast_answer = fibonacci_fast(i);
+        long long naive_answer = fibonacci_naive(i);
+
+        if(fast_answer != naive_answer)
         {
-            long long fast_answer = fibonacci_fast(i);
-            long long naive_answer = fibonacci_naive(i);
-
-            if(fast_answer != naive_answer)
-                {
-                    std::cout << "Answer: " << naive_answer
-                              << " Result: " << fast_answer << "\n";
-                    break;
-                }
-
-            std::cout << "Fibonacci " << i << " = " << fast_answer << "\n";
+            std::cout << "Answer: " << naive_answer
+                      << " Result: " << fast_answer << "\n";
+            break;
         }
+
+        std::cout << "Fibonacci " << i << " = " << fast_answer << "\n";
+    }
 }
 
-int main()
-{
+int main() {
     int n = 0;
     std::cin >> n;
     std::cout << fibonacci_fast(n);

@@ -10,8 +10,7 @@ long long get_pisano_length(long long m);
 void test_pisano_length();
 void time_fibonacci_sum_fast();
 
-int main()
-{
+int main() {
     long long n = 0;
     cin >> n;
     cout << fibonacci_sum_fast(n) << "\n";
@@ -20,8 +19,7 @@ int main()
     // time_fibonacci_sum_fast();
 }
 
-int fibonacci_sum_naive(long long n)
-{
+int fibonacci_sum_naive(long long n) {
     if(n <= 1)
         return n;
 
@@ -30,18 +28,17 @@ int fibonacci_sum_naive(long long n)
     long long sum = 1;
 
     for(long long i = 0; i < n - 1; ++i)
-        {
-            long long tmp_previous = previous;
-            previous = current;
-            current = (tmp_previous + current) % 10;
-            sum = (sum + current) % 10;
-        }
+    {
+        long long tmp_previous = previous;
+        previous = current;
+        current = (tmp_previous + current) % 10;
+        sum = (sum + current) % 10;
+    }
 
     return sum;
 }
 
-int fibonacci_sum_fast(long long n)
-{
+int fibonacci_sum_fast(long long n) {
     if(n <= 1)
         return n;
 
@@ -60,11 +57,11 @@ int fibonacci_sum_fast(long long n)
     int previous = 0;
     int current = 1;
     for(int i = 0; i <= equivalence; i++)
-        {
-            int temp_previous = previous;
-            previous = current;
-            current = (temp_previous + previous) % M;
-        }
+    {
+        int temp_previous = previous;
+        previous = current;
+        current = (temp_previous + previous) % M;
+    }
 
     // wrap around if 0
     if(current == 0)
@@ -73,34 +70,29 @@ int fibonacci_sum_fast(long long n)
         return current - 1;
 }
 
-void stress_test_fibonacci_sum()
-{
+void stress_test_fibonacci_sum() {
     srand(time(NULL));
     unsigned int test_counter = 0;
     while(true)
+    {
+        const long long n = (rand() % 10000000) + 1;
+        long long naive_answer = fibonacci_sum_naive(n);
+        long long fast_answer = fibonacci_sum_fast(n);
+
+        if(naive_answer != fast_answer)
         {
-            const long long n = (rand() % 10000000) + 1;
-            long long naive_answer = fibonacci_sum_naive(n);
-            long long fast_answer = fibonacci_sum_fast(n);
-
-            if(naive_answer != fast_answer)
-                {
-                    std::cout << "Fibonacci of: " << n
-                              << "  answer: " << naive_answer
-                              << "  result: " << fast_answer << "\n";
-                    break;
-                }
-
-            test_counter++;
-            if(test_counter % 1000 == 0)
-                {
-                    std::cout << "TEST " << test_counter << "  PASSED\n";
-                }
+            std::cout << "Fibonacci of: " << n << "  answer: " << naive_answer
+                      << "  result: " << fast_answer << "\n";
+            break;
         }
+
+        test_counter++;
+        if(test_counter % 1000 == 0)
+        { std::cout << "TEST " << test_counter << "  PASSED\n"; }
+    }
 }
 
-void time_fibonacci_sum_fast()
-{
+void time_fibonacci_sum_fast() {
     long long max_N = 100000000000000;
 
     double start_time = (double)clock() / CLOCKS_PER_SEC;
