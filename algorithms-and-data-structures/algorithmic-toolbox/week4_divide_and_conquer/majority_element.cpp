@@ -61,6 +61,33 @@ int get_majority_element(vector<int> &a) {
     return -1;
 }
 
+int get_majority_element_improved_helper(vector<int> &a, int start, int end) {
+    // Approach: Recusively search for the majority element of each half of the vector.
+    int n = a.size();
+    // the element in a single-item vector is the majority element
+    if (start == end) {
+        return a[start];
+    }
+
+    // Instantiate a vector of majority element containing the majority element of 
+    //  the left half (result[start] - result[half]) and the right half 
+    //  (result[half] - result[1])
+    vector<int> result(2, -1);
+    int half = (start + end) / 2;
+    result[0] = get_majority_element_improved((a.start, a.half), start, half);
+    result[1] = get_majority_element_improved((a.half, a.end), half, end);
+
+    if (result[0] == result[1]) {
+        return result[0];
+    }
+
+    return -1;
+}
+
+int get_majority_element_improved(vector<int> &a) {
+    return get_majority_element_improved_helper(a, 0, a.size());
+}
+
 void stress_test_majority_element() {
     srand(time(NULL));
     unsigned int test_counter = 0;
