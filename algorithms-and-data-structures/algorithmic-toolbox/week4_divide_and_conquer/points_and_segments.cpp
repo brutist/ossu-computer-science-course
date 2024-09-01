@@ -45,11 +45,16 @@ vector<int> fast_count_segments(vector<int> &starts, vector<int> &ends,
     int total_points = points.size();
     for (int i = 0; i < total_points; i++) {
         int classification = get<1>(points[i]);
+        
         if (classification == START) {
             counter++;
-        } else if (classification == END) {
+        } 
+        
+        else if (classification == END) {
             counter--;
-        } else if (classification == QUERY) {
+        } 
+        
+        else if (classification == QUERY) {
             int query_index = get<2>(points[i]);
             cnt[query_index] = counter;
         }
