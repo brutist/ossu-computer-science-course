@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <limits>
+#include <tuple>
 
 using namespace std;
 
@@ -28,9 +29,31 @@ double minimal_distance_naive(vector<int> &x, vector<int> &y) {
     return sqrt(min_distance_squared);
 }
 
+vector<int> sort_index(const vector<int> &keys) {
+    int n = keys.size();
+    vector<int> idx(n, 0);
+    for (int i = 0; i < n; i++) {
+        idx[i] = i;
+    }
+
+    sort(idx.begin(), idx.end(), 
+        [&](const int& a, const int& b) {   // apparently, this is lambda in c++
+            return (keys[a] < keys[b])
+        }
+    );
+
+    return idx;
+}
+
 double minimal_distance(vector<int> &x, vector<int> &y) {
-    // write your code here
-    return 0.;
+    // Maintain an index of the original vectors sorted in their x and y values
+    vector<int> x_idx = sort_index(x);
+    vector<int> y_idx = sort_index(y);
+
+    int n = min(x.size(), y.size());
+
+
+    return 0.0;
 }
 
 int main() {
