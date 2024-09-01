@@ -18,10 +18,10 @@ vector<int> poly_mult_naive(vector<int> A, vector<int> B, int n) {
 
 int main() {
     int n;
+    cin >> n;
     vector<int> A(n);
     vector<int> B(n);
 
-    cin >> n;
     for (int i = 0; i < n; i++) {
         cin >> A[i] >> B[i];
     }
