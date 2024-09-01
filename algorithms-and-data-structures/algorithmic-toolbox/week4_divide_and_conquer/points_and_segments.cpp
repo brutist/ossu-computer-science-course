@@ -1,8 +1,8 @@
-#include <iostream>
-#include <vector>
 #include <algorithm>
-#include <tuple>
+#include <iostream>
 #include <numeric>
+#include <tuple>
+#include <vector>
 
 using namespace std;
 
@@ -47,13 +47,11 @@ vector<int> fast_count_segments(vector<int> &starts, vector<int> &ends,
         int classification = get<1>(points[i]);
         if (classification == START) {
             counter++;
-        }
-        else if (classification == END) {
+        } else if (classification == END) {
             counter--;
-        }
-        else if (classification == QUERY) {
+        } else if (classification == QUERY) {
             int query_index = get<2>(points[i]);
-            cnt[query_index] = counter; 
+            cnt[query_index] = counter;
         }
     }
 
@@ -90,8 +88,10 @@ void stress_test_count_segments() {
             ends.push_back(r + rand() % (MAX_VALUE - r + 1));
         }
 
-        vector<int> naive_answer = naive_count_segments(starts, ends, query_points);
-        vector<int> fast_answer = fast_count_segments(starts, ends, query_points);
+        vector<int> naive_answer =
+            naive_count_segments(starts, ends, query_points);
+        vector<int> fast_answer =
+            fast_count_segments(starts, ends, query_points);
 
         if (naive_answer != fast_answer) {
 
@@ -136,11 +136,9 @@ void time_count_segments_max_inputs(int samples) {
     fast_count_segments(starts, ends, query_points);
     double time_diff = ((double)clock() / CLOCKS_PER_SEC) - start_time;
 
-    std::cout << "The time elapsed for fast with max input: " 
-              << time_diff << "\n";
+    std::cout << "The time elapsed for fast with max input: " << time_diff
+              << "\n";
 }
-
-
 
 int main() {
     int n, m;
@@ -159,6 +157,6 @@ int main() {
         std::cout << cnt[i] << ' ';
     }
 
-    //stress_test_count_segments();
-    //time_count_segments_max_inputs(1000);
+    // stress_test_count_segments();
+    // time_count_segments_max_inputs(1000);
 }
