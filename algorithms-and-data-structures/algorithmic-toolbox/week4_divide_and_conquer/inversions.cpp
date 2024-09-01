@@ -1,7 +1,7 @@
-#include <iostream>
-#include <vector>
-#include <tuple>
 #include <algorithm>
+#include <iostream>
+#include <tuple>
+#include <vector>
 
 using namespace std;
 
@@ -19,7 +19,8 @@ long long get_number_of_inversions_naive(vector<int> &a) {
     return number_of_inversions;
 }
 
-long long merge(vector<int> &a, vector<int> &aux, int left_start, int left_end, int right_end) {
+long long merge(vector<int> &a, vector<int> &aux, int left_start, int left_end,
+                int right_end) {
     // copy
     for (int n = left_start; n <= right_end; n++) {
         aux[n] = a[n];
@@ -49,7 +50,8 @@ long long merge(vector<int> &a, vector<int> &aux, int left_start, int left_end, 
     return inversion_count;
 }
 
-long long merge_sort(vector<int> &a, vector<int> &aux, int left_start, int right_end) {
+long long merge_sort(vector<int> &a, vector<int> &aux, int left_start,
+                     int right_end) {
     if (left_start >= right_end) {
         return 0;
     }
@@ -98,8 +100,8 @@ void stress_test_get_inversions() {
             cout << "\n";
 
             std::cout << "Inversions of n size: " << n
-                    << "  answer: " << naive_answer
-                    << "  result: " << fast_answer << "\n";
+                      << "  answer: " << naive_answer
+                      << "  result: " << fast_answer << "\n";
 
             break;
         }
@@ -110,8 +112,6 @@ void stress_test_get_inversions() {
         }
     }
 }
-
-
 
 int main() {
     int n;
@@ -124,5 +124,5 @@ int main() {
     vector<int> b(a.size());
     std::cout << merge_sort_wrapper(a) << '\n';
 
-    //stress_test_get_inversions();
+    // stress_test_get_inversions();
 }
