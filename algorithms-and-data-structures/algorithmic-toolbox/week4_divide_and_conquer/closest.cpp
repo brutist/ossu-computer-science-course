@@ -5,25 +5,42 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <limits>
 
-using std::min;
-using std::pair;
-using std::string;
-using std::vector;
+using namespace std;
 
-double minimal_distance(vector<int> x, vector<int> y) {
+double dist_squared(int x1, int y1, int x2, int y2) {
+    return ((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2));
+}
+
+double minimal_distance_naive(vector<int> &x, vector<int> &y) {
+    double min_distance_squared = numeric_limits<double>::max();
+    int n = min(x.size(), y.size());
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            double current_dist_squared = dist_squared(x[i], y[i], x[j], y[j]);
+            if(current_dist_squared < min_distance_squared) {
+                min_distance_squared = current_dist_squared;
+            }
+        }
+    }
+
+    return sqrt(min_distance_squared);
+}
+
+double minimal_distance(vector<int> &x, vector<int> &y) {
     // write your code here
     return 0.;
 }
 
 int main() {
     size_t n;
-    std::cin >> n;
+    cin >> n;
     vector<int> x(n);
     vector<int> y(n);
     for (size_t i = 0; i < n; i++) {
-        std::cin >> x[i] >> y[i];
+        cin >> x[i] >> y[i];
     }
-    std::cout << std::fixed;
-    std::cout << std::setprecision(9) << minimal_distance(x, y) << "\n";
+    cout << fixed;
+    cout << setprecision(4) << minimal_distance_naive(x, y) << "\n";
 }
