@@ -14,8 +14,8 @@ class SearchPoints {
     vector<int> y;
 
     double dist_squared(int x1, int y1, int x2, int y2) {
-        double x_sq = (long long) (x1 - x2) * (x1 - x2);
-        double y_sq = (long long) (y1 - y2) * (y1 - y2);
+        double x_sq = (long long)(x1 - x2) * (x1 - x2);
+        double y_sq = (long long)(y1 - y2) * (y1 - y2);
         return x_sq + y_sq;
     }
 
@@ -51,33 +51,29 @@ class SearchPoints {
         }
 
         sort(idx.begin(), idx.end(),
-            [&](const int &a, const int &b) {
-                return (keys[a] < keys[b]);
-            });
+             [&](const int &a, const int &b) { return (keys[a] < keys[b]); });
 
         return idx;
     }
 
     double strip_closest(vector<int> &idx, double min_dist) {
-        double min = min_dist * min_dist;  
-        
+        double min = min_dist * min_dist;
+
         // sort by y coordinates
         sort(idx.begin(), idx.end(),
-             [&](const int &a,
-                 const int &b) { 
-                 return (y[a] < y[b]);
-             });
-        
+             [&](const int &a, const int &b) { return (y[a] < y[b]); });
+
         int n = idx.size();
         for (int i = 0; i < n; i++) {
             for (int j = i + 1; j < n && (y[idx[j]] - y[idx[i]]) < min; j++) {
-                double curr_dist = dist_squared(x[idx[j]], y[idx[j]], x[idx[i]], y[idx[i]]);
+                double curr_dist =
+                    dist_squared(x[idx[j]], y[idx[j]], x[idx[i]], y[idx[i]]);
                 if (curr_dist < min) {
                     min = curr_dist;
                 }
             }
         }
-        
+
         return sqrt(min);
     }
 
@@ -93,7 +89,7 @@ class SearchPoints {
             return minimal_distance_naive(idx, start, end);
         }
 
-        // Find the midpoint and recursive calculate the smallest distance of 
+        // Find the midpoint and recursive calculate the smallest distance of
         //  the left and right subsections. Find the minimum between the two.
         int mid = (start + end) / 2;
         double d1 = minimal_distance_util(idx, start, mid);
@@ -110,7 +106,7 @@ class SearchPoints {
                 strip_indexes.push_back(idx[i]);
             }
         }
-        
+
         double strip_min_dist = strip_closest(strip_indexes, d);
         return min(d, strip_min_dist);
     }
@@ -122,7 +118,7 @@ class SearchPoints {
         int end = min(x.size(), y.size()) - 1;
         vector<int> sorted_x_idx = sort_index(x, start, end);
 
-        // use recursive function minimal_distance_util to find the 
+        // use recursive function minimal_distance_util to find the
         //  smallest distance
         return minimal_distance_util(sorted_x_idx, start, end);
     }
@@ -154,12 +150,12 @@ void stress_test_minimal_distance() {
         double naive_answer = points.minimal_distance_naive_wrapper();
         double fast_answer = points.minimal_distance();
         double epsilon = 0.000001;
-        
+
         if (abs(naive_answer - fast_answer) > epsilon) {
             if (points.x != original_x || points.y != original_y) {
                 cout << "Mutation on minimal_distance()\n";
             }
-            
+
             cout << "x: ";
             for (int i : x) {
                 string spacer = "";
@@ -178,12 +174,11 @@ void stress_test_minimal_distance() {
                 }
                 cout << spacer << i << "  ";
             }
-            cout << "\n"; 
+            cout << "\n";
 
             cout << "Closest Points NAIVE answer: " << naive_answer << "\n";
             cout << "Closest Points FAST answer: " << fast_answer << "\n\n";
 
-          
             break;
         }
 
@@ -193,7 +188,6 @@ void stress_test_minimal_distance() {
         }
     }
 }
-
 
 int main() {
     size_t n;
