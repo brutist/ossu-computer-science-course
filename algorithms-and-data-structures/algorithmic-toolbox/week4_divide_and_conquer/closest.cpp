@@ -51,7 +51,6 @@ class SearchPoints {
         return idx;
     }
 
-
     double strip_closest(vector<int> &idx, double min_dist) {
         double min = min_dist * min_dist;  
         
@@ -140,6 +139,9 @@ void stress_test_minimal_distance() {
             y.push_back(MIN_VALUE + rand() % (MAX_VALUE - MIN_VALUE + 1));
         }
 
+        vector<int> original_x(x);
+        vector<int> original_y(y);
+
         SearchPoints points;
         points.x = x;
         points.y = y;
@@ -149,7 +151,7 @@ void stress_test_minimal_distance() {
         double epsilon = 0.000001;
         
         if (abs(naive_answer - fast_answer) > epsilon) {
-            if (points.x != x || points.y != y) {
+            if (points.x != original_x || points.y != original_y) {
                 cout << "Mutation on minimal_distance()\n";
             }
 
