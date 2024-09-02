@@ -14,16 +14,18 @@ class SearchPoints {
     vector<int> y;
 
     double dist_squared(int x1, int y1, int x2, int y2) {
-        return ((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2));
+        double x_sq = (long long) (x1 - x2) * (x1 - x2);
+        double y_sq = (long long) (y1 - y2) * (y1 - y2);
+        return x_sq + y_sq;
     }
 
-    double minimal_distance_naive(int start, int end) {
+    double minimal_distance_naive(vector<int> &idx, int start, int end) {
         double min_distance_squared = numeric_limits<double>::max();
 
         for (int i = start; i <= end; i++) {
             for (int j = i + 1; j <= end; j++) {
                 double current_dist_squared =
-                    dist_squared(x[i], y[i], x[j], y[j]);
+                    dist_squared(x[idx[i]], y[idx[i]], x[idx[j]], y[idx[j]]);
                 if (current_dist_squared < min_distance_squared) {
                     min_distance_squared = current_dist_squared;
                 }
@@ -34,7 +36,12 @@ class SearchPoints {
     }
 
     double minimal_distance_naive_wrapper() {
-        return minimal_distance_naive(0, x.size() - 1);
+        int n = x.size();
+        vector<int> idx(n);
+        for (int i = 0; i < n; i++) {
+            idx[i] = i;
+        }
+        return minimal_distance_naive(idx, 0, n - 1);
     }
 
     vector<int> sort_index(const vector<int> &keys, int start, int end) {
@@ -83,7 +90,7 @@ class SearchPoints {
 
         int n = (end - start) + 1;
         if (n <= 3) {
-            return minimal_distance_naive(start, end);
+            return minimal_distance_naive(idx, start, end);
         }
 
         // Find the midpoint and recursive calculate the smallest distance of 
@@ -92,19 +99,20 @@ class SearchPoints {
         double d1 = minimal_distance_util(idx, start, mid);
         double d2 = minimal_distance_util(idx, mid + 1, end);
         double d = min(d1, d2);
-        
+
         // Create a vector of indexes to the x and y values that is within
         //  -d -> +d of middle boundary
         int mid_x = x[idx[mid]];
         vector<int> strip_indexes;
         for (int i = start; i <= end; i++) {
             double delta_x = abs(x[idx[i]] - mid_x);
-            if (delta_x < d) {
+            if (delta_x <= d) {
                 strip_indexes.push_back(idx[i]);
             }
         }
-
-        return min(d, strip_closest(strip_indexes, d));
+        
+        double strip_min_dist = strip_closest(strip_indexes, d);
+        return min(d, strip_min_dist);
     }
 
     double minimal_distance() {
@@ -123,12 +131,9 @@ class SearchPoints {
 void stress_test_minimal_distance() {
     srand(time(NULL));
     unsigned int test_counter = 0;
-    int N_LIMIT = 10;
-    int MIN_VALUE = -10;
-    int MAX_VALUE = 10;
-
-    int fail_threshold = 10;
-    int failed_test = 0;
+    int N_LIMIT = 100;
+    int MIN_VALUE = -1000000000;
+    int MAX_VALUE = 1000000000;
 
     while (true) {
         const int n = (rand() % N_LIMIT) + 1;
@@ -154,7 +159,7 @@ void stress_test_minimal_distance() {
             if (points.x != original_x || points.y != original_y) {
                 cout << "Mutation on minimal_distance()\n";
             }
-
+            
             cout << "x: ";
             for (int i : x) {
                 string spacer = "";
@@ -173,16 +178,13 @@ void stress_test_minimal_distance() {
                 }
                 cout << spacer << i << "  ";
             }
-            cout << "\n";
+            cout << "\n"; 
 
             cout << "Closest Points NAIVE answer: " << naive_answer << "\n";
             cout << "Closest Points FAST answer: " << fast_answer << "\n\n";
 
-            failed_test++;
-            if (fail_threshold == failed_test) {
-                break;
-            }
-            
+          
+            break;
         }
 
         test_counter++;
