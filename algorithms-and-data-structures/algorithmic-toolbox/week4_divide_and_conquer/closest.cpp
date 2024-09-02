@@ -3,7 +3,6 @@
 #include <iomanip>
 #include <iostream>
 #include <limits>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -39,22 +38,23 @@ class SearchPoints {
     }
 
     vector<int> sort_index(const vector<int> &keys, int start, int end) {
-        int total = (end - start) + 1;
-        vector<int> idx(total, 0);
+        vector<int> idx;
         for (int i = start; i <= end; i++) {
-            idx[i] = i;
+            idx.push_back(i);
         }
 
         sort(idx.begin(), idx.end(),
-             [&](const int &a,
-                 const int &b) { // apparently, this is lambda in c++
-                 return (keys[a] < keys[b]);
-             });
+            [&](const int &a, const int &b) {
+                return (keys[a] < keys[b]);
+            });
 
         return idx;
     }
 
-    double strip_closest(vector<int> idx, double min_dist) {
+
+    double strip_closest(vector<int> &idx, double min_dist) {
+        double min = min_dist * min_dist;  
+        
         // sort by y coordinates
         sort(idx.begin(), idx.end(),
              [&](const int &a,
@@ -64,18 +64,18 @@ class SearchPoints {
         
         int n = idx.size();
         for (int i = 0; i < n; i++) {
-            for (int j = i + 1; j < n && (y[idx[j]] - y[idx[i]]) < min_dist; j++) {
-                double curr_dist = sqrt(dist_squared(x[idx[j]], y[idx[j]], x[idx[i]], y[idx[i]]));
-                if (curr_dist < min_dist) {
-                    min_dist = curr_dist;
+            for (int j = i + 1; j < n && (y[idx[j]] - y[idx[i]]) < min; j++) {
+                double curr_dist = dist_squared(x[idx[j]], y[idx[j]], x[idx[i]], y[idx[i]]);
+                if (curr_dist < min) {
+                    min = curr_dist;
                 }
             }
         }
-
-        return min_dist;
+        
+        return sqrt(min);
     }
 
-    double minimal_distance_util(vector<int> idx, int start, int end) {
+    double minimal_distance_util(vector<int> &idx, int start, int end) {
         // Approach: Recursively find the minimum distance (d1 and d2) between
         //          two points in the two half of the sorted (by x-coors)
         //          points. Let d be the minimum between (d1 and d2). Search a
@@ -94,12 +94,12 @@ class SearchPoints {
         double d2 = minimal_distance_util(idx, mid + 1, end);
         double d = min(d1, d2);
         
-        // Since idx is the index of sorted x coordinates, we can use this to 
-        //  identify the start and end indexes of the strip (-d < mid_x < +d)
+        // Create a vector of indexes to the x and y values that is within
+        //  -d -> +d of middle boundary
         int mid_x = x[idx[mid]];
         vector<int> strip_indexes;
         for (int i = start; i <= end; i++) {
-            int delta_x = abs(x[idx[i]] - mid_x);
+            double delta_x = abs(x[idx[i]] - mid_x);
             if (delta_x < d) {
                 strip_indexes.push_back(idx[i]);
             }
@@ -111,9 +111,8 @@ class SearchPoints {
     double minimal_distance() {
         // Maintain an index of the original vectors sorted in their x and y
         // values
-        int n = min(x.size(), y.size());
         int start = 0;
-        int end = n - 1;
+        int end = min(x.size(), y.size()) - 1;
         vector<int> sorted_x_idx = sort_index(x, start, end);
 
         // use recursive function minimal_distance_util to find the 
@@ -125,9 +124,12 @@ class SearchPoints {
 void stress_test_minimal_distance() {
     srand(time(NULL));
     unsigned int test_counter = 0;
-    int N_LIMIT = 100;
-    int MIN_VALUE = -100000000;
-    int MAX_VALUE = 100000000;
+    int N_LIMIT = 10;
+    int MIN_VALUE = -10;
+    int MAX_VALUE = 10;
+
+    int fail_threshold = 10;
+    int failed_test = 0;
 
     while (true) {
         const int n = (rand() % N_LIMIT) + 1;
@@ -142,18 +144,43 @@ void stress_test_minimal_distance() {
         points.x = x;
         points.y = y;
 
-        
         double naive_answer = points.minimal_distance_naive_wrapper();
         double fast_answer = points.minimal_distance();
-        double epsilon = 0.00001;
-
+        double epsilon = 0.000001;
+        
         if (abs(naive_answer - fast_answer) > epsilon) {
-            
+            if (points.x != x || points.y != y) {
+                cout << "Mutation on minimal_distance()\n";
+            }
+
+            cout << "x: ";
+            for (int i : x) {
+                string spacer = "";
+                if (i >= 0) {
+                    spacer = " ";
+                }
+                cout << spacer << i << "  ";
+            }
+            cout << "\n";
+
+            cout << "y: ";
+            for (int i : y) {
+                string spacer = "";
+                if (i >= 0) {
+                    spacer = " ";
+                }
+                cout << spacer << i << "  ";
+            }
+            cout << "\n";
+
             cout << "Closest Points NAIVE answer: " << naive_answer << "\n";
+            cout << "Closest Points FAST answer: " << fast_answer << "\n\n";
+
+            failed_test++;
+            if (fail_threshold == failed_test) {
+                break;
+            }
             
-            cout << "Closest Points FAST answer: " << fast_answer << "\n";
-      
-            break;
         }
 
         test_counter++;
