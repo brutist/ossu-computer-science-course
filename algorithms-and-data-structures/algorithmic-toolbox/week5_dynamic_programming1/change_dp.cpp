@@ -1,7 +1,7 @@
-#include <iostream>
-#include <vector>
 #include <algorithm>
+#include <iostream>
 #include <limits>
+#include <vector>
 
 using namespace std;
 
@@ -13,20 +13,21 @@ int get_change_naive_util(int m, int num_coins, int denoms[]) {
     int min_coins = numeric_limits<int>::max();
     for (int i = 0; i < 3; i++) {
         if (m >= denoms[i]) {
-            min_coins = min(min_coins, get_change_naive_util(m - denoms[i], num_coins + 1, denoms));
+            min_coins =
+                min(min_coins, get_change_naive_util(m - denoms[i],
+                                                     num_coins + 1, denoms));
         }
     }
 
     return min_coins;
 }
 
-
 int get_change_naive(int m) {
     int denoms[] = {1, 3, 4};
     return get_change_naive_util(m, 0, denoms);
 }
 
-int get_change_util(int m, int coins, vector<int> &memo) {
+int get_change_util(int m, int coins, int memo[], vector<int> &denoms) {
     if (memo[m] != 0) {
         return memo[m] + coins;
     }
@@ -35,27 +36,26 @@ int get_change_util(int m, int coins, vector<int> &memo) {
         return coins;
     }
 
-    vector<int> denoms = {1, 3, 4};
     int n = denoms.size();
-    vector<int> min_coins;
+    int min_coins = numeric_limits<int>::max();
     for (int i = 0; i < n; i++) {
         if (m >= denoms[i]) {
-            min_coins.push_back(get_change_util(m - denoms[i], coins + 1, memo));
+            min_coins = min(min_coins, get_change_util(m - denoms[i], coins + 1,
+                                                       memo, denoms));
         }
     }
 
-    return *min_element(min_coins.begin(), min_coins.end());
+    return min_coins;
 }
-
 
 // memoisation implementation
 int get_change(int m) {
-    vector<int> memo(m + 1, 0);
+    int memo[m + 1] = {0};
 
     int change = 1;
     vector<int> denoms = {1, 3, 4};
     while (change <= m) {
-        int min_coins = get_change_util(change, 0, memo);
+        int min_coins = get_change_util(change, 0, memo, denoms);
         memo[change] = min_coins;
         change++;
     }
@@ -95,16 +95,15 @@ void time_get_change_max_inputs() {
     get_change(M_LIMIT);
     double time_diff = ((double)clock() / CLOCKS_PER_SEC) - start_time;
 
-    std::cout << "The time elapsed for fast get_change with max input: " << time_diff
-              << "\n";
+    std::cout << "The time elapsed for fast get_change with max input: "
+              << time_diff << "\n";
 }
-
 
 int main() {
     int m;
     std::cin >> m;
     std::cout << get_change(m) << '\n';
 
-    //stress_test_get_change();
-    //time_get_change_max_inputs();
+    stress_test_get_change();
+    // time_get_change_max_inputs();
 }
