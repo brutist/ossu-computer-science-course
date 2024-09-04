@@ -104,6 +104,6 @@ int main() {
     std::cin >> m;
     std::cout << get_change(m) << '\n';
 
-    stress_test_get_change();
-    // time_get_change_max_inputs();
+    // stress_test_get_change();
+    //  time_get_change_max_inputs();
 }
