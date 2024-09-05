@@ -189,7 +189,6 @@ void stress_test_minimal_distance() {
     }
 }
 
-<<<<<<< HEAD
 void time_closest() {
     srand(time(NULL));
     int N_LIMIT = 200000;
@@ -209,15 +208,14 @@ void time_closest() {
 
     double start_time = (double)clock() / CLOCKS_PER_SEC;
     points.minimal_distance();
-    double time_diff = ((double)clock() / CLOCKS_PER_SEC) - start_time;
+    double time_diff =
+        ((double)clock() / CLOCKS_PER_SEC) - start_time;
 
-    std::cout << "The time elapsed for fast with max input: " << time_diff
-              << " seconds \n";
+    std::cout << "The time elapsed for fast with max input: "
+            << time_diff << " seconds \n";
 }
 
 
-=======
->>>>>>> af56cd524e14a24546ccc2684b061fd9944c6e5b
 int main() {
     size_t n;
     cin >> n;
@@ -233,6 +231,6 @@ int main() {
     cout << fixed;
     cout << setprecision(4) << points.minimal_distance() << "\n";
 
-    // stress_test_minimal_distance();
-    // time_closest();
+    //stress_test_minimal_distance();
+    //time_closest();
 }
