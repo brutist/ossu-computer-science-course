@@ -120,6 +120,6 @@ int main() {
     }
     std::cout << optimal_weight(W, w) << '\n';
 
-    stress_test_optimal_weight();
+    //stress_test_optimal_weight();
     //time_optimal_weight_max_inputs();
 }
