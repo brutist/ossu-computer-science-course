@@ -21,7 +21,6 @@ class SumPartition {
         int size = A.size();
 
         vector<vector<int>> dp(sum + 1, vector<int>(sum + 1, 0));
-        dp[0][0] = true;
 
         // process the numbers one by one
         for (int i = 0; i < size; i++) {
@@ -34,7 +33,7 @@ class SumPartition {
                 }
             }
         }
-        
+
         return dp[sum / 3][sum / 3];
     }
 
@@ -130,7 +129,7 @@ void time_partition3() {
     SumPartition sp = {weights};
 
     double start_time = (double)clock() / CLOCKS_PER_SEC;
-    sp.partition3();
+    sp.canPartition();
     double time_diff = ((double)clock() / CLOCKS_PER_SEC) - start_time;
 
     std::cout << "The time elapsed for fast partition3 with max input: "
@@ -146,8 +145,8 @@ int main() {
     }
 
     SumPartition sp = {A};
-    std::cout << sp.partition3() << '\n';
+    std::cout << sp.canPartition() << '\n';
 
-    stress_test_partition3();
+    //stress_test_partition3();
     //time_partition3();
 }
