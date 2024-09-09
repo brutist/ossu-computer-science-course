@@ -80,10 +80,8 @@ void stress_test_optimal_weight() {
         int fast_answer = optimal_weight(capacity, weights);
 
         if (naive_answer != fast_answer) {
-            std::cout << "KNAPSACK NAIVE answer: " << naive_answer
-                      << "\n";
-            std::cout << "KNAPSACK FAST answer: " << fast_answer
-                      << "\n\n";
+            std::cout << "KNAPSACK NAIVE answer: " << naive_answer << "\n";
+            std::cout << "KNAPSACK FAST answer: " << fast_answer << "\n\n";
 
             break;
         }
@@ -102,13 +100,13 @@ void time_optimal_weight_max_inputs() {
     int MIN_VALUE = 0;
     int MAX_VALUE = 100000;
     vector<int> weights = generate_random_vector(n, MIN_VALUE, MAX_VALUE);
-    
+
     double start_time = (double)clock() / CLOCKS_PER_SEC;
     optimal_weight(W, weights);
     double time_diff = ((double)clock() / CLOCKS_PER_SEC) - start_time;
 
     std::cout << "The time elapsed for fast optimal_weight with max input: "
-            << time_diff << "\n";
+              << time_diff << "\n";
 }
 
 int main() {
@@ -120,6 +118,6 @@ int main() {
     }
     std::cout << optimal_weight(W, w) << '\n';
 
-    //stress_test_optimal_weight();
-    //time_optimal_weight_max_inputs();
+    // stress_test_optimal_weight();
+    // time_optimal_weight_max_inputs();
 }

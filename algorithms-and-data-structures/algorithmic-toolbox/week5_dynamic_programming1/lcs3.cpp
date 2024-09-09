@@ -106,8 +106,8 @@ class LCS3 {
             if (naive_answer != fast_answer) {
                 std::cout << "Longest Subsequence 3 NAIVE answer: "
                           << naive_answer << "\n";
-                std::cout << "Longest Subsequence 3 FAST answer: " << fast_answer
-                          << "\n\n";
+                std::cout << "Longest Subsequence 3 FAST answer: "
+                          << fast_answer << "\n\n";
 
                 break;
             }

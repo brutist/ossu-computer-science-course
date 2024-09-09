@@ -127,8 +127,6 @@ void time_optimal_sequence_max_inputs() {
               << time_diff << "  seconds \n";
 }
 
-
-
 int main() {
     int n;
     std::cin >> n;
@@ -139,6 +137,6 @@ int main() {
     }
 
     std::cout << "\n";
-    //stress_test_optimal_sequence();
+    // stress_test_optimal_sequence();
     time_optimal_sequence_max_inputs();
 }

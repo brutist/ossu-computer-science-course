@@ -208,13 +208,11 @@ void time_closest() {
 
     double start_time = (double)clock() / CLOCKS_PER_SEC;
     points.minimal_distance();
-    double time_diff =
-        ((double)clock() / CLOCKS_PER_SEC) - start_time;
+    double time_diff = ((double)clock() / CLOCKS_PER_SEC) - start_time;
 
-    std::cout << "The time elapsed for fast with max input: "
-            << time_diff << " seconds \n";
+    std::cout << "The time elapsed for fast with max input: " << time_diff
+              << " seconds \n";
 }
-
 
 int main() {
     size_t n;
@@ -231,6 +229,6 @@ int main() {
     cout << fixed;
     cout << setprecision(4) << points.minimal_distance() << "\n";
 
-    //stress_test_minimal_distance();
-    //time_closest();
+    // stress_test_minimal_distance();
+    // time_closest();
 }

@@ -1,14 +1,13 @@
+#include <algorithm>
 #include <iostream>
 #include <limits>
 #include <string>
 #include <vector>
-#include <algorithm>
 
 using std::min;
 using std::numeric_limits;
 using std::string;
 using std::vector;
-using std::string;
 
 class EditDistance {
   public:
@@ -24,11 +23,11 @@ class EditDistance {
         //              match     - D(row-1, col-1)    if str1[row] == str2[col]
         //              mismatch  - D(row-1, col-1) +1 if str1[row] != str2[col]
         if (i == 0) {
-            return j;    // instantiate first row D(0, j) = j 
+            return j; // instantiate first row D(0, j) = j
         }
 
         if (j == 0) {
-            return i;   // instantiate first column D(i, 0) = i
+            return i; // instantiate first column D(i, 0) = i
         }
 
         int insertion = dp_array[i][j - 1] + 1;
@@ -64,16 +63,18 @@ class EditDistance {
     }
 
     int edit_distance_naive_util(int m, int n) {
-        if (m == 0) return n;
-        if (n == 0) return m;
+        if (m == 0)
+            return n;
+        if (n == 0)
+            return m;
 
         if (str1[m - 1] == str2[n - 1]) {
             return edit_distance_naive_util(m - 1, n - 1);
         }
 
-        return 1 + min({edit_distance_naive_util(m, n - 1),         // insertion
-                        edit_distance_naive_util(m - 1, n),         // deletion
-                        edit_distance_naive_util(m - 1, n - 1)});   // mismatch
+        return 1 + min({edit_distance_naive_util(m, n - 1),       // insertion
+                        edit_distance_naive_util(m - 1, n),       // deletion
+                        edit_distance_naive_util(m - 1, n - 1)}); // mismatch
     }
 
     // wrapper function to calculate the edit distance recursively
@@ -87,7 +88,7 @@ class EditDistance {
 
         for (int i = 0; i < length; i++) {
             random_string += alphabet[rand() % alphabet.length() - 1];
-        } 
+        }
 
         return random_string;
     }
@@ -109,8 +110,9 @@ class EditDistance {
 
             if (naive_answer != fast_answer) {
                 std::cout << "Edit Distance NAIVE answer: " << naive_answer
-                        << "\n";
-                std::cout << "Edit Distance FAST answer: " << fast_answer << "\n\n";
+                          << "\n";
+                std::cout << "Edit Distance FAST answer: " << fast_answer
+                          << "\n\n";
 
                 break;
             }
@@ -134,7 +136,7 @@ class EditDistance {
         double time_diff = ((double)clock() / CLOCKS_PER_SEC) - start_time;
 
         std::cout << "The time elapsed for fast edit_distance with max input: "
-                << time_diff << "\n";
+                  << time_diff << "\n";
     }
 };
 
@@ -146,7 +148,7 @@ int main() {
     EditDistance ed = {str1, str2};
     std::cout << ed.edit_distance_naive() << std::endl;
 
-    //ed.stress_test_edit_distance();
+    // ed.stress_test_edit_distance();
     ed.time_edit_distance_max_inputs();
     return 0;
 }
