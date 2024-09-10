@@ -12,6 +12,7 @@ using std::numeric_limits;
 using std::stoi;
 using std::string;
 using std::vector;
+using std::cout;
 
 long long eval(long long a, long long b, char op) {
     if (op == '*') {
@@ -32,34 +33,20 @@ long long eval(long long a, long long b, char op) {
 }
 
 vector<long long> min_and_max(const string &exp, int i, int j) {
-    // find the operation
-    int num_operations = 0;
-    int idx = i;
-    for (int k = i; k < j; k++) {
-        char c = exp[k];
-        if (c == '*' || c == '+' || c == '-') {
-            num_operations++;
-            idx = k;
-        }
-    }
-
     // base case
-    if (num_operations == 1) {
-        long long operand1 = stoi(exp.substr(i, idx - i));
-        long long operand2 = stoi(exp.substr(idx + 1, j - idx));
-        long long ans = eval(operand1, operand2, exp[idx]);
+    if (j - i == 2) {
+        int k = i + 1;
+        int operand1 = stoi(exp.substr(i, 1));
+        int operand2 = stoi(exp.substr(j - 1, 1));
+        long long ans = eval(operand1, operand2, exp[k]);
+        cout << "eval: " << operand1 << " " << exp[k] << " " << operand2 << "\n";
         return {ans, ans};
     }
 
     long long min_eval = numeric_limits<long long>::max();
-    long long max_eval = -numeric_limits<long long>::max();
-    vector<char> ops = {'*', '+', '-'};
-    for (int k = i; k < j; k++) {
+    long long max_eval = numeric_limits<long long>::min();
+    for (int k = i + 1; k < j - 2 ; k += 2) {
         char op = exp[k];
-        if (count(ops.begin(), ops.end(), op) == 0) {
-            continue;
-        }
-
         long long min_left = min_and_max(exp, i, k)[0];
         long long max_left = min_and_max(exp, i, k)[1];
         long long min_right = min_and_max(exp, k + 1, j)[0];
