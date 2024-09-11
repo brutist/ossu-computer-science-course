@@ -5,15 +5,7 @@
 #include <string>
 #include <vector>
 
-using std::count;
-using std::cout;
-using std::max;
-using std::min;
-using std::numeric_limits;
-using std::stoi;
-using std::string;
-using std::vector;
-using std::to_string;
+using namespace std;
 using vll = vector<long long>;
 
 long long eval(long long a, long long b, char op) {
@@ -141,10 +133,8 @@ void stress_test_get_maximum_value(bool verbose = true) {
             cout << "answer: " << naive_answer << " input: " << exp << "\n";
 
             if (verbose) {
-                cout << "PARTITION SOLUTION answer: " << naive_answer
-                          << "\n";
-                cout << "PARTITION INTERNET answer: " << fast_answer
-                          << "\n\n";
+                cout << "PARTITION SOLUTION answer: " << naive_answer << "\n";
+                cout << "PARTITION INTERNET answer: " << fast_answer << "\n\n";
             }
 
             FAILED_TEST++;
