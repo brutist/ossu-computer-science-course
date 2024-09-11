@@ -69,7 +69,9 @@ long long get_maximum_value(const string &exp) {
     //          subexpressions (j - i). The maximum_value will be
     //          the M(1, n) in an expression of size n.
 
-    int n = (exp.size() / 2) + 1;
+    // n corresponds to the number of digits here
+    // An expression is d0,op0,d1,op1,d2,op2...opn-1,dn.
+    int n = (exp.size() / 2);
     // vll[0] = min, vll[1] = max
     vector<vector<vll>> dp(n + 1, vector<vll>(n + 1, vll(2)));
     // instantiate all j - i = 0 with the digit[i] itself
@@ -79,14 +81,14 @@ long long get_maximum_value(const string &exp) {
     }
 
     // go through the subproblems in order of increasing size(j - i)
-    for (int s = 0; s < n; s++) {
-        for (int i = 0; i < n - s; i++) {
+    for (int s = 0; s <= n; s++) {
+        for (int i = 0; i <= n - s; i++) {
             int j = i + s;
             dp[i][j] = min_and_max(exp, (2 * i), (2 * j));
         }
     }
 
-    return max(dp[0][n - 1][0], dp[0][n - 1][1]);
+    return max(dp[0][n][0], dp[0][n][1]);
 }
 
 string generate_valid_expression(int length) {
@@ -127,14 +129,14 @@ void stress_test_get_maximum_value(bool verbose = true) {
         string exp = generate_valid_expression(n);
 
         long long naive_answer = get_maximum_value_naive(exp);
-        long long fast_answer = get_maximum_value_naive(exp);
+        long long fast_answer = get_maximum_value(exp);
 
         if (naive_answer != fast_answer) {
             cout << "answer: " << naive_answer << " input: " << exp << "\n";
 
             if (verbose) {
-                cout << "PARTITION SOLUTION answer: " << naive_answer << "\n";
-                cout << "PARTITION INTERNET answer: " << fast_answer << "\n\n";
+                cout << "PARTITION NAIVE answer: " << naive_answer << "\n";
+                cout << "PARTITION FAST answer: " << fast_answer << "\n\n";
             }
 
             FAILED_TEST++;
