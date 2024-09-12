@@ -68,5 +68,10 @@ int main() {
         cout << "Success";
     }
 
+
+    else if (match_success) {
+        cout << opening_brackets_stack.top().position + 1;
+    }
+
     return 0;
 }
