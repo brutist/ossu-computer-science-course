@@ -39,7 +39,7 @@ int main() {
             opening_brackets_stack.push(Bracket(next, position));
         }
 
-        if (next == ')' || next == ']' || next == '}') {
+        else if (next == ')' || next == ']' || next == '}') {
             // case 2: closing bracket but no opening brackets
             //       left, fail test
             if (opening_brackets_stack.empty()) {
@@ -49,11 +49,13 @@ int main() {
 
             // case 3: closing bracket but not matched,
             //      fail test
-            Bracket prev = opening_brackets_stack.top();
-            opening_brackets_stack.pop();
-            if (!prev.Matchc(next)) {
-                match_success = false;
-                fail_position = position + 1;
+            else {
+                Bracket prev = opening_brackets_stack.top();
+                opening_brackets_stack.pop();
+                if (!prev.Matchc(next)) {
+                    match_success = false;
+                    fail_position = position + 1;
+                }
             }
         }
 
