@@ -1,8 +1,20 @@
 #!/bin/sh
 
-for file_name in ./**/*.{cpp,h,hpp}; do
-    if [ -f "$file_name" ]; then
-        printf '%s\n' "$file_name"
-        clang-format -i --style=file:./.clang-format $file_name
+directory="."
+
+function iterate() {
+  local dir="$1"
+
+  for file in "$dir"/*; do
+    if [ -f "$file" ] && [[ "$file" == *".cpp" ]]; then
+        printf '%s\n' "$file"
+        clang-format -i --style=file:./.clang-format $file
     fi
-done
+
+    if [ -d "$file" ]; then
+      iterate "$file"
+    fi
+  done
+}
+
+iterate "$directory"

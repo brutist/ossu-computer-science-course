@@ -11,6 +11,6 @@ int main(int argc, char const *argv[]) {
         std::cout << i << std::endl;
 
     // this is a reference to the original vec
-    for (const auto& i : vec)
-        std::cout <<  i << std::endl;
+    for (const auto &i : vec)
+        std::cout << i << std::endl;
 }
