@@ -1,16 +1,17 @@
 #!/bin/sh
 
 #==============================================================================#
-#   Usage: run as "bash automatic_tester.sh 'path_to_cpp_file' <verbosity>"
+#   Usage: run as "bash automatic_tester.sh <cpp_file> <verbosity> <test_limit>"
 #         Automatically compiles using "c++ -std=c++14 -Wall "$cpp_file" -o a.out"
 #         Test file names should be in format xx {x = 0-9} and test answers should be
 #         in format xx.a located in the same folder named "tests"
 #         <verbosity> is true or false. If false, expected vs. actual output will not be shown.
+#         <test_limit> is an optional number that limits the number of test cases.
 #==============================================================================#
 
 # Check if C++ file argument is provided
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 <cpp_file> [verbosity]"
+    echo "Usage: $0 <cpp_file> [verbosity] [test_limit]"
     exit 1
 fi
 
@@ -19,6 +20,9 @@ cpp_file="$1"
 
 # Verbosity flag (default is true)
 verbose=${2:-true}
+
+# Test limit (default is no limit)
+test_limit=${3:-0}
 
 # Check if the provided file exists and has a .cpp extension
 if [ ! -f "$cpp_file" ] || [[ "$cpp_file" != *.cpp ]]; then
@@ -45,8 +49,16 @@ if [ ! -f "a.out" ]; then
     exit 1
 fi
 
+# Initialize test counter
+counter=0
+
 # Iterate over all files in the test folder that match the pattern "xx"
 for input_file in "$test_folder"/[0-9][0-9]; do
+    # Break if the test limit is reached
+    if [ "$test_limit" -ne 0 ] && [ "$counter" -ge "$test_limit" ]; then
+        break
+    fi
+    
     # Skip if no matching files are found
     if [ ! -f "$input_file" ]; then
         continue
@@ -78,4 +90,7 @@ for input_file in "$test_folder"/[0-9][0-9]; do
     else
         echo "Skipping test $(basename "$input_file"): Expected output file $output_file missing"
     fi
+
+    # Increment the test counter
+    counter=$((counter + 1))
 done
