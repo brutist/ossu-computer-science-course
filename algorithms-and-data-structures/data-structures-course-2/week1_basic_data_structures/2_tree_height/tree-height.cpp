@@ -29,9 +29,7 @@ int max_tree_height(Node *root, int height) {
     int max_height = 0;
     for (Node *r : root->children) {
         int child_height = max_tree_height(r, height + 1);
-        if (max_height < child_height) {
-            max_height = child_height;
-        }
+        max_height = std::max(max_height, child_height);
     }
 
     return max_height;
