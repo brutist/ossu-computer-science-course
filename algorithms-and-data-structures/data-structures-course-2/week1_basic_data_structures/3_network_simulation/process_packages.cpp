@@ -1,3 +1,4 @@
+#include <deque>
 #include <iostream>
 #include <queue>
 #include <vector>
@@ -23,7 +24,25 @@ class Buffer {
     Buffer(int size) : size_(size), finish_time_() {}
 
     Response Process(const Request &request) {
-        // write your code here
+        int request_start_time_ = request.arrival_time + request.process_time;
+
+        // there is no request before this
+        if (finish_time_.empty()) {
+            finish_time_.push(request_start_time_);
+            return Response(false, request_start_time_);
+        }
+       
+        // arrival time of request is later than the last finish_time_,
+        //  request is processed and 
+        else if (request.arrival_time > finish_time_.back()) {
+            finish_time_.push(request_start_time_);
+            finish_time_.pop();
+            return Response(false, request_start_time_);
+        }
+
+        // buffer is full or request arrival time is before than the
+        //  last finish_time_
+        return Response(true, -1);
     }
 
   private:
