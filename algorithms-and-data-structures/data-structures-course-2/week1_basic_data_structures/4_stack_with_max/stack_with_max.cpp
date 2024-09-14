@@ -12,18 +12,25 @@ using std::vector;
 
 class StackWithMax {
     vector<int> stack;
+    vector<int> max_stack;
 
   public:
-    void Push(int value) { stack.push_back(value); }
+    void Push(int value) {
+        stack.push_back(value);
+        max_stack.push_back(
+            std::max(value, max_stack.empty() ? -1 : max_stack.back()));
+    }
 
     void Pop() {
         assert(stack.size());
         stack.pop_back();
+        max_stack.pop_back();
     }
 
     int Max() const {
+        // assert that the stack is not empty
         assert(stack.size());
-        return *max_element(stack.begin(), stack.end());
+        return max_stack.back();
     }
 };
 
@@ -41,16 +48,16 @@ int main() {
         if (query == "push") {
             cin >> value;
             stack.Push(std::stoi(value));
-        } 
-        
+        }
+
         else if (query == "pop") {
             stack.Pop();
-        } 
-        
+        }
+
         else if (query == "max") {
             cout << stack.Max() << "\n";
-        } 
-        
+        }
+
         else {
             assert(0);
         }
