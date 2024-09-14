@@ -53,7 +53,7 @@ fi
 counter=0
 
 # Iterate over all files in the test folder that match the pattern "xx"
-for input_file in "$test_folder"/[0-9][0-9]; do
+for input_file in "$test_folder"/[0-9][0-9][0-9][0-9]; do
     # Break if the test limit is reached
     if [ "$test_limit" -ne 0 ] && [ "$counter" -ge "$test_limit" ]; then
         break

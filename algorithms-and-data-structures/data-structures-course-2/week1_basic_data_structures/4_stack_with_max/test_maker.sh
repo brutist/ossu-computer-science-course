@@ -1,21 +1,16 @@
 #!/bin/bash
 
 #==============================================================================#
-#   Usage: bash generate_queries.sh <number_of_queries>
+#   Usage: bash generate_queries.sh
 #         This script generates a set of valid stack-related queries,
 #         including "push v", "pop", and "max", while ensuring that no
 #         "max" or "pop" is called on an empty stack.
-#         The push value is now between 0 and 100000.
+#         The number of queries is randomized from 1 to 400,000, and
+#         the push value is between 0 and 100000.
 #==============================================================================#
 
-# Check if a number is provided as the first argument
-if [ $# -ne 1 ]; then
-    echo "Usage: $0 <number_of_queries>"
-    exit 1
-fi
-
-# Number of queries to generate
-q=$1
+# Randomize the number of queries between 1 and 400000
+q=$(shuf -i 1-4000 -n 1)
 
 # Print the first line with the number of queries
 echo "$q"
