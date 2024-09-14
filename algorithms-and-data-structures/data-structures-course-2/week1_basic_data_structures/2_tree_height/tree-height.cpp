@@ -25,7 +25,7 @@ int max_tree_height(Node *root, int height) {
     if (root->children.size() == 0) {
         return height;
     }
-    
+
     int max_height = 0;
     for (Node *r : root->children) {
         int child_height = max_tree_height(r, height + 1);

@@ -41,16 +41,16 @@ int main() {
         if (query == "push") {
             cin >> value;
             stack.Push(std::stoi(value));
-        } 
-        
+        }
+
         else if (query == "pop") {
             stack.Pop();
-        } 
-        
+        }
+
         else if (query == "max") {
             cout << stack.Max() << "\n";
-        } 
-        
+        }
+
         else {
             assert(0);
         }

@@ -39,7 +39,8 @@ class Buffer {
 
         int request_start_time = request.arrival_time;
         if (!finish_time_.empty()) {
-            request_start_time = std::max(request.arrival_time, finish_time_.back());
+            request_start_time =
+                std::max(request.arrival_time, finish_time_.back());
         }
 
         finish_time_.push(request_start_time + request.process_time);
