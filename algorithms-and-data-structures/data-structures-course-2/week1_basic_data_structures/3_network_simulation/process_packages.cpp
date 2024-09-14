@@ -24,36 +24,26 @@ class Buffer {
     Buffer(int size) : size_(size), finish_time_() {}
 
     Response Process(const Request &request) {
-        int request_finish_time_ = request.arrival_time + request.process_time;
-
-        // there is no request before this
-        if (finish_time_.empty()) {
-            return Response(false, request.arrival_time);
+        // delete all the finish time that has been processed
+        //  when this request arrived
+        while (!finish_time_.empty() &&
+               finish_time_.front() <= request.arrival_time) {
+            finish_time_.pop();
         }
 
-        // arrival time of request is later than the last finish_time_,
-        //  request is processed and
-        else if (request.arrival_time >= finish_time_.back()) {
-            // remove all finish times that are before the request's
-            //  arrival time
-            while (!finish_time_.empty() ||
-                   request.arrival_time > finish_time_.front()) {
-                finish_time_.pop();
-            }
-            
-            return Response(false, request_finish_time_);
+        // buffer is still full after deleting done finish times
+        int current_buffer_size = finish_time_.size();
+        if (size_ == current_buffer_size) {
+            return Response(true, -1);
         }
 
-        else if (request.arrival_time < finish_time_.back() ||
-                 finish_time_.size() < size_) {
-            return Response(false, request_finish_time_);
+        int request_start_time = request.arrival_time;
+        if (!finish_time_.empty()) {
+            request_start_time = std::max(request.arrival_time, finish_time_.back());
         }
 
-        finish_time_.push(request_finish_time_);
-
-        // buffer is full or request arrival time is before than the
-        //  last finish_time_
-        return Response(true, -1);
+        finish_time_.push(request_start_time + request.process_time);
+        return Response(false, request_start_time);
     }
 
   private:
@@ -76,13 +66,13 @@ std::vector<Request> ReadRequests() {
 std::vector<Response> ProcessRequests(const std::vector<Request> &requests,
                                       Buffer *buffer) {
     std::vector<Response> responses;
-    for (int i = 0; i < requests.size(); ++i)
+    for (unsigned int i = 0; i < requests.size(); ++i)
         responses.push_back(buffer->Process(requests[i]));
     return responses;
 }
 
 void PrintResponses(const std::vector<Response> &responses) {
-    for (int i = 0; i < responses.size(); ++i)
+    for (unsigned int i = 0; i < responses.size(); ++i)
         std::cout << (responses[i].dropped ? -1 : responses[i].start_time)
                   << std::endl;
 }
