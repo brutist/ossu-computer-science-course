@@ -40,6 +40,7 @@ class HeapBuilder {
         for (int i = (n / 2) - 1; i >= 0; i--) {
             sink(i, n);
         }
+
     }
 
     void sink(int i, int size) {

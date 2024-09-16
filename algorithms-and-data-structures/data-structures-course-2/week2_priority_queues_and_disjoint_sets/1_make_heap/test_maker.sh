@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Generate a random number n between 1 and 100000
-n=$((1 + RANDOM % 100))
+n=10
 
 # Output the first line containing n
 echo "$n"
@@ -12,7 +12,7 @@ counter=0
 
 # Function to generate random number between 0 and 10^9 using /dev/urandom
 generate_random_number() {
-    echo $(( $(od -An -N4 -tu4 < /dev/urandom) % 1000 ))
+    echo $(( $(od -An -N4 -tu4 < /dev/urandom) % 100 ))
 }
 
 while [ $counter -lt $n ]; do

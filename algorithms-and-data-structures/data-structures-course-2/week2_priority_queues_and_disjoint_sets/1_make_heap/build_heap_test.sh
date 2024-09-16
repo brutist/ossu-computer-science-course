@@ -49,8 +49,8 @@ check_min_heap_property() {
     local arr=("${@:2}")
 
     for ((i=0; i<n; i++)); do
-        local left=$((2*i + 1))
-        local right=$((2*i + 2))
+        local left=$(((2*i) + 1))
+        local right=$(((2*i) + 2))
 
         # Check if parent is greater than the left child
         if [[ $left -lt $n && ${arr[$i]} -gt ${arr[$left]} ]]; then
@@ -104,6 +104,10 @@ for ((test_num=1; test_num<=num_tests; test_num++)); do
         echo "FAIL: Number of swaps ($num_swaps) is out of valid range for test $test_num"
         continue
     fi
+
+    echo "$test_input"
+    echo "${array[@]}"
+    echo "${swaps[@]}"
     done
 
 
