@@ -16,7 +16,7 @@ class HeapBuilder {
 
     void WriteResponse() const {
         cout << swaps_.size() << "\n";
-        for (int i = 0; i < swaps_.size(); ++i) {
+        for (unsigned int i = 0; i < swaps_.size(); ++i) {
             cout << swaps_[i].first << " " << swaps_[i].second << "\n";
         }
     }
@@ -31,20 +31,35 @@ class HeapBuilder {
 
     void GenerateSwaps() {
         swaps_.clear();
-        // The following naive implementation just sorts
-        // the given sequence using selection sort algorithm
-        // and saves the resulting sequence of swaps.
-        // This turns the given array into a heap,
-        // but in the worst case gives a quadratic number of swaps.
-        //
-        // TODO: replace by a more efficient implementation
-        for (int i = 0; i < data_.size(); ++i)
-            for (int j = i + 1; j < data_.size(); ++j) {
-                if (data_[i] > data_[j]) {
-                    swap(data_[i], data_[j]);
-                    swaps_.push_back(make_pair(i, j));
-                }
-            }
+        // Approach: Since the leafs already satisfy the heap property,
+        //      we can recursively sink the elements from n/2 until
+        //      1 to transform the vector into a heap. Since this is a
+        //      min heap, parents that are bigger should be replaced with
+        //      the smallest children.
+        int n = data_.size();
+        for (int i = (n / 2) - 1; i >= 0; i--) {
+            sink(i, n);
+        }
+    }
+
+    void sink(int i, int size) {
+        int min_index = i;
+        int l = (i * 2) + 1;
+        int r = (i * 2) + 2;
+
+        if (l < size && data_[l] < data_[min_index]) {
+            min_index = l;
+        }
+
+        if (r < size && data_[r] < data_[min_index]) {
+            min_index = r;
+        }
+
+        if (i != min_index) {
+            swap(data_[i], data_[min_index]);
+            swaps_.push_back(make_pair(i, min_index)); // record the swap
+            sink(min_index, size); // recursively sink affected subtree
+        }
     }
 
   public:
