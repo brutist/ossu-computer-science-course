@@ -34,6 +34,7 @@ struct DisjointSets {
 
         int main_parent = getParent(sets[table].parent);
         sets[table].parent = main_parent; // path compression
+        sets[table].rank = 1; // update rank, to account for the compression
         return main_parent;
     }
 
