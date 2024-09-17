@@ -70,7 +70,7 @@ check_min_heap_property() {
 
 # Step 2: Generate and test inputs
 for ((test_num=1; test_num<=num_tests; test_num++)); do
-    echo "Running test $test_num..."
+    echo -n "Running test $test_num...  "
 
     # Generate test input using test_maker.sh
     test_input=$("$test_maker_script")
@@ -87,14 +87,18 @@ for ((test_num=1; test_num<=num_tests; test_num++)); do
     swaps=$(echo "$program_output" | tail -n +2)
 
     # Apply the swaps to the array
-    for swap in $(echo "$swaps"); do
-        i=$(echo "$swap" | awk '{print $1}')
-        j=$(echo "$swap" | awk '{print $2}')
+    while read i j; do
+        # Ensure index `i` and `j` are correctly parsed and handle 0-based indexing if needed
+        if [[ -z "$i" || -z "$j" ]]; then
+            echo "Error: Swap indices are empty or invalid"
+        fi
+
         # Perform the swap
         temp=${array[$i]}
         array[$i]=${array[$j]}
         array[$j]=$temp
-    done
+    done <<< "$swaps"
+
 
     # Step 3: Check if the array is a valid min-heap
     check_min_heap_property "$n" "${array[@]}"
@@ -104,10 +108,6 @@ for ((test_num=1; test_num<=num_tests; test_num++)); do
         echo "FAIL: Number of swaps ($num_swaps) is out of valid range for test $test_num"
         continue
     fi
-
-    echo "$test_input"
-    echo "${array[@]}"
-    echo "${swaps[@]}"
     done
 
 
