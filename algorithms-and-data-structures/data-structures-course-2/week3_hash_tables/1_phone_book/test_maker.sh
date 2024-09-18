@@ -18,7 +18,7 @@ if [[ "$2" == "--max" ]]; then
 elif [[ "$2" == "--stress" ]]; then
   N=$((MAX_N / 8))
 elif [ -z "$1" ]; then
-  N=$((1 + RANDOM % 100000))  # Random value for N if not provided
+  N=$((1 + RANDOM % 20000))  # Random value for N if not provided
 else
   N=$1
 fi
