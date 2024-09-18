@@ -1,14 +1,23 @@
 #!/bin/bash
 #==============================================================================#
-#   Usage: bash generate_phonebook_queries.sh [N]
+#   Usage: bash generate_phonebook_queries.sh [N] [-- {max, stress}]
 #   Generates N phonebook queries, where N is the number of operations to output.
 #   If N is not provided, the script randomly generates a value between 1 and 100000.
 #   The script randomly generates operations including 'add', 'del', and 'find'
 #   for phone numbers (up to 7 digits) and names (up to 15 characters).
+#   --max: Use the largest possible N (1000000)
+#   --stress: Use up to 1/8 of the largest possible N (125000)
 #==============================================================================#
 
-# Check if the number of queries N is provided, otherwise randomly choose N between 1 and 1000
-if [ -z "$1" ]; then
+# Default maximum value of N
+MAX_N=1000000
+
+# Parse optional flags for --max or --stress
+if [[ "$2" == "--max" ]]; then
+  N=$MAX_N
+elif [[ "$2" == "--stress" ]]; then
+  N=$((MAX_N / 8))
+elif [ -z "$1" ]; then
   N=$((1 + RANDOM % 100000))  # Random value for N if not provided
 else
   N=$1
