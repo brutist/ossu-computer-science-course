@@ -9,7 +9,7 @@
 
 # Check if the number of queries N is provided, otherwise randomly choose N between 1 and 1000
 if [ -z "$1" ]; then
-  N=$((1 + RANDOM % 1000))  # Random value for N if not provided
+  N=$((1 + RANDOM % 100000))  # Random value for N if not provided
 else
   N=$1
 fi

@@ -89,6 +89,10 @@ if [ "$create_tests" = true ]; then
     mkdir -p "$test_folder"
 fi
 
+# Variables for time tracking
+total_time_naive=0
+total_time_fast=0
+
 # Step 4: Generate test cases and compare
 for i in $(seq -f "%04g" 0 $((num_tests-1))); do
     # Generate test case using test_maker.sh
@@ -98,6 +102,17 @@ for i in $(seq -f "%04g" 0 $((num_tests-1))); do
     if [ "$create_tests" = true ]; then
         echo "$test_input" > "$test_folder/$i"
     fi
+
+    # Time execution of naive program
+    TIMEFORMAT=%R
+    time_naive=$( { time echo "$test_input" | ./prog_naive.out >/dev/null; } 2>&1 )
+
+    # Time execution of fast program
+    time_fast=$( { time echo "$test_input" | ./prog_fast.out >/dev/null; } 2>&1 )
+
+    # Add to total time
+    total_time_naive=$(echo "$total_time_naive + $time_naive" | bc)
+    total_time_fast=$(echo "$total_time_fast + $time_fast" | bc)
 
     # Generate expected output using naive program
     expected_output=$(echo "$test_input" | ./prog_naive.out)
@@ -128,6 +143,13 @@ for i in $(seq -f "%04g" 0 $((num_tests-1))); do
         fi
     fi
 done
+
+# Step 6: Calculate and print average time for both programs
+average_time_naive=$(echo "scale=4; $total_time_naive / $num_tests" | bc)
+average_time_fast=$(echo "scale=4; $total_time_fast / $num_tests" | bc)
+
+echo "Average time for Naive program: $average_time_naive seconds"
+echo "Average time for Fast program: $average_time_fast seconds"
 
 # Clean up the compiled binaries
 rm prog_naive.out prog_fast.out
