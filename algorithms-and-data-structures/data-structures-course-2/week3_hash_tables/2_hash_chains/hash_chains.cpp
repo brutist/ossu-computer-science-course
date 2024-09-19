@@ -37,6 +37,7 @@ class QueryProcessor {
         for (string s : b) {
             std::cout << s << " ";
         }
+        std::cout << "\n";
     }
 
   public:
@@ -48,7 +49,8 @@ class QueryProcessor {
         cin >> query.type;
         if (query.type != "check")
             cin >> query.s;
-
+        else
+            cin >> query.ind;
         return query;
     }
 
