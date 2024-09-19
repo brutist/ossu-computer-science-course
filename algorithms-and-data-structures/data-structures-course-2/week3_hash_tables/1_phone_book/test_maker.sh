@@ -13,12 +13,12 @@
 MAX_N=1000000
 
 # Parse optional flags for --max or --stress
-if [[ "$2" == "--max" ]]; then
+if [[ "$1" == "--max" ]]; then
   N=$MAX_N
-elif [[ "$2" == "--stress" ]]; then
+elif [[ "$1" == "--stress" ]]; then
   N=$((MAX_N / 8))
 elif [ -z "$1" ]; then
-  N=$((1 + RANDOM % 100000))  # Random value for N if not provided
+  N=$((1 + RANDOM % 20000))  # Random value for N if not provided
 else
   N=$1
 fi
@@ -32,7 +32,7 @@ generate_random_name() {
 
 # Generate random 7-digit phone number
 generate_random_number() {
-  local phone_number=$((1000000 + RANDOM % 9000))  # Generate a 4-digit number for easy checking
+  local phone_number=$((1000000 + RANDOM % 900000))  # Generate a 6-digit number for easy checking
   echo "$phone_number"
 }
 

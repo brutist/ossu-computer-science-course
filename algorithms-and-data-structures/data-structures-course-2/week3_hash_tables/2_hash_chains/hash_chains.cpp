@@ -1,11 +1,14 @@
 #include <algorithm>
 #include <iostream>
+#include <list>
 #include <string>
 #include <vector>
 
 using std::cin;
+using std::list;
 using std::string;
 using std::vector;
+using bucket = list<string>;
 
 struct Query {
     string type, s;
@@ -15,7 +18,7 @@ struct Query {
 class QueryProcessor {
     int bucket_count;
     // store all strings in one vector
-    vector<string> elems;
+    vector<bucket> buckets;
     size_t hash_func(const string &s) const {
         static const size_t multiplier = 263;
         static const size_t prime = 1000000007;
@@ -25,8 +28,21 @@ class QueryProcessor {
         return hash % bucket_count;
     }
 
+  private:
+    bool bucketContains(bucket &B, string &query) const {
+        return std::find(B.begin(), B.end(), query) != B.end();
+    }
+
+    void writeBucket(bucket b) {
+        for (string s : b) {
+            std::cout << s << " ";
+        }
+        std::cout << "\n";
+    }
+
   public:
-    explicit QueryProcessor(int bucket_count) : bucket_count(bucket_count) {}
+    explicit QueryProcessor(int bucket_count)
+        : bucket_count(bucket_count), buckets(bucket_count, list<string>(0)) {}
 
     Query readQuery() const {
         Query query;
@@ -44,27 +60,27 @@ class QueryProcessor {
 
     void processQuery(const Query &query) {
         if (query.type == "check") {
-            // use reverse order, because we append strings to the end
-            for (int i = static_cast<int>(elems.size()) - 1; i >= 0; --i)
-                if (hash_func(elems[i]) == query.ind)
-                    std::cout << elems[i] << " ";
-            std::cout << "\n";
-        } 
-        
+            writeBucket(buckets[query.ind]);
+        }
+
         else {
-            vector<string>::iterator it =
-                std::find(elems.begin(), elems.end(), query.s);
+            int index = static_cast<int>(hash_func(query.s));
+            bucket bucket = buckets[index];
+            string q = query.s;
+
             if (query.type == "find")
-                writeSearchResult(it != elems.end());
-            
+                writeSearchResult(bucketContains(bucket, q));
+
             else if (query.type == "add") {
-                if (it == elems.end())
-                    elems.push_back(query.s);
-            } 
-            
+                if (!bucketContains(bucket, q)) {
+                    buckets[index].push_front(q);
+                }
+            }
+
             else if (query.type == "del") {
-                if (it != elems.end())
-                    elems.erase(it);
+                if (bucketContains(bucket, q)) {
+                    buckets[index].remove(q);
+                }
             }
         }
     }
