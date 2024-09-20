@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cassert>
 
 using std::string;
 typedef unsigned long long ull;
@@ -31,14 +32,6 @@ void print_occurrences(const std::vector<int> &output) {
     std::cout << "\n";
 }
 
-ull base_raise_to(int B, size_t P, size_t prime) {
-    ull h = 1;
-    for (size_t i = 0; i < P; i++) {
-        h = (h * B) % prime;
-    }
-    return h;
-}
-
 std::vector<size_t> precompute_hashes(const Data &input, size_t p, size_t b) {
     // Approach: Calculate the hash value of the pattern. Calculate
     //      the hash value of the fist substring of the text that is
@@ -50,8 +43,14 @@ std::vector<size_t> precompute_hashes(const Data &input, size_t p, size_t b) {
     int P = input.pattern.size();
     std::vector<size_t> H(T - P + 1);
     H[T - P] = hash_func(input.text.substr(T - P, P));
-    ull y = base_raise_to(b, P, p);
-    
+
+    // calculate base raise to length of pattern
+    size_t y = 1;
+    for (int i = 0; i < P; i++) {
+        y = (y * b) % p;
+    }
+    // calculate the hash of substrings starting from i by subtracting the contribution
+    //  of the trailing char and adding the leading char to the hash
     for (int i = T - P - 1; i >= 0; i--) {
         H[i] = ((b * H[i + 1]) + input.text[i] - (y * input.text[i + P])) % p;
     }
@@ -64,15 +63,15 @@ std::vector<int> get_occurrences(const Data &input) {
     size_t B = 263;
     size_t P = 1000000007;
     std::vector<int> occurrences;
-    ull pattern_hash = hash_func(input.pattern);
+    size_t pattern_hash = hash_func(input.pattern);
     // precalculate the hashes for substring from 0 to txt[i - len(pattern)]
     std::vector<size_t> hashes = precompute_hashes(input, P, B);
     for (size_t i = 0; i < hashes.size(); i++) {
         // check if substring is really the same as the pattern or just a
         //  hash collision
         if (hashes[i] == pattern_hash) {
-            if (input.text.substr(i, input.pattern.size()) == input.pattern)
-                occurrences.push_back(i);
+           
+            occurrences.push_back(i);
         }
     }
 
