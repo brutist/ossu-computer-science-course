@@ -65,20 +65,19 @@ class QueryProcessor {
 
         else {
             int index = static_cast<int>(hash_func(query.s));
-            bucket bucket = buckets[index];
             string q = query.s;
 
             if (query.type == "find")
-                writeSearchResult(bucketContains(bucket, q));
+                writeSearchResult(bucketContains(buckets[index], q));
 
             else if (query.type == "add") {
-                if (!bucketContains(bucket, q)) {
+                if (!bucketContains(buckets[index], q)) {
                     buckets[index].push_front(q);
                 }
             }
 
             else if (query.type == "del") {
-                if (bucketContains(bucket, q)) {
+                if (bucketContains(buckets[index], q)) {
                     buckets[index].remove(q);
                 }
             }
