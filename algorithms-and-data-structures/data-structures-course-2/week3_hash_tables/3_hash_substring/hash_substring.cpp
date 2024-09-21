@@ -17,12 +17,10 @@ Data read_input() {
     return data;
 }
 
-size_t hash_func(const string &s) {
-    static const size_t multiplier = 263;
-    static const size_t prime = 1000000007;
+size_t hash_func(const string &s, size_t p, size_t b) {
     unsigned long long hash = 0;
     for (int i = static_cast<int>(s.size()) - 1; i >= 0; --i)
-        hash = (hash * multiplier + s[i]) % prime;
+        hash = (hash * b + s[i]) % p;
     return hash;
 }
 
@@ -42,7 +40,7 @@ std::vector<size_t> precompute_hashes(const Data &input, size_t p, size_t b) {
     int T = input.text.size();
     int P = input.pattern.size();
     std::vector<size_t> H(T - P + 1);
-    H[T - P] = hash_func(input.text.substr(T - P, P));
+    H[T - P] = hash_func(input.text.substr(T - P, P), p, b);
 
     // calculate base raise to length of pattern
     size_t y = 1;
@@ -52,7 +50,7 @@ std::vector<size_t> precompute_hashes(const Data &input, size_t p, size_t b) {
     // calculate the hash of substrings starting from i by subtracting the contribution
     //  of the trailing char and adding the leading char to the hash
     for (int i = T - P - 1; i >= 0; i--) {
-        H[i] = ((b * H[i + 1]) + input.text[i] - (y * input.text[i + P])) % p;
+        H[i] = (b * H[i + 1] + input.text[i] - y * input.text[i + P] % p) % p;
     }
 
     return H;
@@ -63,7 +61,7 @@ std::vector<int> get_occurrences(const Data &input) {
     size_t B = 263;
     size_t P = 1000000007;
     std::vector<int> occurrences;
-    size_t pattern_hash = hash_func(input.pattern);
+    size_t pattern_hash = hash_func(input.pattern, P, B);
     // precalculate the hashes for substring from 0 to txt[i - len(pattern)]
     std::vector<size_t> hashes = precompute_hashes(input, P, B);
     for (size_t i = 0; i < hashes.size(); i++) {
