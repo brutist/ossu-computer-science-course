@@ -30,10 +30,18 @@ LATIN_ALPHABET="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 # Function to generate a random string of a given length
 generate_random_string() {
     local length=$1
+    local chunk_size=32767  # Limit of RANDOM
     local str=""
-    for ((i = 0; i < length; i++)); do
-        str+="${LATIN_ALPHABET:RANDOM % ${#LATIN_ALPHABET}:1}"
+
+    # Loop to generate chunks of random characters
+    while (( length > 0 )); do
+        local cur_len=$(( length < chunk_size ? length : chunk_size ))  # Generate smaller chunks if needed
+        for (( i = 0; i < cur_len; i++ )); do
+            str+="${LATIN_ALPHABET:RANDOM % ${#LATIN_ALPHABET}:1}"
+        done
+        length=$(( length - cur_len ))
     done
+
     echo "$str"
 }
 
@@ -43,25 +51,25 @@ calculate_pattern_length() {
     # Make the pattern length a random percentage of text length (between 10% and 100%)
     local min_percentage=10
     local max_percentage=100
-    local random_percentage=$((RANDOM % (max_percentage - min_percentage + 1) + min_percentage))
-    echo $((text_len * random_percentage / 100))
+    local random_percentage=$(( RANDOM % (max_percentage - min_percentage + 1) + min_percentage ))
+    echo $(( text_len * random_percentage / 100 ))
 }
 
 # Default lengths are 1/4 of the maximum
-T_len=$((MAX_T / DEFAULT_FACTOR))
-P_len=$(calculate_pattern_length $T_len)  # Random length for P, usually smaller
+T_len=$(( MAX_T / DEFAULT_FACTOR ))
+P_len=$(calculate_pattern_length "$T_len")  # Random length for P, usually smaller
 
 # Check optional flags
 if [[ "$1" == "--stress" ]]; then
-    T_len=$((MAX_T / STRESS_FACTOR))
-    P_len=$((RANDOM % 5 + 1))  # Pattern length between 1 to 6
+    T_len=$(( MAX_T / STRESS_FACTOR ))
+    P_len=$(( RANDOM % 5 + 1 ))  # Pattern length between 1 to 6
 elif [[ "$1" == "--max" ]]; then
     T_len=$MAX_T
-    P_len=$(calculate_pattern_length $T_len)  # Recalculate for maximum case
+    P_len=$(calculate_pattern_length "$T_len")  # Recalculate for maximum case
 fi
 
 # Ensure |P| <= |T| (just in case)
-if ((P_len > T_len)); then
+if (( P_len > T_len )); then
     P_len=$T_len
 fi
 
