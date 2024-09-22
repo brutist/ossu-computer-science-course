@@ -23,7 +23,7 @@ create_tests=false
 use_max_flag=false
 use_stress_flag=false
 
-# Process additional optional arguments (-v, --tests, and --max)
+# Process additional optional arguments (-v, --tests, --max, and --stress)
 for arg in "$@"; do
     if [ "$arg" = "-v" ]; then
         verbose=true
@@ -82,7 +82,7 @@ fi
 # Compile fast program
 echo "Compiling $cpp_fast (fast implementation)..."
 c++ -std=c++14 -Wall "$cpp_fast" -o prog_fast.out
-if [ $? -ne 0 ];then
+if [ $? -ne 0 ]; then
     echo "Error: Compilation of $cpp_fast failed."
     exit 1
 fi
@@ -94,7 +94,7 @@ if [ ! -x "$test_maker_script" ]; then
     chmod +x "$test_maker_script"
 fi
 
-# If --create-tests is provided, set up a tests directory
+# If --tests is provided, set up a tests directory
 if [ "$create_tests" = true ]; then
     test_folder="$cpp_dir/tests"
     mkdir -p "$test_folder"
