@@ -1,54 +1,61 @@
 #include <iostream>
 #include <vector>
 
-using std::cout;
 using std::cin;
+using std::cout;
+using std::make_pair;
+using std::pair;
 using std::string;
+using std::vector;
 
 class Solver {
     string s;
-    std::vector<int> H1;
-    std::vector<int> H2;
-    std::vector<long long> P1; // Precompute powers of x for modulo m1
-    std::vector<long long> P2; // Precompute powers of x for modulo m2
-    int x, m1, m2;
+    std::vector<pair<int, int>> H;
+    // Precompute powers of x for modulo {m1,m2}
+    std::vector<pair<long long, long long>> P;
+    int m1, m2;
 
   public:
-    Solver(const string &str) : s(str) {
-        // initialize hash[k] and power[k] containing hashes of length k
-        //  and base raise to k
-        H1 = std::vector<int>(s.size() + 1, 0); 
-        H2 = std::vector<int>(s.size() + 1, 0);
-        P1 = std::vector<long long>(s.size() + 1, 1);
-        P2 = std::vector<long long>(s.size() + 1, 1); 
-
+    Solver(const string &str)
+        : s(str), H(vector<pair<int, int>>(1, make_pair(0, 0))),
+          P(vector<pair<long long, long long>>(1, make_pair(1, 1))) {
         // Use pre-defined primes to avoid repeated modulo operations
         m1 = 1000000007;
         m2 = 1000000009;
 
         // Use a fixed base for speed and consistency (use large prime or
         // random)
-        x = 31; // A common base in string hashing, or use 33, 37, etc.
+        int x = 31; // A common base in string hashing, or use 33, 37, etc.
 
         // Precompute hashes and powers of x
         int n = s.size();
+        H.reserve(n);
+        P.reserve(n);
         for (int i = 1; i <= n; ++i) {
-            H1[i] = (s[i - 1] + 1LL * x * H1[i - 1]) % m1;
-            H2[i] = (s[i - 1] + 1LL * x * H2[i - 1]) % m2;
-            P1[i] = (1LL * P1[i - 1] * x) % m1; // x^i % m1
-            P2[i] = (1LL * P2[i - 1] * x) % m2; // x^i % m2
+            long long hash1 = (s[i - 1] + 1LL * x * H[i - 1].first);
+            long long hash2 = (s[i - 1] + 1LL * x * H[i - 1].second);
+            long long power1 = (1LL * P[i - 1].first * x);
+            long long power2 = (1LL * P[i - 1].second * x);
+            // only take the modulo if necessary
+            hash1 = (hash1 > m1 ? hash1 : hash1 % m1);
+            hash2 = (hash2 > m2 ? hash1 : hash2 % m2);
+            power1 = (power1 > m1 ? power1 : power1 % m1);
+            power2 = (power2 > m2 ? power2 : power2 % m2);
+
+            H.push_back(make_pair(hash1, hash2));
+            P.push_back(make_pair(power1, power2));
         }
     }
 
     inline bool ask(int a, int b, int l) {
         // Use inline to reduce function call overhead
-        int hash_a1 = (H1[a + l] - 1LL * H1[a] * P1[l] % m1 + m1) % m1;
-        int hash_a2 = (H2[a + l] - 1LL * H2[a] * P2[l] % m2 + m2) % m2;
-        int hash_b1 = (H1[b + l] - 1LL * H1[b] * P1[l] % m1 + m1) % m1;
-        int hash_b2 = (H2[b + l] - 1LL * H2[b] * P2[l] % m2 + m2) % m2;
+        int ha1 = (H[a + l].first - H[a].first * P[l].first % m1);
+        int ha2 = (H[a + l].second - H[a].second * P[l].second % m2);
+        int hb1 = (H[b + l].first - H[b].first * P[l].first % m1);
+        int hb2 = (H[b + l].second - H[b].second * P[l].second % m2);
 
         // Compare the two hashes
-        return hash_a1 == hash_b1 && hash_a2 == hash_b2;
+        return ha1 == hb1 && ha2 == hb2;
     }
 };
 
