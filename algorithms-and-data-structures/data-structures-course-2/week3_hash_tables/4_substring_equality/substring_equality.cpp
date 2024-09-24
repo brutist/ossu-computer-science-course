@@ -1,7 +1,9 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
+using std::cout;
+using std::cin;
+using std::string;
 
 class Solver {
     string s;
@@ -12,9 +14,14 @@ class Solver {
     int x, m1, m2;
 
   public:
-    Solver(const string &str)
-        : s(str), H1(s.size() + 1, 0), H2(s.size() + 1, 0), P1(s.size() + 1, 1),
-          P2(s.size() + 1, 1) {
+    Solver(const string &str) : s(str) {
+        // initialize hash[k] and power[k] containing hashes of length k
+        //  and base raise to k
+        H1 = std::vector<int>(s.size() + 1, 0); 
+        H2 = std::vector<int>(s.size() + 1, 0);
+        P1 = std::vector<long long>(s.size() + 1, 1);
+        P2 = std::vector<long long>(s.size() + 1, 1); 
+
         // Use pre-defined primes to avoid repeated modulo operations
         m1 = 1000000007;
         m2 = 1000000009;
@@ -46,7 +53,7 @@ class Solver {
 };
 
 int main() {
-    ios_base::sync_with_stdio(0), cin.tie(0);
+    std::ios_base::sync_with_stdio(0), cin.tie(0);
 
     string s;
     int q;
