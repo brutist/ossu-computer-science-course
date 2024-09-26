@@ -1,6 +1,6 @@
+#include <cassert>
 #include <iostream>
 #include <vector>
-#include <cassert>
 
 using std::cout;
 using std::make_pair;
@@ -54,32 +54,31 @@ class Solver {
     pair<int, int> get_hashes(int a, int l) {
         assert(a + l <= static_cast<int>(H.size()));
 
-        int ha1 = (H[a + l].first - ((1LL * H[a].first * P[l].first) % m1 + m1) % m1);
-        int ha2 = (H[a + l].second - ((1LL * H[a].second * P[l].second) % m2 + m2) % m2);
+        int ha1 = (H[a + l].first - (H[a].first * P[l].first % m1) % m1);
+        int ha2 = (H[a + l].second - (H[a].second * P[l].second % m2) % m2);
 
         // Compare the two hashes
         return make_pair(ha1, ha2);
     }
-};
 
-// returns the start index i and j of equal substrings of length l in
-// strings in s and t
-pair<size_t, size_t> substring_index(Solver &s, Solver &t, size_t S, size_t T, size_t l) {
-    for (size_t i = 0; i + l <= S; i++) {
-        for (size_t j = 0; j + l <= T; j++) {
-            pair<int, int> hash_s = s.get_hashes(i, l);
-            pair<int, int> hash_t = t.get_hashes(j, l);
-            std::cout << hash_s.first << ", " << hash_s.second << "\n";
-            std::cout << hash_t.first << ", " << hash_t.second << "\n";
+    // returns the start index i and j of equal substrings of length l in
+    // strings in s and t
+    pair<int, int> equal_starts_index(Solver &t, int T, int l) {
+        int S = s.size();
+        for (int i = 0; i + l <= S; i++) {
+            for (int j = 0; j + l <= T; j++) {
+                pair<int, int> hash_s = get_hashes(i, l);
+                pair<int, int> hash_t = t.get_hashes(j, l);
 
-            if (hash_s == hash_t) {
-                return make_pair(i, j);
+                if (hash_s == hash_t) {
+                    return make_pair(i, j);
+                }
             }
         }
-    }
 
-    return make_pair(0, 0);
-}
+        return make_pair(-1, -1);
+    }
+};
 
 Answer solve(const string &s, const string &t) {
     // Approach: Use binary search to search for common substring of length K in
@@ -99,8 +98,8 @@ Answer solve(const string &s, const string &t) {
     // binary search for the length of maximum equal substrings in s and t
     while (low <= high) {
         size_t mid = (low + high) / 2;
-        pair<size_t, size_t> starts = substring_index(solved_s, solved_t, S, T, mid);
-        if (starts.first != 0 && starts.second != 0) {
+        pair<int, int> starts = solved_s.equal_starts_index(solved_t, T, mid);
+        if (starts.first != -1 && starts.second != -1) {
             low = mid + 1;
             answer = {starts.first, starts.second, mid};
         }
