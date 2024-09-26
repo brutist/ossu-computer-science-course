@@ -1,10 +1,12 @@
 #include <iostream>
 #include <vector>
+#include <cassert>
 
-using std::string;
 using std::cout;
+using std::make_pair;
+using std::pair;
+using std::string;
 using std::vector;
-
 
 struct Answer {
     size_t i, j, len;
@@ -12,50 +14,72 @@ struct Answer {
 
 class Solver {
     string s;
-    std::vector<int> H1;
-    std::vector<int> H2;
-    std::vector<long long> P1; // Precompute powers of x for modulo m1
-    std::vector<long long> P2; // Precompute powers of x for modulo m2
-    int x, m1, m2;
+    std::vector<pair<int, int>> H;
+    // Precompute powers of x for modulo {m1,m2}
+    std::vector<pair<long long, long long>> P;
+    int m1, m2;
 
   public:
-    Solver(const string &str) : s(str) {
-        // initialize hash[k] and power[k] containing hashes of length k
-        //  and base raise to k
-        H1 = std::vector<int>(s.size() + 1, 0); 
-        H2 = std::vector<int>(s.size() + 1, 0);
-        P1 = std::vector<long long>(s.size() + 1, 1);
-        P2 = std::vector<long long>(s.size() + 1, 1); 
-
+    Solver(const string &str)
+        : s(str), H(vector<pair<int, int>>(1, make_pair(0, 0))),
+          P(vector<pair<long long, long long>>(1, make_pair(1, 1))) {
         // Use pre-defined primes to avoid repeated modulo operations
         m1 = 1000000007;
         m2 = 1000000009;
 
         // Use a fixed base for speed and consistency (use large prime or
         // random)
-        x = 31; // A common base in string hashing, or use 33, 37, etc.
+        int x = 31; // A common base in string hashing, or use 33, 37, etc.
 
         // Precompute hashes and powers of x
         int n = s.size();
+        H.reserve(n);
+        P.reserve(n);
         for (int i = 1; i <= n; ++i) {
-            H1[i] = (s[i - 1] + 1LL * x * H1[i - 1]) % m1;
-            H2[i] = (s[i - 1] + 1LL * x * H2[i - 1]) % m2;
-            P1[i] = (1LL * P1[i - 1] * x) % m1; // x^i % m1
-            P2[i] = (1LL * P2[i - 1] * x) % m2; // x^i % m2
+            long long hash1 = (s[i - 1] + 1LL * x * H[i - 1].first);
+            long long hash2 = (s[i - 1] + 1LL * x * H[i - 1].second);
+            long long power1 = (1LL * P[i - 1].first * x);
+            long long power2 = (1LL * P[i - 1].second * x);
+            // only take the modulo if necessary
+            hash1 = (hash1 > m1 ? hash1 : hash1 % m1);
+            hash2 = (hash2 > m2 ? hash1 : hash2 % m2);
+            power1 = (power1 > m1 ? power1 : power1 % m1);
+            power2 = (power2 > m2 ? power2 : power2 % m2);
+
+            H.push_back(make_pair(hash1, hash2));
+            P.push_back(make_pair(power1, power2));
         }
     }
 
-    inline bool ask(int a, int b, int l) {
-        // Use inline to reduce function call overhead
-        int hash_a1 = (H1[a + l] - 1LL * H1[a] * P1[l] % m1 + m1) % m1;
-        int hash_a2 = (H2[a + l] - 1LL * H2[a] * P2[l] % m2 + m2) % m2;
-        int hash_b1 = (H1[b + l] - 1LL * H1[b] * P1[l] % m1 + m1) % m1;
-        int hash_b2 = (H2[b + l] - 1LL * H2[b] * P2[l] % m2 + m2) % m2;
+    pair<int, int> get_hashes(int a, int l) {
+        assert(a + l <= static_cast<int>(H.size()));
+
+        int ha1 = (H[a + l].first - ((1LL * H[a].first * P[l].first) % m1 + m1) % m1);
+        int ha2 = (H[a + l].second - ((1LL * H[a].second * P[l].second) % m2 + m2) % m2);
 
         // Compare the two hashes
-        return hash_a1 == hash_b1 && hash_a2 == hash_b2;
+        return make_pair(ha1, ha2);
     }
 };
+
+// returns the start index i and j of equal substrings of length l in
+// strings in s and t
+pair<size_t, size_t> substring_index(Solver &s, Solver &t, size_t S, size_t T, size_t l) {
+    for (size_t i = 0; i + l <= S; i++) {
+        for (size_t j = 0; j + l <= T; j++) {
+            pair<int, int> hash_s = s.get_hashes(i, l);
+            pair<int, int> hash_t = t.get_hashes(j, l);
+            std::cout << hash_s.first << ", " << hash_s.second << "\n";
+            std::cout << hash_t.first << ", " << hash_t.second << "\n";
+
+            if (hash_s == hash_t) {
+                return make_pair(i, j);
+            }
+        }
+    }
+
+    return make_pair(0, 0);
+}
 
 Answer solve(const string &s, const string &t) {
     // Approach: Use binary search to search for common substring of length K in
@@ -69,20 +93,31 @@ Answer solve(const string &s, const string &t) {
     Solver solved_s = Solver(s);
     Solver solved_t = Solver(t);
 
-    int low = 0, high = std::min(s.size(), t.size());
+    int S = s.size(), T = t.size();
+    int low = 0, high = std::min(S, T);
     Answer answer = {0, 0, 0};
+    // binary search for the length of maximum equal substrings in s and t
     while (low <= high) {
-        int mid = (low + high) / 2;
-        if ()
+        size_t mid = (low + high) / 2;
+        pair<size_t, size_t> starts = substring_index(solved_s, solved_t, S, T, mid);
+        if (starts.first != 0 && starts.second != 0) {
+            low = mid + 1;
+            answer = {starts.first, starts.second, mid};
+        }
+
+        else {
+            high = mid - 1;
+        }
     }
 
+    return answer;
 }
 
 int main() {
-    ios_base::sync_with_stdio(false), cin.tie(0);
+    std::ios_base::sync_with_stdio(false), std::cin.tie(0);
     string s, t;
-    while (cin >> s >> t) {
+    while (std::cin >> s >> t) {
         auto ans = solve(s, t);
-        cout << ans.i << " " << ans.j << " " << ans.len << "\n";
+        std::cout << ans.i << " " << ans.j << " " << ans.len << "\n";
     }
 }

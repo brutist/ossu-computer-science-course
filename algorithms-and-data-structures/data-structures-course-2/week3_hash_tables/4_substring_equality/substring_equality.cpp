@@ -49,10 +49,10 @@ class Solver {
 
     inline bool ask(int a, int b, int l) {
         // Use inline to reduce function call overhead
-        int ha1 = (H[a + l].first - H[a].first * P[l].first % m1);
-        int ha2 = (H[a + l].second - H[a].second * P[l].second % m2);
-        int hb1 = (H[b + l].first - H[b].first * P[l].first % m1);
-        int hb2 = (H[b + l].second - H[b].second * P[l].second % m2);
+        int ha1 = (H[a + l].first - ((1LL * H[a].first * P[l].first) % m1) % m1);
+        int ha2 = (H[a + l].second - ((1LL * H[a].second * P[l].second) % m2) % m2);
+        int hb1 = (H[b + l].first - ((1LL * H[b].first * P[l].first) % m1) % m1);
+        int hb2 = (H[b + l].second - ((1LL * H[b].second * P[l].second) % m2) % m2);
 
         // Compare the two hashes
         return ha1 == hb1 && ha2 == hb2;
